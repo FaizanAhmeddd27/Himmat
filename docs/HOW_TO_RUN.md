@@ -20,15 +20,17 @@ python -m venv .venv
 
 ### 2. Add the secret settings
 
-Create a file at `backend\.env`. Copy `backend\.env.example` and fill it in. For the AI questions to work, these two lines matter:
+Create a file at `backend\.env`. Copy `backend\.env.example` and fill it in. These lines matter:
 
 ```
+DATABASE_URL=your-supabase-connection-string
 AI_PROVIDER=groq
 GROQ_API_KEY=your-key-here
 ```
 
-- Get the key from a teammate. **Never commit it**: the repo is public, and `.env` is already ignored by git.
-- No key? Set `AI_PROVIDER=none`. Everything still works. "Ask Ustad" shows a friendly message, and the written hints are unaffected.
+- Get the values from a teammate. **Never commit it**: the repo is public, and `.env` is already ignored by git.
+- No database? Leave `DATABASE_URL` empty and progress goes to local files.
+- No Groq key? Set `AI_PROVIDER=none`. Everything still works. "Ask Ustad" shows a friendly message, and the written hints are unaffected.
 
 ### 3. Set up the frontend
 
@@ -140,7 +142,7 @@ Open **/demo** and press **Try it yourself** for a brand-new profile. Do this be
 | Page looks stuck on an old session | Use **Start over** on the phone screen, or open a private window |
 | Backend changes don't show | Restart Terminal 1: it doesn't reload by itself with the command above |
 
-Your progress is saved in `backend\data\`. Deleting that folder resets every profile. It is ignored by git.
+**Where progress is saved:** in Supabase when `DATABASE_URL` is set in `backend\.env`. The tables are created automatically the first time. If the database can't be reached when the backend starts, it saves to `backend\data\` for that run and the terminal shows a warning. If the connection drops while running, practice carries on, but changes made during the drop are not saved to Supabase.
 
 ---
 

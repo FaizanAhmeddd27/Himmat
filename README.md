@@ -46,7 +46,7 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. Without a Groq key everything still works except free-text questions to Ustad.
+Open http://localhost:3000. With no Groq key, everything still works except free-text questions to Ustad. With no `DATABASE_URL`, progress is saved to local files instead of Supabase.
 
 ## Architecture
 
@@ -62,6 +62,7 @@ Next.js frontend  --REST-->  FastAPI backend
 |---|---|
 | Frontend | Next.js 16, TypeScript, Tailwind CSS 4, Framer Motion, Recharts, Zustand |
 | Backend | FastAPI, Pydantic v2 |
+| Database | Supabase Postgres, falling back to local files if it cannot be reached |
 | AI | Groq, explanation only, with a written fallback |
 | Tests | Pytest (engine, replay, recovery, skills, AI guardrails), ESLint, Ruff, Black, mypy |
 
@@ -91,7 +92,7 @@ Built in one day, so here is what is not done:
 - **Content:** one practice scenario, one mastery scenario and one recovery lab. Send Money, Video Calls, Shopping and Government Forms are planned, and Digital DNA shows those skills as sample starting points.
 - **Accounts:** guest mode is the default, with a random ID kept in the browser. Sign-in pages are built on Supabase but need its keys, and the backend does not check sign-in tokens yet, so a profile is protected only by its long random ID.
 - **Family:** a supporter opens a private link rather than linking two accounts. Anyone with that link sees what the learner chose to share.
-- **Storage:** JSON files on the server, not Postgres. Swapping only touches the store modules.
+- **Storage:** Supabase Postgres, with each session and profile saved as a JSON document rather than the full table design in `docs/ARCH.md`. The app reads from memory, so running more than one backend at once is not supported yet.
 - **Language:** the Urdu and Roman Urdu text was written with AI and still needs review by a fluent reader. Read aloud works in English, and in Urdu only on devices with an Urdu voice. Roman Urdu has no read aloud, because an English voice cannot pronounce it.
 - **Learning science:** the dashboard schedules practice again at growing intervals (1, 3, 7, then 14 days), but it repeats the same scenario rather than a new variant, sends no reminders, and skills do not decay yet.
 - **Deployment:** runs locally.
@@ -105,4 +106,4 @@ Built in one day, so here is what is not done:
 
 ## Final commit
 
-`e44db17` is the final code commit. The only later commit adds this line.
+`844aee5` is the final code commit. The only later commit adds this line.
