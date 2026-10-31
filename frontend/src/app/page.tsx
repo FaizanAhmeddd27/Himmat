@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ShieldCheck } from "lucide-react";
 import { api } from "@/lib/api";
-import { pick, speak, useA11y } from "@/lib/a11y";
+import { canReadAloud, pick, speak, useA11y } from "@/lib/a11y";
 import { useT, type I18nKey } from "@/lib/i18n";
 import type { ActionDef, Localized, NodePayload } from "@/lib/types";
 import { ThemedLoader } from "@/components/common/ThemedLoader";
@@ -75,7 +75,7 @@ function Hero() {
           <h1 className="text-balance text-[clamp(52px,6vw,88px)] leading-[0.98] text-wine">{t("home.title")}</h1>
           <p className="mt-6 text-base text-ink md:text-lg">{t("home.sentence")}</p>
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-            <Link href={`/simulations/${SCENARIO}`} className="btn-primary">
+            <Link href="/onboarding" className="btn-primary">
               {t("home.start")}
             </Link>
             <p className="flex items-center gap-2 text-base text-ink">
@@ -293,6 +293,7 @@ function Ustad() {
           <p aria-live="polite" className="mt-4 min-h-20 text-base text-ink md:text-lg">
             {hint}
           </p>
+          {canReadAloud(lang) ? (
           <button
             type="button"
             onClick={() => speak(hint)}
@@ -300,6 +301,7 @@ function Ustad() {
           >
             {t("common.listen")}
           </button>
+          ) : null}
         </div>
       </div>
     </section>
@@ -341,7 +343,7 @@ function Close() {
           <p className="mt-4 text-base text-on-wine-muted md:text-lg">{t("footer.tag")}</p>
         </div>
         <Link
-          href={`/simulations/${SCENARIO}`}
+          href="/onboarding"
           className="inline-flex min-h-14 shrink-0 items-center justify-center rounded-[12px] bg-sand px-8 text-lg text-wine transition-colors hover:bg-surface"
         >
           {t("home.start")}

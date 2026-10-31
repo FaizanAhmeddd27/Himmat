@@ -76,7 +76,12 @@ export function pick(map: Localized | null | undefined, lang: LangKey): string {
   return map[lang] ?? map.en ?? "";
 }
 
-/** Read-aloud helper (UI_UX §5.4.1). Roman Urdu reads fine with an English voice. */
+/** An English voice cannot pronounce Roman Urdu, so read-aloud stays off for it. */
+export function canReadAloud(lang: LangKey): boolean {
+  return lang === "en";
+}
+
+/** Read-aloud helper (UI_UX §5.4.1). */
 export function speak(text: string) {
   if (typeof window === "undefined" || !window.speechSynthesis) return;
   window.speechSynthesis.cancel();

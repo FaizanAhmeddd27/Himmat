@@ -8,9 +8,11 @@ import { Logo } from "@/components/layout/Logo";
 import { useT, type I18nKey } from "@/lib/i18n";
 
 const LINKS: { href: string; key: I18nKey }[] = [
+  { href: "/dashboard", key: "nav.home" },
   { href: "/simulations", key: "nav.practise" },
   { href: "/digital-dna", key: "nav.skills" },
   { href: "/family", key: "nav.family" },
+  { href: "/settings", key: "nav.settings" },
 ];
 
 function NavLink({ href, active, label }: { href: string; active?: boolean; label: string }) {
@@ -47,7 +49,7 @@ export function SiteHeader() {
         <Link href="/" className="inline-flex min-h-12 items-center" aria-label="HIMMAT home">
           <Logo />
         </Link>
-        <nav className="order-3 flex w-full items-center gap-1 sm:order-none sm:w-auto sm:flex-1">
+        <nav className="order-3 flex w-full flex-wrap items-center gap-x-1 lg:order-none lg:w-auto lg:flex-1">
           <Suspense fallback={<PlainNavLinks />}>
             <NavLinks />
           </Suspense>

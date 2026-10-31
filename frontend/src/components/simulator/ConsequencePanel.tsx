@@ -9,7 +9,7 @@
 import Link from "next/link";
 import { CircleHelp, Compass, Lightbulb, ShieldCheck, TriangleAlert, Volume2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { pick, speak, type LangKey } from "@/lib/a11y";
+import { canReadAloud, pick, speak, type LangKey } from "@/lib/a11y";
 import { SKILL_NAMES, useT, type I18nKey } from "@/lib/i18n";
 import type { OutcomeTagName, SessionView } from "@/lib/types";
 import { ConfidenceRating } from "@/components/simulator/ConfidenceRating";
@@ -72,6 +72,7 @@ export function ConsequencePanel({
           {mastery && tag !== "safe" ? (
             <p className="mt-2 text-lg text-on-wine-muted">{t("outcome.notYet")}</p>
           ) : null}
+          {canReadAloud(lang) ? (
           <button
             type="button"
             onClick={() => speak(readOut)}
@@ -80,6 +81,7 @@ export function ConsequencePanel({
             <Volume2 aria-hidden className="size-5" />
             {t("common.listen")}
           </button>
+          ) : null}
         </div>
       </div>
 

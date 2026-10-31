@@ -12,14 +12,9 @@ import { ThemedLoader } from "@/components/common/ThemedLoader";
 import { api, toApiError } from "@/lib/api";
 import { pick, useA11y } from "@/lib/a11y";
 import { useT } from "@/lib/i18n";
-import type { ApiErrorInfo, DnaView, Recommendation } from "@/lib/types";
+import type { ApiErrorInfo, DnaView } from "@/lib/types";
 import { SkillBars, SkillRadar, SkillTrend } from "@/components/dna/SkillCharts";
-
-function hrefFor(rec: Recommendation): string {
-  if (rec.kind === "recovery") return `/recovery/${rec.target}`;
-  if (rec.kind === "mastery") return `/simulations/${rec.target}?mode=mastery`;
-  return `/simulations/${rec.target}`;
-}
+import { recommendationHref } from "@/components/dna/next-step";
 
 function ConfidenceMeter({ label, value }: { label: string; value: number | null }) {
   const t = useT();
@@ -96,7 +91,7 @@ export default function DigitalDnaPage() {
               <h2 className="mt-1 text-xl text-wine">{pick(rec.title, lang)}</h2>
               <p className="mt-1 max-w-xl text-lg text-ink">{pick(rec.reason, lang)}</p>
             </div>
-            <Link href={hrefFor(rec)} className="btn-primary shrink-0">
+            <Link href={recommendationHref(rec)} className="btn-primary shrink-0">
               {t("dna.startNext")}
             </Link>
           </div>

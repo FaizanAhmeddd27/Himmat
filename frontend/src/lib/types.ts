@@ -196,7 +196,26 @@ export interface Recommendation {
   reason: Localized;
 }
 
+export interface ReviewItem {
+  scenario_id: string;
+  kind: "practice" | "mastery";
+  title: Localized;
+  due: boolean;
+  days_left: number;
+}
+
+export interface AssessmentView {
+  questions: {
+    id: string;
+    situation: Localized;
+    options: { id: string; label: Localized }[];
+  }[];
+}
+
 export interface DnaView {
+  assessed: boolean;
+  onboarded: boolean;
+  reviews: ReviewItem[];
   learner_id: string;
   name: string;
   skills: DnaSkill[];

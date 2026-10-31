@@ -7,6 +7,7 @@ import { getLearnerId } from "./learner";
 import type {
   ActionResponse,
   ApiErrorInfo,
+  AssessmentView,
   CompareView,
   ConsentCategory,
   DnaView,
@@ -106,7 +107,16 @@ export const api = {
     post<{ ok: boolean }>("/skills/confidence", { scenario_id: scenarioId, phase, rating }),
   resetLearner: () => post<{ ok: boolean }>("/skills/reset"),
 
+  getAssessment: () => fetchJson<AssessmentView>("/assessment"),
+  submitAssessment: (answers: Record<string, string>) =>
+    post<DnaView>("/assessment/submit", { answers }),
+  skipAssessment: () => post<{ ok: boolean }>("/assessment/skip"),
+  deleteAccount: () => fetchJson<{ ok: boolean }>("/account", { method: "DELETE" }),
+  seedDemo: () => post<{ ok: boolean }>("/demo/seed"),
+
   getFamily: () => fetchJson<FamilyView>("/family/dashboard"),
+  getSupporterView: (learnerId: string) =>
+    fetchJson<FamilyView>(`/family/dashboard/${encodeURIComponent(learnerId)}`),
   setConsent: (category: ConsentCategory, granted: boolean) =>
     fetchJson<FamilyView>("/family/consents", {
       method: "PUT",

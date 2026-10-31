@@ -152,6 +152,23 @@ def test_recommendation_never_points_at_unbuilt_content():
     }
 
 
+def test_weakest_skill_recommendation_opens_the_matching_practice():
+    learner = learners.get_learner_store().get("amna")
+    learner.completed_scenarios = ["fake_bank_message"]
+    learner.mastery_passed = True
+    learner.scores.update(
+        {
+            "scam_detection": 80,
+            "otp_safety": 80,
+            "reporting": 80,
+            "account_recovery": 10,
+        }
+    )
+    rec = learners.recommendation(learner)
+    assert rec["skill"] == "account_recovery"
+    assert rec["target"] == "recovery_shared_otp"
+
+
 def test_mastery_counts_for_more_than_practice():
     scenario, practice = played("lucky_draw_message", MASTERY_PASS)
     learners.apply_session_result(scenario, practice)

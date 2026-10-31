@@ -15,6 +15,9 @@ from app.engine.models import Languages, Scenario, SessionRecord, SkillChange
 from app.skills.mastery import apply_events
 from app.skills.taxonomy import BY_ID, SKILLS
 
+# Where to practise a skill when it is the learner's weakest.
+PRACTICE_FOR_SKILL = {"account_recovery": "recovery_shared_otp"}
+
 REVIEW_DAYS = (1, 3, 7, 14)
 DAY_SECONDS = 86400
 
@@ -269,7 +272,7 @@ def recommendation(learner: LearnerRecord) -> dict:
     )
     return {
         "kind": "done",
-        "target": "fake_bank_message",
+        "target": PRACTICE_FOR_SKILL.get(weakest.id, "fake_bank_message"),
         "skill": weakest.id,
         "title": weakest.name,
         "reason": {

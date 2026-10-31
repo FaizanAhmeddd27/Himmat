@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Volume2 } from "lucide-react";
 import Image from "next/image";
 import { api, toApiError } from "@/lib/api";
-import { pick, speak } from "@/lib/a11y";
+import { canReadAloud, pick, speak } from "@/lib/a11y";
 import { useT, type I18nKey } from "@/lib/i18n";
 import type { ApiErrorInfo, HintResponse, LangKey } from "@/lib/types";
 
@@ -103,6 +103,7 @@ export function HintDrawer({
                     <li key={hint.level} className="rounded-[12px] bg-neutral-tint p-3">
                       <p className="text-sm text-muted-foreground">{t(LEVEL_TITLES[hint.level])}</p>
                       <p className="mt-1 text-base text-ink">{text}</p>
+                      {canReadAloud(lang) ? (
                       <button
                         type="button"
                         onClick={() => speak(text)}
@@ -111,6 +112,7 @@ export function HintDrawer({
                         <Volume2 aria-hidden className="size-5" />
                         {t("common.listen")}
                       </button>
+                      ) : null}
                     </li>
                   );
                 })}
@@ -153,6 +155,7 @@ export function HintDrawer({
                 {answer ? (
                   <div aria-live="polite" className="mt-3 rounded-[12px] bg-neutral-tint p-3">
                     <p className="text-base text-ink">{answer}</p>
+                    {canReadAloud(lang) ? (
                     <button
                       type="button"
                       onClick={() => speak(answer)}
@@ -161,6 +164,7 @@ export function HintDrawer({
                       <Volume2 aria-hidden className="size-5" />
                       {t("common.listen")}
                     </button>
+                    ) : null}
                   </div>
                 ) : null}
               </form>
