@@ -68,13 +68,18 @@ def public_view(scenario: RecoveryScenario) -> dict:
 def _longest_in_order(ranks: List[int]) -> Set[int]:
     """Largest set of steps already in the right order. Only the rest get flagged,
     so one step out of place never makes the steps around it look wrong."""
-    best: List[List[int]] = []
+    chains: List[List[int]] = []
     for index, rank in enumerate(ranks):
-        chain = max(
-            (best[i] for i in range(index) if ranks[i] < rank), key=len, default=[]
-        )
-        best.append([*chain, rank])
-    return set(max(best, key=len, default=[]))
+        longest: List[int] = []
+        for i in range(index):
+            if ranks[i] < rank and len(chains[i]) > len(longest):
+                longest = chains[i]
+        chains.append([*longest, rank])
+    best: List[int] = []
+    for chain in chains:
+        if len(chain) > len(best):
+            best = chain
+    return set(best)
 
 
 def evaluate(scenario: RecoveryScenario, submitted: List[str]) -> dict:
@@ -90,9 +95,9 @@ def evaluate(scenario: RecoveryScenario, submitted: List[str]) -> dict:
 
     in_order = _longest_in_order(
         [
-            cards[card_id].rank
-            for card_id in submitted
-            if cards[card_id].rank is not None
+            rank
+            for rank in (cards[card_id].rank for card_id in submitted)
+            if rank is not None
         ]
     )
     steps = []

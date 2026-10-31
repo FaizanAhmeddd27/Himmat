@@ -11,6 +11,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { TriangleAlert } from "lucide-react";
+import { ThemedLoader } from "@/components/common/ThemedLoader";
 import { api, toApiError } from "@/lib/api";
 import { useA11y } from "@/lib/a11y";
 import { useT } from "@/lib/i18n";
@@ -131,7 +132,7 @@ export function ScenarioPlayer({
       <>
         <PracticeBanner />
         <main className="flex flex-1 items-center justify-center px-6 py-24">
-          <p className="text-lg text-muted-foreground">{t("common.loading")}</p>
+          <ThemedLoader />
         </main>
       </>
     );

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { Ban, CircleCheck, Plus, RotateCcw, TriangleAlert, X } from "lucide-react";
+import { ThemedLoader } from "@/components/common/ThemedLoader";
 import { api, toApiError } from "@/lib/api";
 import { pick, useA11y } from "@/lib/a11y";
 import { SKILL_NAMES, useT, type I18nKey } from "@/lib/i18n";
@@ -83,9 +84,13 @@ function Lab() {
   if (!view) {
     return (
       <main className="flex flex-1 items-center justify-center px-6 py-24">
-        <p role={error ? "alert" : undefined} className="max-w-xl text-center text-lg text-muted-foreground">
-          {error ? error.message : t("common.loading")}
-        </p>
+        {error ? (
+          <p role="alert" className="max-w-xl text-center text-lg text-caution">
+            {error.message}
+          </p>
+        ) : (
+          <ThemedLoader />
+        )}
       </main>
     );
   }

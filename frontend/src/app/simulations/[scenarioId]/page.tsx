@@ -11,12 +11,11 @@ import { Suspense, useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { PracticeBanner } from "@/components/layout/PracticeBanner";
 import { ScenarioPlayer } from "@/components/simulator/ScenarioPlayer";
+import { ThemedLoader } from "@/components/common/ThemedLoader";
 import { api, toApiError } from "@/lib/api";
-import { useT } from "@/lib/i18n";
 import type { ApiErrorInfo, ScenarioMeta } from "@/lib/types";
 
 function Player() {
-  const t = useT();
   const { scenarioId } = useParams<{ scenarioId: string }>();
   const search = useSearchParams();
   const [scenario, setScenario] = useState<ScenarioMeta | null>(null);
@@ -34,9 +33,13 @@ function Player() {
       <>
         <PracticeBanner />
         <main className="flex flex-1 items-center justify-center px-6 py-24">
-          <p role={error ? "alert" : undefined} className="max-w-xl text-center text-lg text-muted-foreground">
-            {error ? error.message : t("common.loading")}
-          </p>
+          {error ? (
+            <p role="alert" className="max-w-xl text-center text-lg text-caution">
+              {error.message}
+            </p>
+          ) : (
+            <ThemedLoader />
+          )}
         </main>
       </>
     );

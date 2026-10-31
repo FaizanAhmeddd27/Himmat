@@ -8,6 +8,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ThemedLoader } from "@/components/common/ThemedLoader";
 import { api } from "@/lib/api";
 import { pick, useA11y } from "@/lib/a11y";
 import { useT } from "@/lib/i18n";
@@ -55,7 +56,7 @@ export default function SimulationsPage() {
             </p>
           ) : null}
           {scenarios === null && !loadError ? (
-            <p className="text-lg text-muted-foreground">{t("common.loading")}</p>
+            <ThemedLoader />
           ) : null}
 
           <ul className="divide-y divide-border">

@@ -8,6 +8,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ThemedLoader } from "@/components/common/ThemedLoader";
 import { api, toApiError } from "@/lib/api";
 import { pick, useA11y } from "@/lib/a11y";
 import { useT } from "@/lib/i18n";
@@ -62,9 +63,13 @@ export default function DigitalDnaPage() {
   if (!view) {
     return (
       <main className="flex flex-1 items-center justify-center px-6 py-24">
-        <p role={error ? "alert" : undefined} className="max-w-xl text-center text-lg text-muted-foreground">
-          {error ? error.message : t("common.loading")}
-        </p>
+        {error ? (
+          <p role="alert" className="max-w-xl text-center text-lg text-caution">
+            {error.message}
+          </p>
+        ) : (
+          <ThemedLoader />
+        )}
       </main>
     );
   }
