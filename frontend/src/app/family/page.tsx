@@ -7,13 +7,13 @@
  */
 
 import { useEffect, useState } from "react";
-import { EyeOff, Lock } from "lucide-react";
+import { Link2, Lock } from "lucide-react";
 import { ThemedLoader } from "@/components/common/ThemedLoader";
 import { api, toApiError } from "@/lib/api";
-import { pick, useA11y } from "@/lib/a11y";
 import { useT, type I18nKey } from "@/lib/i18n";
 import type { ApiErrorInfo, ConsentCategory, FamilyView } from "@/lib/types";
-import { SkillTrend } from "@/components/dna/SkillCharts";
+import { getLearnerId } from "@/lib/learner";
+import { SupporterView } from "@/components/family/SupporterView";
 
 const CATEGORIES: { id: ConsentCategory; title: I18nKey; body: I18nKey }[] = [
   { id: "skills_summary", title: "family.skills", body: "family.skillsBody" },
@@ -21,21 +21,12 @@ const CATEGORIES: { id: ConsentCategory; title: I18nKey; body: I18nKey }[] = [
   { id: "activity_timeline", title: "family.activity", body: "family.activityBody" },
 ];
 
-function Hidden({ label }: { label: string }) {
-  const t = useT();
-  return (
-    <p className="flex items-center gap-2 text-base text-muted-foreground">
-      <EyeOff aria-hidden className="size-5 shrink-0" />
-      {label}: {t("family.hidden")}
-    </p>
-  );
-}
-
 export default function FamilyPage() {
   const t = useT();
-  const lang = useA11y((s) => s.lang);
   const [view, setView] = useState<FamilyView | null>(null);
   const [error, setError] = useState<ApiErrorInfo | null>(null);
+  const [shareLink, setShareLink] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     api
@@ -53,6 +44,17 @@ export default function FamilyPage() {
     }
   };
 
+  const share = async () => {
+    const link = `${window.location.origin}/family/dashboard/${getLearnerId()}`;
+    setShareLink(link);
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+    } catch {
+      setCopied(false); // The link stays on screen to copy by hand.
+    }
+  };
+
   if (!view) {
     return (
       <main className="flex flex-1 items-center justify-center px-6 py-24">
@@ -66,8 +68,6 @@ export default function FamilyPage() {
       </main>
     );
   }
-
-  const mastered = view.skills_summary?.filter((skill) => skill.mastery >= 50 && skill.practised) ?? [];
 
   return (
     <main className="flex flex-1 flex-col">
@@ -116,73 +116,19 @@ export default function FamilyPage() {
                 {error.message}
               </p>
             ) : null}
+            <button type="button" onClick={share} className="btn-secondary mt-6 w-full">
+              <Link2 aria-hidden className="me-2 size-5 shrink-0" />
+              {t("family.share")}
+            </button>
+            {shareLink ? (
+              <div role="status" className="mt-2">
+                {copied ? <p className="text-base text-safe">{t("family.copied")}</p> : null}
+                <p className="break-all text-base text-muted-foreground">{shareLink}</p>
+              </div>
+            ) : null}
           </div>
 
-          <div className="rounded-[16px] border border-border bg-surface p-6 sm:p-8">
-            <h2 className="text-xl text-wine">{t("family.bilalSees")}</h2>
-            <p className="mt-1 text-lg text-ink">{t("family.neutral")}</p>
-
-            <div className="mt-6 space-y-6">
-              {view.skills_summary ? (
-                <div>
-                  <h3 className="text-lg text-wine">{t("family.mastered")}</h3>
-                  {mastered.length > 0 ? (
-                    <ul className="mt-1 space-y-1">
-                      {mastered.map((skill) => (
-                        <li key={skill.id} className="flex justify-between gap-4 text-lg text-ink">
-                          <span>{pick(skill.name, lang)}</span>
-                          <span className="tabular-nums">{skill.mastery}%</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="mt-1 text-base text-muted-foreground">{t("family.noneYet")}</p>
-                  )}
-                  {view.history ? <div className="mt-3"><SkillTrend history={view.history} /></div> : null}
-                </div>
-              ) : (
-                <Hidden label={t("family.skills")} />
-              )}
-
-              {view.difficulty_areas ? (
-                <div>
-                  <h3 className="text-lg text-wine">{t("family.help")}</h3>
-                  {view.difficulty_areas.length === 0 ? (
-                    <p className="mt-1 text-base text-muted-foreground">{t("family.noHelp")}</p>
-                  ) : null}
-                  <ul className="mt-2 space-y-3">
-                    {view.difficulty_areas.map((area) => (
-                      <li key={area.skill.id}>
-                        <p className="text-lg text-ink">{pick(area.skill.name, lang)}</p>
-                        <p className="text-base text-muted-foreground">{pick(area.tip, lang)}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : (
-                <Hidden label={t("family.difficulty")} />
-              )}
-
-              {view.activity_timeline ? (
-                <div>
-                  <h3 className="text-lg text-wine">{t("family.activity")}</h3>
-                  {view.activity_timeline.length > 0 ? (
-                    <ul className="mt-1 space-y-1">
-                      {view.activity_timeline.map((item) => (
-                        <li key={item.label} className="text-base text-ink">
-                          {pick(item.text, lang)}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="mt-1 text-base text-muted-foreground">{t("family.noneYet")}</p>
-                  )}
-                </div>
-              ) : (
-                <Hidden label={t("family.activity")} />
-              )}
-            </div>
-          </div>
+          <SupporterView view={view} />
         </div>
       </section>
     </main>
