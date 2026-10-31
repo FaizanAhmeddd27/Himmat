@@ -1,0 +1,306 @@
+{
+  "id": "fake_bank_message",
+  "version": 1,
+  "title": {
+    "en": "The Fake Bank Message",
+    "ur-Latn": "Nakli Bank ka Message"
+  },
+  "summary": {
+    "en": "Amma gets a message that looks like her bank. It says her account will be blocked today unless she confirms a code. What should she do?",
+    "ur-Latn": "Amma ko aik message milta hai jo bank se aisa lagta hai. Kehta hai account aaj band ho jayega agar code confirm na karo. Ab kya karna chahiye?"
+  },
+  "skills": ["stop_before_clicking", "verify_sender", "never_share_otp", "report_fraud"],
+  "difficulty": 1,
+  "is_active": true,
+  "initial_node": "n_msg",
+  "initial_state": {
+    "opened_link": false,
+    "shared_otp": false
+  },
+  "nodes": {
+    "n_msg": {
+      "type": "screen",
+      "ui": {
+        "component": "ChatLine/ChatThread",
+        "props": {
+          "sender_name": {
+            "en": "HBL BANK VERIFY",
+            "ur-Latn": "HBL BANK VERIFY"
+          },
+          "sender_number": "+92 300 000 0000 (practice)",
+          "messages": [
+            {
+              "from": "sender",
+              "text": {
+                "en": "URGENT: Your HBL account will be BLOCKED today at 5 PM. Someone tried your password. Confirm your OTP code now to keep your account safe. Tap: hbl-verify.com/secure",
+                "ur-Latn": "FORI: Aap ka HBL account aaj sham 5 baje BAND ho jayega. Kisi ne password try kiya. Account mehfooz rakhne ke liye apna OTP code ab confirm karein. Tap karein: hbl-verify.com/secure"
+              }
+            }
+          ]
+        }
+      },
+      "hints": {
+        "l1": {
+          "en": "Take a breath first. Urgent messages want you to hurry so you don't think.",
+          "ur-Latn": "Pehle aik gehri saans lein. Fori wale messages jaldi karwate hain takay aap soch na sako."
+        },
+        "l2": {
+          "en": "Real banks never ask for your OTP on a link. Check who really sent this message.",
+          "ur-Latn": "Asli bank kabhi link par OTP nahi mangta. Dekhein yeh message asal mein kis ne bheja."
+        },
+        "l3": {
+          "en": "Best move: don't tap the link. Call your son or the bank's official number printed on your card to check.",
+          "ur-Latn": "Behtareen kaam: link par tap na karein. Apne betay ko ya card par likhe bank ke asli number par call kar ke check karein."
+        }
+      },
+      "actions": [
+        {
+          "id": "check_sender",
+          "label": {
+            "en": "Check who sent it",
+            "ur-Latn": "Dekhein kis ne bheja"
+          },
+          "effects": {
+            "set": { "checked_sender": true }
+          },
+          "evidence": [{ "skill": "verify_sender", "value": 0.7, "weight": 1.0 }],
+          "next": "n_sender"
+        },
+        {
+          "id": "open_link",
+          "label": {
+            "en": "Tap the link (practice link)",
+            "ur-Latn": "Link kholein (practice link)"
+          },
+          "effects": {
+            "set": { "opened_link": true }
+          },
+          "evidence": [{ "skill": "stop_before_clicking", "value": 0.0, "weight": 1.0 }],
+          "next": "n_fake_page"
+        },
+        {
+          "id": "call_son",
+          "label": {
+            "en": "Call your son first",
+            "ur-Latn": "Pehle betay ko call karein"
+          },
+          "effects": {
+            "set": { "called_family": true }
+          },
+          "evidence": [{ "skill": "verify_sender", "value": 1.0, "weight": 1.0 }],
+          "next": "n_helped"
+        }
+      ]
+    },
+    "n_sender": {
+      "type": "screen",
+      "ui": {
+        "component": "ChatLine/SenderDetails",
+        "props": {
+          "points": [
+            {
+              "en": "The number is a random mobile number, not a bank number.",
+              "ur-Latn": "Yeh number aik mamooli mobile number hai, bank ka number nahi."
+            },
+            {
+              "en": "The link \"hbl-verify.com\" is NOT the bank's website (hbl.com).",
+              "ur-Latn": "Link \"hbl-verify.com\" bank ki asli website (hbl.com) NAHI hai."
+            },
+            {
+              "en": "It creates fear: \"blocked today at 5 PM\". Banks don't block like this.",
+              "ur-Latn": "Is mein dar dala gaya hai: \"aaj 5 baje band\". Bank aise block nahi karta."
+            }
+          ]
+        }
+      },
+      "hints": {
+        "l1": {
+          "en": "You already saw the signs. Think about what a careful person does with such a message.",
+          "ur-Latn": "Aap ne nishaniyan dekh li hain. Sochein, samajhdar insaan aisa message kya karta hai."
+        },
+        "l2": {
+          "en": "Don't reply, don't tap. Make the message useless for the scammer.",
+          "ur-Latn": "Jawab na dein, link na kholein. Message ko scam ke kaam na aane dein."
+        },
+        "l3": {
+          "en": "Report and block the sender so this number can't bother you again.",
+          "ur-Latn": "Is number ko report aur block karein takay dobara pareshan na kar sake."
+        }
+      },
+      "actions": [
+        {
+          "id": "report_block",
+          "label": {
+            "en": "Report and block",
+            "ur-Latn": "Report aur block karein"
+          },
+          "effects": {
+            "set": { "reported": true },
+            "inc": { "confidence": 1 }
+          },
+          "evidence": [{ "skill": "report_fraud", "value": 1.0, "weight": 1.0 }],
+          "next": "n_safe"
+        },
+        {
+          "id": "go_back",
+          "label": {
+            "en": "Go back to the message",
+            "ur-Latn": "Wapis message par jayein"
+          },
+          "effects": {},
+          "evidence": [{ "skill": "stop_before_clicking", "value": 0.5, "weight": 0.5 }],
+          "next": "n_msg"
+        }
+      ]
+    },
+    "n_fake_page": {
+      "type": "screen",
+      "ui": {
+        "component": "ChatLine/FakeVerifyPage",
+        "props": {
+          "page_title": {
+            "en": "HBL Secure Verify (practice page)",
+            "ur-Latn": "HBL Secure Verify (practice page)"
+          },
+          "page_body": {
+            "en": "Enter the 6-digit OTP we sent you to stop your account from being blocked.",
+            "ur-Latn": "Account band hone se roknay ke liye 6 anko ka OTP darj karein jo hum ne bheja hai."
+          },
+          "practice_otp": "246810",
+          "page_url": "hbl-verify.com/secure"
+        }
+      },
+      "hints": {
+        "l1": {
+          "en": "This page is inside the practice world. Nothing you type here is real.",
+          "ur-Latn": "Yeh page practice world ke andar hai. Yahan jo bhi likhein woh asli nahi hai."
+        },
+        "l2": {
+          "en": "Ask yourself: who is asking for this code? A page from a message, or the real bank app?",
+          "ur-Latn": "Khud se poochein: yeh code kis maang raha hai? Message wala page, ya asli bank app?"
+        },
+        "l3": {
+          "en": "Never type your OTP on a page that came from a message. Close this page and go back.",
+          "ur-Latn": "OTP kabhi us page par na likhein jo message se aaya hai. Yeh page band karein."
+        }
+      },
+      "actions": [
+        {
+          "id": "enter_otp",
+          "label": {
+            "en": "Type the code shown on the page",
+            "ur-Latn": "Page par dikhaya gaya code likhein"
+          },
+          "needs_input": "otp",
+          "effects": {
+            "set": { "shared_otp": true }
+          },
+          "evidence": [{ "skill": "never_share_otp", "value": 0.0, "weight": 1.0 }],
+          "next": "n_compromised"
+        },
+        {
+          "id": "close_page",
+          "label": {
+            "en": "Close the page",
+            "ur-Latn": "Page band karein"
+          },
+          "effects": {
+            "set": { "closed_page": true }
+          },
+          "evidence": [
+            { "skill": "never_share_otp", "value": 1.0, "weight": 0.7 },
+            { "skill": "stop_before_clicking", "value": 0.8, "weight": 0.3 }
+          ],
+          "next": "n_close_call"
+        }
+      ]
+    }
+  },
+  "outcomes": {
+    "n_helped": {
+      "tag": "neutral",
+      "consequence": {
+        "what": {
+          "en": "You called your son before doing anything with the message.",
+          "ur-Latn": "Aap ne message ke sath kuch karne se pehle betay ko call ki."
+        },
+        "why": {
+          "en": "Two heads are better than one. A person you trust can see the scam signs faster than fear can.", 
+          "ur-Latn": "Do dimagh behtar hain. Aap ka apna banda dar se pehle scam ki nishaniyan pehchan leta hai."
+        },
+        "should_have": {
+          "en": "You did the right thing. You could also report the message so others are protected too.",
+          "ur-Latn": "Aap ne bilkul theek kiya. Aap message ko report bhi kar sakte hain takay doosre bhi mehfooz rahein."
+        },
+        "do_differently": {
+          "en": "Next time, try deciding first on your own, then check it with family — your own judgement grows stronger.",
+          "ur-Latn": "Agli dafa khud pehle faisla karein, phir ghar walon se tasdeeq karein — apni samajh aur mazboot hogi."
+        }
+      }
+    },
+    "n_safe": {
+      "tag": "safe",
+      "consequence": {
+        "what": {
+          "en": "You reported the message and blocked the number. Nothing happened to your practice money — there was never a real threat.",
+          "ur-Latn": "Aap ne message report aur number block kiya. Practice paisay ko kuch nahi hua — kabhi khatra hi nahi tha."
+        },
+        "why": {
+          "en": "Real banks never ask for OTP codes on links. The sender used fear and a fake link — the classic tricks.",
+          "ur-Latn": "Asli bank link par OTP nahi mangta. Is ne dar aur nakli link istemal kiya — purani tarkeeb."
+        },
+        "should_have": {
+          "en": "Spotting the signs and reporting is exactly right. Well done.",
+          "ur-Latn": "Nishaniyan pehchan kar report karna bilkul sahi hai. Shabash."
+        },
+        "do_differently": {
+          "en": "Keep this habit: check the sender, call the bank's official number from your card, then report.",
+          "ur-Latn": "Yeh aadat rakhein: sender check karein, card par likhe asli number par call karein, phir report karein."
+        }
+      }
+    },
+    "n_compromised": {
+      "tag": "affected",
+      "recovery": "recovery_shared_otp",
+      "consequence": {
+        "what": {
+          "en": "In this practice world, the code was typed into a fake page. Practice money left the practice account. That is what the scammer wanted.",
+          "ur-Latn": "Nakli page par code likh diya gaya. Practice paise practice account se nikal gaye. Yehi scammer chahta tha."
+        },
+        "why": {
+          "en": "An OTP is like the last key of your account. Giving it to anyone — even a page that looks like a bank — is handing over the key.",
+          "ur-Latn": "OTP account ki aakhri chaabi jaisa hai. Yeh kisi ko dena — chahe page bank jaisa hi dikhe — chaabi de dena hai."
+        },
+        "should_have": {
+          "en": "The bank never needs your OTP: not on links, not on calls, not on messages. Close the page and verify through the official app or number.",
+          "ur-Latn": "Bank ko OTP ki zaroorat kabhi nahi hoti: na link par, na call par, na message par. Page band karein aur asli app ya number se tasdeeq karein."
+        },
+        "do_differently": {
+          "en": "If this ever happens in real life: hang up, close the page, call the real bank immediately, and your money can often still be saved. You will practise exactly that in the Recovery Lab.",
+          "ur-Latn": "Agar asli zindagi mein aisa ho: call kaat dein, page band karein, fori asli bank ko call karein — aksar paisay bach jate hain. Yeh aap Recovery Lab mein abbasi karenge."
+        }
+      }
+    },
+    "n_close_call": {
+      "tag": "close_call",
+      "consequence": {
+        "what": {
+          "en": "You tapped the link but stopped before typing the code. Close call — and you caught it yourself.",
+          "ur-Latn": "Aap link tak gaye magar code likhne se pehle ruk gaye. Tang guzri — aur aap ne khud pakar liya."
+        },
+        "why": {
+          "en": "The page only becomes dangerous the moment you type the OTP. Stopping there is the real wall of defence.",
+          "ur-Latn": "Page sirf tab khatarnak hota hai jab aap OTP likhte hain. Wahin ruk jaana asli hisaar hai."
+        },
+        "should_have": {
+          "en": "Even better: don't open the link at all. The message itself was already a lie.",
+          "ur-Latn": "Aur behtar: link kholein hi na. Message hi jhoot thi."
+        },
+        "do_differently": {
+          "en": "Build the reflex: urgent message → pause → check sender → report. Try once more to do it without opening the link.",
+          "ur-Latn": "Yeh aadat banayein: fori message → rukein → sender check karein → report karein. Ek dafa phir se, bina link khole, koshish karein."
+        }
+      }
+    }
+  }
+}

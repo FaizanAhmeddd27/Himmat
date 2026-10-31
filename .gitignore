@@ -61,3 +61,6 @@ supabase/.branches/
 # ---- Misc ----
 *.local
 .cache/
+
+# Engine data (session store)
+backend/data/
