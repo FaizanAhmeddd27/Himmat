@@ -107,3 +107,47 @@ body {
   outline: 3px dashed #f59e0b;
   outline-offset: -2px;
 }
+
+/* Cursors: native CSS, so there is no lag and nothing changes on touch screens.
+   SVG first, PNG for browsers that skip SVG cursors, then the system cursor.
+   Every tappable spot in the phone gets the same fingertip, so the cursor never
+   hints at which choice is risky (UI_UX §5.1). */
+:root {
+  --cursor-arrow: url("/cursors/arrow.svg") 3 2, url("/cursors/arrow.png") 3 2, auto;
+  --cursor-hand: url("/cursors/hand.svg") 11 3, url("/cursors/hand.png") 11 3, pointer;
+  --cursor-dot: url("/cursors/dot.svg") 16 16, url("/cursors/dot.png") 16 16, auto;
+  --cursor-finger: url("/cursors/finger.svg") 16 16, url("/cursors/finger.png") 16 16, pointer;
+}
+html[data-contrast="high"] {
+  --cursor-arrow: url("/cursors/arrow-hc.svg") 3 2, url("/cursors/arrow-hc.png") 3 2, auto;
+  --cursor-hand: url("/cursors/hand-hc.svg") 11 3, url("/cursors/hand-hc.png") 11 3, pointer;
+  --cursor-dot: url("/cursors/dot-hc.svg") 16 16, url("/cursors/dot-hc.png") 16 16, auto;
+  --cursor-finger: url("/cursors/finger-hc.svg") 16 16, url("/cursors/finger-hc.png") 16 16, pointer;
+}
+
+@media (pointer: fine) and (forced-colors: none) {
+  html {
+    cursor: var(--cursor-arrow);
+  }
+  a,
+  button,
+  label[for],
+  summary,
+  [role="switch"] {
+    cursor: var(--cursor-hand);
+  }
+  [data-phone],
+  [data-phone] button {
+    cursor: var(--cursor-dot);
+  }
+  [data-phone] .tap-spot:not(:disabled) {
+    cursor: var(--cursor-finger);
+  }
+  input,
+  textarea {
+    cursor: text;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
