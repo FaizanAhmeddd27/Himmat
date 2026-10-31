@@ -89,6 +89,8 @@ export function ScenarioPlayer({
   useEffect(() => {
     const open = async () => {
       if (firstAction) {
+        // Drop the param first, so a refresh resumes instead of replaying the tap.
+        window.history.replaceState(null, "", window.location.pathname);
         await start(firstAction);
         return;
       }
