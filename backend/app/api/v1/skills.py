@@ -9,7 +9,7 @@ from app.deps import learner_id
 from app.engine import recovery as recovery_engine
 from app.engine.models import EngineError
 from app.engine.store import get_store
-from app.skills import assessment, demo, learners
+from app.skills import assessment, learners
 
 router = APIRouter()
 
@@ -111,12 +111,6 @@ async def delete_account(learner: str = Depends(learner_id)) -> dict:
     """Removes the profile and every session (FR-1.6)."""
     learners.get_learner_store().delete(learner)
     get_store().delete_for_learner(learner)
-    return {"ok": True}
-
-
-@router.post("/demo/seed", tags=["demo"])
-async def seed_demo(learner: str = Depends(learner_id)) -> dict:
-    demo.seed_demo_learner(learner)
     return {"ok": True}
 
 

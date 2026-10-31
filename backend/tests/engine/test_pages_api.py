@@ -1,4 +1,4 @@
-"""API behind onboarding, dashboard, settings, supporter view and demo (FR-1.x, 8.x)."""
+"""API behind onboarding, dashboard, settings and supporter view (FR-1.x, 8.x)."""
 
 import sys
 from pathlib import Path
@@ -68,18 +68,6 @@ def test_skip_marks_onboarded_and_keeps_sample_scores(client):
     client.post("/api/v1/assessment/skip", headers=HEADERS)
     dna = client.get("/api/v1/skills/dna", headers=HEADERS).json()
     assert dna["onboarded"] is True and dna["assessed"] is False
-
-
-def test_demo_seed_runs_the_real_engine(client):
-    assert client.post("/api/v1/demo/seed", headers=HEADERS).status_code == 200
-    dna = client.get("/api/v1/skills/dna", headers=HEADERS).json()
-    assert len(dna["history"]) == 4
-    assert dna["confidence"] == {"before": 1, "after": 4}
-    assert {r["scenario_id"] for r in dna["reviews"]} == {
-        "fake_bank_message",
-        "lucky_draw_message",
-    }
-    assert dna["recommendation"]["kind"] == "done"
 
 
 def test_reviews_grow_with_each_completion_and_come_due():
