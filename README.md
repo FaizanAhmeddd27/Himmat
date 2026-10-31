@@ -18,9 +18,9 @@ Built for the Build4Better hackathon, 31 October 2026.
 | **Recovery Lab** | Put the steps in order after sharing an OTP, with feedback on each step. |
 | **Mastery test** | A new scam, a lucky draw, with hints switched off, to show what you can do alone. |
 | **Digital DNA** | Skill scores that change with what you do, how sure you feel before and after, and a next step chosen from your own results. |
-| **Ustad** | Three levels of written hints, plus an AI that answers questions in English or Roman Urdu. |
+| **Ustad** | Three levels of written hints, plus an AI that answers questions in English, Roman Urdu or Urdu. |
 | **Family dashboard** | The learner chooses what a family member sees, by category. Mistakes are never shown. |
-| **Accessibility** | Three text sizes, high contrast, read aloud, tap targets of at least 44px, and Roman Urdu. |
+| **Languages and accessibility** | English, Roman Urdu and Urdu script with a right-to-left layout. Three text sizes, high contrast, read aloud, and tap targets of at least 44px. |
 
 ## The core rule
 
@@ -92,7 +92,7 @@ Built in one day, so here is what is not done:
 - **Accounts:** guest mode is the default, with a random ID kept in the browser. Sign-in pages are built on Supabase but need its keys, and the backend does not check sign-in tokens yet, so a profile is protected only by its long random ID.
 - **Family:** a supporter opens a private link rather than linking two accounts. Anyone with that link sees what the learner chose to share.
 - **Storage:** JSON files on the server, not Postgres. Swapping only touches the store modules.
-- **Language:** English and Roman Urdu. Urdu script is not shipped, and a few labels inside the fake apps stay in English.
+- **Language:** the Urdu and Roman Urdu text was written with AI and still needs review by a fluent reader. Read aloud works in English, and in Urdu only on devices with an Urdu voice. Roman Urdu has no read aloud, because an English voice cannot pronounce it.
 - **Learning science:** the dashboard schedules practice again at growing intervals (1, 3, 7, then 14 days), but it repeats the same scenario rather than a new variant, sends no reminders, and skills do not decay yet.
 - **Deployment:** runs locally.
 - **Starting scores:** the first check uses self-reported answers. Anyone who skips it starts from a sample profile.

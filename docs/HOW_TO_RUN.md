@@ -98,7 +98,7 @@ Follow this path to see every feature. It is also the order of the demo video.
 - **Hints:** in a practice scenario, open **Need a hint?** and reveal the three levels.
 - **Ask Ustad:** under the hints, type "What is an OTP?" Answers take about 4 seconds, and Ustad won't choose for you even if you ask.
 - **Show me what I can tap:** outlines every tappable spot on the phone.
-- **Roman Urdu, A / A+ / A++, High contrast:** all in the top bar, and they apply everywhere.
+- **English, Roman Urdu, اردو, A / A+ / A++, High contrast:** all in the top bar, and they apply everywhere. Urdu mirrors the whole layout. **Listen** appears in Urdu only if the device has an Urdu voice, and never in Roman Urdu.
 - **Other endings in the bank scenario:** call Bilal, call the helpline from the sender's details, or open the link and close the page.
 - **Refresh mid-game:** you come back to the same screen.
 
