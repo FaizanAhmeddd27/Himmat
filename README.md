@@ -89,13 +89,13 @@ The rules ask for this, so here it is in full. Details are in [docs/AI_USAGE.md]
 Built in one day, so here is what is not done:
 
 - **Content:** one practice scenario, one mastery scenario and one recovery lab. Send Money, Video Calls, Shopping and Government Forms are planned, and Digital DNA shows those skills as sample starting points.
-- **Accounts:** guest mode only, with a random ID kept in the browser. Supabase sign-in is not wired up.
-- **Family:** the dashboard is one page showing the learner's controls beside Bilal's view. There is no real linking between two accounts yet.
+- **Accounts:** guest mode is the default, with a random ID kept in the browser. Sign-in pages are built on Supabase but need its keys, and the backend does not check sign-in tokens yet, so a profile is protected only by its long random ID.
+- **Family:** a supporter opens a private link rather than linking two accounts. Anyone with that link sees what the learner chose to share.
 - **Storage:** JSON files on the server, not Postgres. Swapping only touches the store modules.
 - **Language:** English and Roman Urdu. Urdu script is not shipped, and a few labels inside the fake apps stay in English.
-- **Learning science:** skill decay and spaced repetition are designed in the docs but not built.
+- **Learning science:** the dashboard schedules practice again at growing intervals (1, 3, 7, then 14 days), but it repeats the same scenario rather than a new variant, sends no reminders, and skills do not decay yet.
 - **Deployment:** runs locally.
-- **Starting scores:** these are a sample profile for the demo learner, not a real assessment.
+- **Starting scores:** the first check uses self-reported answers. Anyone who skips it starts from a sample profile.
 - **Testing:** not yet tested with real older adults, so we make no claim about learning outcomes.
 
 ## Credits

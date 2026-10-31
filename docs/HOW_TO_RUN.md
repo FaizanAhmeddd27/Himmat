@@ -79,7 +79,7 @@ Follow this path to see every feature. It is also the order of the demo video.
 
 | # | Where | What to do | What you should see |
 |---|---|---|---|
-| 1 | Home page | Tap the blue link inside the message on the phone | The phone opens a fake verify page |
+| 1 | Home page | Tap the blue link inside the message on the phone (or press **Start practising** for the first-time setup and quick check) | The phone opens a fake verify page |
 | 2 | Fake page | Type a card-like number, `4111 1111 1111 1111`, and press **Confirm code** | A calm message refusing it: real-looking numbers are never accepted |
 | 3 | Fake page | Type `246810` (it appears in the message at the top of the phone) and press **Confirm code** | A bank alert: PKR 48,500 of practice money is gone |
 | 4 | Phone | Press **See what happened** | The result screen with the four questions |
@@ -102,9 +102,31 @@ Follow this path to see every feature. It is also the order of the demo video.
 - **Other endings in the bank scenario:** call Bilal, call the helpline from the sender's details, or open the link and close the page.
 - **Refresh mid-game:** you come back to the same screen.
 
+### Other pages
+
+| Page | What it is |
+|---|---|
+| `/onboarding` | First-time setup and a 6-question check that sets real starting scores |
+| `/dashboard` | Home: next step, skills snapshot and when to practise again |
+| `/settings` | Language, text size, contrast, account, and deleting your data |
+| `/family/dashboard/<id>` | Bilal's read-only view. Get the link from **Copy a link for Bilal** on the Family page |
+| `/demo` | For judges: start fresh, or open a learner who has already practised |
+| `/login`, `/signup` | Accounts, once Supabase keys are set (see below) |
+
+### Turning accounts on
+
+Accounts are off until you create `frontend\.env.local` with these two lines from your Supabase project, then restart the frontend:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+Without them, the sign-in pages say so and guest mode carries on working.
+
 ### Starting fresh
 
-Open **My skills** and press **Start over with a new profile** at the bottom. Do this before recording, so the numbers start low.
+Open **/demo** and press **Try it yourself** for a brand-new profile. Do this before recording, so the numbers start low.
 
 ---
 
