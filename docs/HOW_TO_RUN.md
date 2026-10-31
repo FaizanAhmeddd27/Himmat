@@ -52,7 +52,7 @@ cd backend
 .venv\Scripts\python -m uvicorn app.main:app --port 8000
 ```
 
-Ready when you see `Uvicorn running on http://127.0.0.1:8000`.
+Ready when you see `Uvicorn running on http://127.0.0.1:8000`. With Supabase on, this takes about 10 seconds, because the backend connects before it starts serving.
 
 **Terminal 2, frontend:**
 
