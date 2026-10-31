@@ -84,8 +84,6 @@ export interface HintResponse {
   level: 1 | 2 | 3;
   hint: Localized;
   hints_used: number;
-  /** Rephrased by the AI layer when it is available; written hint otherwise. */
-  ai_text?: string | null;
 }
 
 export interface ScenarioMeta {

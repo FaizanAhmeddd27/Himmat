@@ -105,7 +105,7 @@ export function ConsequencePanel({
                   <li key={change.skill} className="flex flex-wrap justify-between gap-x-4 text-lg text-ink">
                     <span>{pick(SKILL_NAMES[change.skill], lang) || change.skill}</span>
                     <span className="tabular-nums text-wine">
-                      {Math.round(change.before)}% to {Math.round(change.after)}%
+                      {Math.round(change.before)}% {t("common.to")} {Math.round(change.after)}%
                     </span>
                   </li>
                 ))}

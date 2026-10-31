@@ -135,7 +135,7 @@ function Lab() {
                 <p key={change.skill} className="mt-6 flex flex-wrap justify-between gap-x-4 text-lg text-ink">
                   <span>{pick(SKILL_NAMES[change.skill], lang)}</span>
                   <span className="tabular-nums text-wine">
-                    {Math.round(change.before)}% to {Math.round(change.after)}%
+                    {Math.round(change.before)}% {t("common.to")} {Math.round(change.after)}%
                   </span>
                 </p>
               ))}

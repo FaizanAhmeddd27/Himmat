@@ -7,10 +7,13 @@
 
 import { useState } from "react";
 import { api } from "@/lib/api";
+import { useA11y } from "@/lib/a11y";
 import { useT, type I18nKey } from "@/lib/i18n";
 
-const FACES = ["Not at all", "A little", "Somewhat", "Quite sure", "Very sure"];
-const FACES_UR = ["Bilkul nahi", "Thora sa", "Kuch had tak", "Kafi", "Bohat zyada"];
+const LABELS = {
+  en: ["Not at all", "A little", "Somewhat", "Quite sure", "Very sure"],
+  "ur-Latn": ["Bilkul nahi", "Thora sa", "Kuch had tak", "Kafi", "Bohat zyada"],
+};
 
 export function ConfidenceRating({
   scenarioId,
@@ -25,7 +28,7 @@ export function ConfidenceRating({
 }) {
   const t = useT();
   const [rating, setRating] = useState<number | null>(null);
-  const labels = t("nav.practise") === "Practise" ? FACES : FACES_UR;
+  const labels = LABELS[useA11y((s) => s.lang)];
 
   const choose = (value: number) => {
     setRating(value);

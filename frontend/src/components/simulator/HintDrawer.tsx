@@ -6,7 +6,7 @@
  * do the task for the learner.
  */
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Volume2 } from "lucide-react";
 import Image from "next/image";
@@ -36,6 +36,9 @@ export function HintDrawer({
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<ApiErrorInfo | null>(null);
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState<string | null>(null);
+  const [asking, setAsking] = useState(false);
 
   const nextLevel = (hints.length + 1) as 1 | 2 | 3;
 
@@ -43,11 +46,27 @@ export function HintDrawer({
     setBusy(true);
     setError(null);
     try {
-      onReveal(await api.requestHint(sessionId, nextLevel, lang));
+      onReveal(await api.requestHint(sessionId, nextLevel));
     } catch (err) {
       setError(toApiError(err));
     } finally {
       setBusy(false);
+    }
+  };
+
+  const ask = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!question.trim() || asking) return;
+    setAsking(true);
+    setError(null);
+    setAnswer(null);
+    try {
+      const reply = await api.askMentor(sessionId, question, lang);
+      setAnswer(reply.text ?? t("hint.askFallback"));
+    } catch (err) {
+      setError(toApiError(err));
+    } finally {
+      setAsking(false);
     }
   };
 
@@ -79,7 +98,7 @@ export function HintDrawer({
               <p className="text-sm text-muted-foreground">{t("hint.private")}</p>
               <ol className="mt-3 space-y-3">
                 {hints.map((hint) => {
-                  const text = hint.ai_text || pick(hint.hint, lang);
+                  const text = pick(hint.hint, lang);
                   return (
                     <li key={hint.level} className="rounded-[12px] bg-neutral-tint p-3">
                       <p className="text-sm text-muted-foreground">{t(LEVEL_TITLES[hint.level])}</p>
@@ -108,6 +127,43 @@ export function HintDrawer({
               ) : (
                 <p className="mt-3 text-sm text-muted-foreground">{t("hint.done")}</p>
               )}
+              <form onSubmit={ask} className="mt-5 border-t border-border pt-4">
+                <label htmlFor="ask-ustad" className="block text-base text-ink">
+                  {t("hint.ask")}
+                </label>
+                <div className="mt-1 flex flex-wrap gap-2">
+                  <input
+                    id="ask-ustad"
+                    value={question}
+                    maxLength={300}
+                    autoComplete="off"
+                    onChange={(event) => setQuestion(event.target.value)}
+                    placeholder={t("hint.askPlaceholder")}
+                    className="min-h-12 min-w-0 flex-1 basis-48 rounded-[12px] border-2 border-border-strong bg-surface px-3 text-base text-ink placeholder:text-text-subtle focus:border-wine"
+                  />
+                  <button
+                    type="submit"
+                    disabled={asking || !question.trim()}
+                    className="min-h-12 rounded-[12px] border-2 border-wine px-4 text-base text-wine hover:bg-wine-tint disabled:opacity-60"
+                  >
+                    {asking ? "..." : t("hint.askSend")}
+                  </button>
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">{t("hint.askNote")}</p>
+                {answer ? (
+                  <div aria-live="polite" className="mt-3 rounded-[12px] bg-neutral-tint p-3">
+                    <p className="text-base text-ink">{answer}</p>
+                    <button
+                      type="button"
+                      onClick={() => speak(answer)}
+                      className="mt-1 inline-flex min-h-12 items-center gap-2 text-sm text-wine underline-offset-4 hover:underline"
+                    >
+                      <Volume2 aria-hidden className="size-5" />
+                      {t("common.listen")}
+                    </button>
+                  </div>
+                ) : null}
+              </form>
               {error ? (
                 <p role="status" className="mt-2 text-sm text-caution">
                   {error.message}

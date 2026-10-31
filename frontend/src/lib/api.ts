@@ -86,13 +86,10 @@ export const api = {
   getSession: (id: string) => fetchJson<SessionView>(`/sessions/${id}`),
   applyAction: (id: string, actionId: string, input?: string | null) =>
     post<ActionResponse>(`/sessions/${id}/actions`, { action_id: actionId, input: input ?? null }),
-  requestHint: (id: string, level: 1 | 2 | 3, lang: LangKey) =>
-    post<HintResponse>(`/sessions/${id}/hint?level=${level}&lang=${lang}`),
+  requestHint: (id: string, level: 1 | 2 | 3) =>
+    post<HintResponse>(`/sessions/${id}/hint?level=${level}`),
   askMentor: (id: string, question: string, lang: LangKey) =>
-    post<{ answer: Record<string, string> | null; text: string | null }>(`/sessions/${id}/ask`, {
-      question,
-      lang,
-    }),
+    post<{ text: string | null }>(`/sessions/${id}/ask`, { question, lang }),
 
   getReplay: (id: string) => fetchJson<ReplayView>(`/sessions/${id}/replay`),
   createBranch: (id: string, fromStep: number, actionId: string) =>

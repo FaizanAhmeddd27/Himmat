@@ -45,6 +45,9 @@ const en = {
   "hint.askPlaceholder": "Type your question here",
   "hint.askSend": "Ask",
   "hint.askNote": "Ustad explains. You make the choice.",
+  "hint.askFallback": "Ustad cannot answer that right now. The hints above can still help you.",
+  "common.to": "to",
+  "footer.fictional": "All apps, banks and messages here are fictional.",
 
   "intro.you": "You are Amma today. Ustad stays beside you if you want a hint, and nothing here can touch your real money or accounts.",
   "intro.time": "About 3 minutes",
@@ -218,6 +221,9 @@ const urLatn: Partial<Record<I18nKey, string>> = {
   "hint.askPlaceholder": "Apna sawal yahan likhein",
   "hint.askSend": "Poochein",
   "hint.askNote": "Ustad samjhate hain. Faisla aap karti hain.",
+  "hint.askFallback": "Ustad abhi iska jawab nahi de sakte. Upar wale hints madad kar sakte hain.",
+  "common.to": "se",
+  "footer.fictional": "Yahan ki saari apps, bank aur messages farzi hain.",
 
   "intro.you": "Aaj aap Amma hain. Ustad aap ke saath hain agar hint chahiye, aur yahan kuch bhi aap ke asli paison ya account ko nahi chhu sakta.",
   "intro.time": "Taqreeban 3 minute",

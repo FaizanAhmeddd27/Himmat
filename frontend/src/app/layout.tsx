@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Share_Tech, Noto_Nastaliq_Urdu } from "next/font/google";
 import { Providers } from "@/components/layout/Providers";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import "./globals.css";
 
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Providers>
           <SiteHeader />
           {children}
+          <SiteFooter />
         </Providers>
       </body>
     </html>

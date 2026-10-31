@@ -18,7 +18,7 @@ function NavLink({ href, active, label }: { href: string; active?: boolean; labe
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`inline-flex min-h-12 items-center rounded-[10px] px-3 text-base underline-offset-8 hover:bg-wine-tint ${
+      className={`inline-flex min-h-12 items-center whitespace-nowrap rounded-[10px] px-3 text-base underline-offset-8 hover:bg-wine-tint ${
         active ? "text-wine underline decoration-2" : "text-ink"
       }`}
     >
