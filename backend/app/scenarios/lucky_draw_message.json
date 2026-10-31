@@ -1,0 +1,360 @@
+{
+  "id": "lucky_draw_message",
+  "version": 1,
+  "kind": "mastery",
+  "title": { "en": "The Lucky Draw Message", "ur-Latn": "Inami Qurandazi ka Message" },
+  "summary": {
+    "en": "A new message says you have won PKR 250,000. It looks nothing like the bank message. What do you do?",
+    "ur-Latn": "Naya message kehta hai ke aap ne PKR 250,000 jeet liye. Yeh bank wale message jaisa bilkul nahi lagta. Aap kya karengi?"
+  },
+  "skills": ["scam_detection", "otp_safety", "reporting"],
+  "difficulty": 2,
+  "is_active": true,
+  "replay_start": {
+    "en": "A message arrived saying you had won PKR 250,000.",
+    "ur-Latn": "Message aaya ke aap ne PKR 250,000 jeet liye hain."
+  },
+  "initial_node": "n_msg",
+  "initial_state": {
+    "opened_link": false,
+    "shared_otp": false,
+    "checked_sender": false,
+    "reported": false,
+    "practice_balance": 50000
+  },
+  "nodes": {
+    "n_msg": {
+      "type": "screen",
+      "ui": {
+        "component": "ChatLine/ChatThread",
+        "props": {
+          "sender_name": { "en": "InamGhar Lucky Draw", "ur-Latn": "InamGhar Lucky Draw" },
+          "sender_number": "+92 311 0000000",
+          "avatar": "gift",
+          "messages": [
+            {
+              "from": "sender",
+              "text": {
+                "en": "Mubarak! Your number has won PKR 250,000 in the InamGhar draw. We sent a code to your phone. Enter it within 30 minutes to claim your prize.",
+                "ur-Latn": "Mubarak! Aap ke number ne InamGhar draw mein PKR 250,000 jeet liye. Hum ne aap ke phone par code bheja hai. Inaam lene ke liye 30 minute mein darj karein."
+              },
+              "link": "inamghar-prize.example/claim"
+            }
+          ]
+        }
+      },
+      "actions": [
+        {
+          "id": "check_sender",
+          "slot": "sender",
+          "label": { "en": "Check who sent it", "ur-Latn": "Dekhein kis ne bheja" },
+          "effects": { "set": { "checked_sender": true } },
+          "evidence": [{ "skill": "scam_detection", "value": 1.0, "weight": 1.0 }],
+          "tag": "safe",
+          "replay": {
+            "en": "You checked who sent the message, with no hints.",
+            "ur-Latn": "Aap ne baghair hint ke dekha ke message kis ne bheja."
+          },
+          "reason": {
+            "en": "You paused on your own, even with a prize on offer.",
+            "ur-Latn": "Inaam ke lalach ke bawajood aap khud ruk gayin."
+          },
+          "what_if": { "en": "What if I checked the sender first?", "ur-Latn": "Agar main pehle bhejne wale ko check karti?" },
+          "next": "n_sender"
+        },
+        {
+          "id": "open_link",
+          "slot": "link",
+          "label": { "en": "Open the link", "ur-Latn": "Link kholein" },
+          "effects": { "set": { "opened_link": true } },
+          "evidence": [{ "skill": "scam_detection", "value": 0.0, "weight": 1.0 }],
+          "tag": "risky",
+          "replay": {
+            "en": "You opened the prize link.",
+            "ur-Latn": "Aap ne inaam wala link khol liya."
+          },
+          "reason": {
+            "en": "A prize you never entered for is the same trick as a blocked account: it rushes you.",
+            "ur-Latn": "Aisa inaam jis ke liye aap ne hissa hi nahi liya, band account jaisi hi chaal hai: jaldi karwana."
+          },
+          "what_if": { "en": "What if I opened the link?", "ur-Latn": "Agar main link khol leti?" },
+          "next": "n_fake_page"
+        },
+        {
+          "id": "call_son",
+          "slot": "quick",
+          "label": { "en": "Call Bilal (your son)", "ur-Latn": "Bilal (beta) ko call karein" },
+          "effects": { "set": { "called_family": true } },
+          "evidence": [{ "skill": "scam_detection", "value": 0.4, "weight": 0.4 }],
+          "tag": "neutral",
+          "replay": {
+            "en": "You called your son before deciding.",
+            "ur-Latn": "Aap ne faisle se pehle betay ko call ki."
+          },
+          "reason": {
+            "en": "You stayed safe, with some help.",
+            "ur-Latn": "Aap thori madad ke saath mehfooz rahin."
+          },
+          "what_if": { "en": "What if I called my son?", "ur-Latn": "Agar main betay ko call karti?" },
+          "next": "n_helped"
+        }
+      ]
+    },
+    "n_sender": {
+      "type": "screen",
+      "ui": {
+        "component": "ChatLine/SenderDetails",
+        "props": {
+          "sender_name": { "en": "InamGhar Lucky Draw", "ur-Latn": "InamGhar Lucky Draw" },
+          "sender_number": "+92 311 0000000",
+          "rows": [
+            {
+              "icon": "phone",
+              "label": { "en": "Number", "ur-Latn": "Number" },
+              "value": { "en": "+92 311 0000000, an ordinary mobile number", "ur-Latn": "+92 311 0000000, aik aam mobile number" }
+            },
+            {
+              "icon": "badge",
+              "label": { "en": "Verified business", "ur-Latn": "Tasdeeq shuda karobar" },
+              "value": { "en": "No badge on this profile", "ur-Latn": "Is profile par koi nishan nahi" }
+            },
+            {
+              "icon": "link",
+              "label": { "en": "Link in the message", "ur-Latn": "Message wala link" },
+              "value": { "en": "inamghar-prize.example", "ur-Latn": "inamghar-prize.example" }
+            },
+            {
+              "icon": "card",
+              "label": { "en": "Draws you remember entering", "ur-Latn": "Jin draws mein aap ne hissa liya" },
+              "value": { "en": "None", "ur-Latn": "Koi nahi" }
+            }
+          ]
+        }
+      },
+      "actions": [
+        {
+          "id": "report_block",
+          "slot": "primary",
+          "label": { "en": "Report and block", "ur-Latn": "Report aur block karein" },
+          "effects": { "set": { "reported": true } },
+          "evidence": [
+            { "skill": "reporting", "value": 1.0, "weight": 1.0 },
+            { "skill": "otp_safety", "value": 1.0, "weight": 1.0 }
+          ],
+          "tag": "safe",
+          "replay": {
+            "en": "You reported the sender and blocked the number.",
+            "ur-Latn": "Aap ne bhejne wale ko report aur block kiya."
+          },
+          "reason": {
+            "en": "No code shared, and this number cannot reach you again.",
+            "ur-Latn": "Koi code nahi diya, aur yeh number ab aap tak nahi pohanch sakta."
+          },
+          "what_if": { "en": "What if I reported and blocked the sender?", "ur-Latn": "Agar main report aur block karti?" },
+          "next": "n_safe"
+        },
+        {
+          "id": "go_back",
+          "slot": "back",
+          "label": { "en": "Back to the message", "ur-Latn": "Wapis message par" },
+          "effects": {},
+          "evidence": [],
+          "tag": "neutral",
+          "replay": {
+            "en": "You went back to read the message again.",
+            "ur-Latn": "Aap message dobara parhne wapis gayin."
+          },
+          "reason": { "en": "Looking twice costs nothing.", "ur-Latn": "Do dafa dekhne mein koi nuqsan nahi." },
+          "what_if": { "en": "What if I went back to the message?", "ur-Latn": "Agar main wapis message par jati?" },
+          "next": "n_msg"
+        }
+      ]
+    },
+    "n_fake_page": {
+      "type": "screen",
+      "ui": {
+        "component": "ChatLine/FakeVerifyPage",
+        "props": {
+          "page_title": { "en": "InamGhar Prize Claim", "ur-Latn": "InamGhar Inaam Claim" },
+          "page_body": {
+            "en": "Enter the 6-digit code from your phone to receive PKR 250,000 in your account.",
+            "ur-Latn": "PKR 250,000 account mein lene ke liye phone par aaya 6 hindason ka code darj karein."
+          },
+          "page_url": "inamghar-prize.example/claim",
+          "field_label": { "en": "Code", "ur-Latn": "Code" },
+          "otp_sms": {
+            "en": "SafeTrust: your OTP is 135790 to approve a payment. Do not share this code with anyone.",
+            "ur-Latn": "SafeTrust: payment approve karne ke liye aap ka OTP 135790 hai. Yeh code kisi ko na batayein."
+          }
+        }
+      },
+      "actions": [
+        {
+          "id": "enter_otp",
+          "slot": "primary",
+          "label": { "en": "Claim prize", "ur-Latn": "Inaam lein" },
+          "needs_input": "otp",
+          "expected_input": "135790",
+          "effects": { "set": { "shared_otp": true, "practice_balance": 2000 } },
+          "evidence": [{ "skill": "otp_safety", "value": 0.0, "weight": 1.0 }],
+          "tag": "risky",
+          "replay": {
+            "en": "You typed the practice OTP to claim the prize.",
+            "ur-Latn": "Aap ne inaam ke liye practice OTP likh diya."
+          },
+          "reason": {
+            "en": "The message on the phone said this code approves a payment. It was never about a prize.",
+            "ur-Latn": "Phone par aaye message ne kaha tha yeh code payment approve karta hai. Inaam ka koi talluq nahi tha."
+          },
+          "what_if": { "en": "What if I typed the code?", "ur-Latn": "Agar main code likh deti?" },
+          "next": "n_debit"
+        },
+        {
+          "id": "close_page",
+          "slot": "close",
+          "label": { "en": "Close this page", "ur-Latn": "Yeh page band karein" },
+          "effects": { "set": { "closed_page": true } },
+          "evidence": [{ "skill": "otp_safety", "value": 1.0, "weight": 0.8 }],
+          "tag": "safe",
+          "replay": {
+            "en": "You closed the page without typing the code.",
+            "ur-Latn": "Aap ne code likhe baghair page band kar diya."
+          },
+          "reason": {
+            "en": "The page could do nothing without your code.",
+            "ur-Latn": "Aap ke code ke baghair yeh page kuch nahi kar sakta tha."
+          },
+          "what_if": { "en": "What if I closed the page?", "ur-Latn": "Agar main page band kar deti?" },
+          "next": "n_close_call"
+        }
+      ]
+    },
+    "n_debit": {
+      "type": "screen",
+      "ui": {
+        "component": "Phone/BankAlert",
+        "props": {
+          "alert_from": { "en": "SafeTrust Bank", "ur-Latn": "SafeTrust Bank" },
+          "alert_text": {
+            "en": "PKR 48,000 was sent from your account to a new recipient. Balance: PKR 2,000.",
+            "ur-Latn": "Aap ke account se PKR 48,000 aik naye account par bhej diye gaye. Baqi raqam: PKR 2,000."
+          },
+          "note": {
+            "en": "Practice money only. Your real money is safe.",
+            "ur-Latn": "Yeh sirf practice ke paise hain. Aap ke asli paise mehfooz hain."
+          }
+        }
+      },
+      "actions": [
+        {
+          "id": "see_what_happened",
+          "slot": "primary",
+          "label": { "en": "See what happened", "ur-Latn": "Dekhein kya hua" },
+          "effects": {},
+          "evidence": [],
+          "tag": "neutral",
+          "replay": {
+            "en": "PKR 48,000 of practice money left your account.",
+            "ur-Latn": "PKR 48,000 practice paise account se nikal gaye."
+          },
+          "reason": {
+            "en": "The code approved a payment, not a prize.",
+            "ur-Latn": "Code ne payment approve ki, inaam nahi."
+          },
+          "next": "n_compromised"
+        }
+      ]
+    }
+  },
+  "outcomes": {
+    "n_safe": {
+      "tag": "safe",
+      "headline": { "en": "You spotted it with no hints", "ur-Latn": "Aap ne baghair hint ke pehchan liya" },
+      "consequence": {
+        "what": {
+          "en": "You checked the sender and blocked the number. Your practice balance is still PKR 50,000.",
+          "ur-Latn": "Aap ne bhejne wale ko check kar ke number block kiya. Practice balance abhi bhi PKR 50,000 hai."
+        },
+        "why": {
+          "en": "This message offered a prize instead of a threat, but you saw the same signs: hurry, an unknown number and a code.",
+          "ur-Latn": "Is message mein dhamki ki jagah inaam tha, magar aap ne wahi nishaniyan dekhin: jaldi, anjaan number aur code."
+        },
+        "should_have": {
+          "en": "This is what should happen, and this time nobody helped you.",
+          "ur-Latn": "Yehi hona chahiye tha, aur is dafa kisi ne madad nahi ki."
+        },
+        "do_differently": {
+          "en": "Nothing. If a real message like this arrives, do exactly what you just did.",
+          "ur-Latn": "Kuch nahi. Agar aisa asli message aaye, bilkul yehi karein jo abhi kiya."
+        }
+      }
+    },
+    "n_helped": {
+      "tag": "neutral",
+      "headline": { "en": "You stayed safe with Bilal's help", "ur-Latn": "Bilal ki madad se aap mehfooz rahin" },
+      "consequence": {
+        "what": {
+          "en": "You called Bilal, and he confirmed the prize was fake.",
+          "ur-Latn": "Aap ne Bilal ko call ki, aur us ne bataya inaam nakli hai."
+        },
+        "why": {
+          "en": "Pausing beat the message's hurry.",
+          "ur-Latn": "Rukne se message ki jaldi nakam ho gayi."
+        },
+        "should_have": {
+          "en": "You were safe. Next, try checking the sender before you call.",
+          "ur-Latn": "Aap mehfooz thin. Agli dafa call se pehle bhejne wale ko check karein."
+        },
+        "do_differently": {
+          "en": "Tap the sender's name first. You already know what to look for.",
+          "ur-Latn": "Pehle bhejne wale ke naam par tap karein. Aap ko pata hai kya dekhna hai."
+        }
+      }
+    },
+    "n_close_call": {
+      "tag": "close_call",
+      "headline": { "en": "You stopped just in time", "ur-Latn": "Aap waqt par ruk gayin" },
+      "consequence": {
+        "what": {
+          "en": "You opened the link but closed the page before typing the code.",
+          "ur-Latn": "Aap ne link khola magar code likhne se pehle page band kar diya."
+        },
+        "why": {
+          "en": "The page needed your code to do anything. You kept it.",
+          "ur-Latn": "Page ko kuch karne ke liye aap ka code chahiye tha. Aap ne nahi diya."
+        },
+        "should_have": {
+          "en": "The safest choice was to leave the link closed.",
+          "ur-Latn": "Sab se mehfooz faisla tha link na kholna."
+        },
+        "do_differently": {
+          "en": "Check the sender before you open anything.",
+          "ur-Latn": "Kuch kholne se pehle bhejne wale ko check karein."
+        }
+      }
+    },
+    "n_compromised": {
+      "tag": "affected",
+      "headline": { "en": "PKR 48,000 of practice money was taken", "ur-Latn": "PKR 48,000 practice paise nikal gaye" },
+      "recovery": "recovery_shared_otp",
+      "consequence": {
+        "what": {
+          "en": "You typed the code to claim a prize. It approved a payment instead.",
+          "ur-Latn": "Aap ne inaam ke liye code likha. Us se payment approve ho gayi."
+        },
+        "why": {
+          "en": "An OTP approves things on your account. A real prize never needs one.",
+          "ur-Latn": "OTP aap ke account par cheezein approve karta hai. Asli inaam ko iski zaroorat nahi hoti."
+        },
+        "should_have": {
+          "en": "The page should have been closed, whatever it promised.",
+          "ur-Latn": "Page band hona chahiye tha, chahe woh kuch bhi wada kare."
+        },
+        "do_differently": {
+          "en": "Read the phone's own message about any code. It tells you what the code really does.",
+          "ur-Latn": "Kisi bhi code ke baare mein phone ka apna message parhein. Woh batata hai code asal mein kya karta hai."
+        }
+      }
+    }
+  }
+}

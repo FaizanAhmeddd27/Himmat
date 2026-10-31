@@ -13,6 +13,7 @@ from app.engine.models import (
 )
 from app.engine.state_machine import apply_action, render_node
 from app.engine.store import get_store
+from app.skills import learners
 
 
 def create_session(
@@ -110,5 +111,7 @@ def perform_action(
             status=409,
         )
     outcome = apply_action(scenario, session, action_id, text_input=text_input)
+    if session.status == "completed":
+        learners.apply_session_result(scenario, session)
     get_store().update(session)
     return scenario, session, outcome

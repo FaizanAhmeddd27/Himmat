@@ -1,0 +1,113 @@
+{
+  "id": "recovery_shared_otp",
+  "skill": "account_recovery",
+  "title": {
+    "en": "You shared your OTP. What now?",
+    "ur-Latn": "Aap ne OTP de diya. Ab kya karein?"
+  },
+  "intro": {
+    "en": "It can happen to anyone, and quick steps can often still save your money. Tap the steps you would take, in the order you would take them. Leave out anything you would not do.",
+    "ur-Latn": "Aisa kisi ke saath bhi ho sakta hai, aur jaldi uthaye qadam aksar paise bacha lete hain. Jo qadam aap uthayengi unhein usi tarteeb se tap karein. Jo nahi karengi use chhor dein."
+  },
+  "cards": [
+    {
+      "id": "reply_scammer",
+      "harmful": true,
+      "label": {
+        "en": "Message the sender and ask for the money back",
+        "ur-Latn": "Bhejne wale ko message kar ke paise wapis mangein"
+      },
+      "explain": {
+        "en": "The sender will only ask for more. Do not contact them again.",
+        "ur-Latn": "Woh sirf aur mangega. Us se dobara rabta na karein."
+      }
+    },
+    {
+      "id": "call_bank",
+      "rank": 2,
+      "critical": true,
+      "label": {
+        "en": "Call the helpline printed on your bank card",
+        "ur-Latn": "Bank card par likhe helpline number par call karein"
+      },
+      "explain": {
+        "en": "The bank can often stop or reverse a transfer if it hears from you quickly, so this comes straight after you stop.",
+        "ur-Latn": "Agar bank ko jaldi pata chale to woh aksar paise rok ya wapis kar sakta hai, is liye yeh rukne ke foran baad aata hai."
+      }
+    },
+    {
+      "id": "change_passwords",
+      "rank": 4,
+      "label": {
+        "en": "Change your banking app password",
+        "ur-Latn": "Banking app ka password badlein"
+      },
+      "explain": {
+        "en": "This locks the door again, once the bank has secured the account.",
+        "ur-Latn": "Bank ke account mehfooz karne ke baad yeh darwaza dobara band kar deta hai."
+      }
+    },
+    {
+      "id": "wait",
+      "harmful": true,
+      "label": {
+        "en": "Wait a few days to see what happens",
+        "ur-Latn": "Kuch din intezar kar ke dekhein kya hota hai"
+      },
+      "explain": {
+        "en": "Every hour matters here. Waiting makes the money harder to get back.",
+        "ur-Latn": "Yahan har ghanta ahem hai. Intezar se paise wapis milna mushkil ho jata hai."
+      }
+    },
+    {
+      "id": "stop",
+      "rank": 1,
+      "critical": true,
+      "label": {
+        "en": "Stop: close the page and do not reply",
+        "ur-Latn": "Rukein: page band karein aur jawab na dein"
+      },
+      "explain": {
+        "en": "Stopping first means nothing more can be taken from you on that page.",
+        "ur-Latn": "Pehle rukne se us page par aap se mazeed kuch nahi liya ja sakta."
+      }
+    },
+    {
+      "id": "report",
+      "rank": 5,
+      "label": {
+        "en": "Report it to the national cybercrime helpline",
+        "ur-Latn": "National cybercrime helpline par report karein"
+      },
+      "explain": {
+        "en": "A report creates a record and helps protect other people. Do this after the bank knows.",
+        "ur-Latn": "Report se record banta hai aur doosre bhi bachte hain. Bank ko batane ke baad karein."
+      }
+    },
+    {
+      "id": "pay_agent",
+      "harmful": true,
+      "label": {
+        "en": "Pay a recovery agent who messages you offering help",
+        "ur-Latn": "Madad ki peshkash karne wale recovery agent ko paise dein"
+      },
+      "explain": {
+        "en": "This is a second scam aimed at people who were just scammed. Your bank never charges for this.",
+        "ur-Latn": "Yeh dhoka khaye logon ke liye doosra dhoka hai. Aap ka bank is ke paise nahi leta."
+      }
+    },
+    {
+      "id": "block_card",
+      "rank": 3,
+      "critical": true,
+      "label": {
+        "en": "Ask the bank to block your card and reset your PIN",
+        "ur-Latn": "Bank se card block aur PIN reset karwayein"
+      },
+      "explain": {
+        "en": "Do this while you are on the call, so nobody can use the account any more.",
+        "ur-Latn": "Call ke dauran hi yeh karwayein, taake koi aur account istemal na kar sake."
+      }
+    }
+  ]
+}
