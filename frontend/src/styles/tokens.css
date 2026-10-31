@@ -57,9 +57,7 @@ html[data-text="large"] {
 }
 html[data-text="xlarge"] {
   --scale: 1.33;
-}
-
-/* High-contrast mode (accessibility toggle) */
+}/* High-contrast mode (accessibility toggle) */
 html[data-contrast="high"] {
   --bg: #ffffff;
   --surface: #ffffff;
