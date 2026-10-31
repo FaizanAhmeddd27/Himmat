@@ -80,6 +80,19 @@ const en = {
   "catalogue.loadError": "The practice phone could not connect. Check that the server is running, then refresh.",
   "catalogue.mastery": "New situation, no hints",
 
+  "tag.safe": "Safe",
+  "tag.risky": "Risky",
+  "tag.neutral": "Neutral",
+  "replay.title": "Your path, step by step",
+  "replay.body": "Nothing here is a mark against you. Rewind any step and see what a different choice would have done.",
+  "replay.bodyNoFork": "Here is what you did and why it mattered.",
+  "replay.whatIf": "What if I chose differently?",
+  "compare.title": "One different choice, two different endings",
+  "compare.first": "Your first try",
+  "compare.new": "Your new try",
+  "compare.balance": "Practice money left",
+  "compare.back": "Back to my path",
+
   "footer.tag": "Learn it. Break it. Recover from it. Master it.",
 } as const;
 
@@ -155,6 +168,19 @@ const urLatn: Partial<Record<I18nKey, string>> = {
   "catalogue.soon": "Baad mein aayega",
   "catalogue.loadError": "Practice phone connect nahi ho saka. Server check karein, phir page refresh karein.",
   "catalogue.mastery": "Naya mauqa, koi hint nahi",
+
+  "tag.safe": "Mehfooz",
+  "tag.risky": "Khatarnak",
+  "tag.neutral": "Aam",
+  "replay.title": "Aap ka rasta, qadam ba qadam",
+  "replay.body": "Yeh aap ke khilaf koi nishan nahi. Kisi bhi qadam par wapis ja kar dekhein ke mukhtalif faisle se kya hota.",
+  "replay.bodyNoFork": "Yeh raha aap ne kya kiya aur us ki ahmiyat.",
+  "replay.whatIf": "Agar main kuch aur chunti?",
+  "compare.title": "Aik mukhtalif faisla, do mukhtalif anjaam",
+  "compare.first": "Aap ki pehli koshish",
+  "compare.new": "Aap ki nayi koshish",
+  "compare.balance": "Baqi practice paise",
+  "compare.back": "Apne raste par wapis",
 
   "footer.tag": "Seekhein. Ghalti karein. Sambhlein. Mahir banein.",
 };
