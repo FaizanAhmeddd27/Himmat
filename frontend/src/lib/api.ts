@@ -1,13 +1,24 @@
 /**
- * Thin typed client for the HIMMAT scenario engine API (Phase 2).
+ * Thin typed client for the HIMMAT scenario engine API.
  * Base URL comes from NEXT_PUBLIC_API_URL (default http://localhost:8000).
  */
 
+import { getLearnerId } from "./learner";
 import type {
-  ActionDef,
   ActionResponse,
+  ApiErrorInfo,
+  CompareView,
+  ConsentCategory,
+  DnaView,
+  FamilyView,
   HintResponse,
+  LangKey,
+  NodePayload,
+  RecoveryResult,
+  RecoveryView,
+  ReplayView,
   ScenarioMeta,
+  SessionMode,
   SessionView,
 } from "./types";
 
@@ -15,72 +26,93 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 const V1 = `${API_BASE}/api/v1`;
 
-/** Extract {code,message,status} from a FastAPI 4xx body. */
-export async function parse_api_error(res: Response): Promise<{ code: string; message: string; status: number }> {
-  let detail: unknown = null;
+const NETWORK_ERROR: ApiErrorInfo = {
+  code: "network_error",
+  message: "The practice phone could not connect. Check that the server is running, then try again.",
+  status: 0,
+};
+
+/** Extract {code,message,status} from a FastAPI error body. */
+async function parseApiError(res: Response): Promise<ApiErrorInfo> {
+  let body: unknown = null;
   try {
-    detail = await res.json();
+    body = await res.json();
   } catch {
     // body was empty
   }
-  const d = (detail as { detail?: { code?: string; message?: string } } | null)?.detail;
+  const detail = (body as { detail?: { code?: string; message?: string } } | null)?.detail;
   return {
-    code: d?.code ?? "unknown_error",
-    message:
-      d?.message ??
-      "Something did not work. Please try again — this is a practice world, nothing can break.",
+    code: detail?.code ?? "unknown_error",
+    message: detail?.message ?? "That did not work. Please try again.",
     status: res.status,
   };
 }
 
-async function fetch_json<T>(url: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
+/** Normalize anything thrown by the client into the calm error shape. */
+export function toApiError(err: unknown): ApiErrorInfo {
+  const e = err as Partial<ApiErrorInfo> | null;
+  if (e?.code && e.message) return { code: e.code, message: e.message, status: e.status ?? 0 };
+  return NETWORK_ERROR;
+}
+
+async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(`${V1}${path}`, {
     ...init,
-    headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
+    headers: {
+      "Content-Type": "application/json",
+      "X-Learner-Id": getLearnerId(),
+      ...(init?.headers ?? {}),
+    },
   });
   if (!res.ok) {
-    const err = await parse_api_error(res);
-    // Surface engine errors (invalid_action, rejected_real_card, …) as a
-    // typed exception the player can show calmly instead of throwing raw.
-    throw Object.assign(new Error(err.message), err);
+    // Engine errors (rejected_real_card, wrong_practice_code, ...) carry a calm
+    // message the screens show as-is.
+    throw Object.assign(new Error("api_error"), await parseApiError(res));
   }
   return res.json() as Promise<T>;
 }
 
+function post<T>(path: string, body: unknown = {}): Promise<T> {
+  return fetchJson<T>(path, { method: "POST", body: JSON.stringify(body) });
+}
+
 export const api = {
-  listScenarios(): Promise<ScenarioMeta[]> {
-    return fetch_json<ScenarioMeta[]>(`${V1}/scenarios`);
-  },
+  listScenarios: () => fetchJson<ScenarioMeta[]>("/scenarios"),
+  getScenario: (id: string) => fetchJson<ScenarioMeta>(`/scenarios/${id}`),
+  previewScenario: (id: string) => fetchJson<NodePayload>(`/scenarios/${id}/preview`),
 
-  getScenario(scenarioId: string): Promise<ScenarioMeta> {
-    return fetch_json<ScenarioMeta>(`${V1}/scenarios/${scenarioId}`);
-  },
+  createSession: (scenarioId: string, mode: SessionMode = "practice") =>
+    post<SessionView>("/sessions", { scenario_id: scenarioId, mode }),
+  getSession: (id: string) => fetchJson<SessionView>(`/sessions/${id}`),
+  applyAction: (id: string, actionId: string, input?: string | null) =>
+    post<ActionResponse>(`/sessions/${id}/actions`, { action_id: actionId, input: input ?? null }),
+  requestHint: (id: string, level: 1 | 2 | 3, lang: LangKey) =>
+    post<HintResponse>(`/sessions/${id}/hint?level=${level}&lang=${lang}`),
+  askMentor: (id: string, question: string, lang: LangKey) =>
+    post<{ answer: Record<string, string> | null; text: string | null }>(`/sessions/${id}/ask`, {
+      question,
+      lang,
+    }),
 
-  createSession(scenarioId: string, mode = "practice"): Promise<SessionView> {
-    return fetch_json<SessionView>(`${V1}/sessions`, {
-      method: "POST",
-      body: JSON.stringify({ scenario_id: scenarioId, mode }),
-    });
-  },
+  getReplay: (id: string) => fetchJson<ReplayView>(`/sessions/${id}/replay`),
+  createBranch: (id: string, fromStep: number, actionId: string) =>
+    post<SessionView>(`/sessions/${id}/branch`, { from_step: fromStep, action_id: actionId }),
+  compare: (id: string, branchId: string) =>
+    fetchJson<CompareView>(`/sessions/${id}/compare/${branchId}`),
 
-  getSession(sessionId: string): Promise<SessionView> {
-    return fetch_json<SessionView>(`${V1}/sessions/${sessionId}`);
-  },
+  getRecovery: (id: string) => fetchJson<RecoveryView>(`/recovery/${id}`),
+  submitRecovery: (id: string, steps: string[]) =>
+    post<RecoveryResult>(`/recovery/${id}/submit`, { steps }),
 
-  applyAction(
-    sessionId: string,
-    action: Pick<ActionDef, "id"> & { input?: string | null },
-  ): Promise<ActionResponse> {
-    return fetch_json<ActionResponse>(`${V1}/sessions/${sessionId}/actions`, {
-      method: "POST",
-      body: JSON.stringify({ action_id: action.id, input: action.input ?? null }),
-    });
-  },
+  getDna: () => fetchJson<DnaView>("/skills/dna"),
+  rateConfidence: (scenarioId: string, phase: "before" | "after", rating: number) =>
+    post<{ ok: boolean }>("/skills/confidence", { scenario_id: scenarioId, phase, rating }),
+  resetLearner: () => post<{ ok: boolean }>("/skills/reset"),
 
-  requestHint(sessionId: string, level: 1 | 2 | 3): Promise<HintResponse> {
-    return fetch_json<HintResponse>(`${V1}/sessions/${sessionId}/hint?level=${level}`, {
-      method: "POST",
-      body: JSON.stringify({}),
-    });
-  },
+  getFamily: () => fetchJson<FamilyView>("/family/dashboard"),
+  setConsent: (category: ConsentCategory, granted: boolean) =>
+    fetchJson<FamilyView>("/family/consents", {
+      method: "PUT",
+      body: JSON.stringify({ category, granted }),
+    }),
 };

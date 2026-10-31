@@ -2,11 +2,11 @@
 
 /**
  * Accessibility store (UI_UX.md §7): language, text size, high contrast.
- * persists to localStorage and mirrors state onto <html data-*> attributes.
+ * Persists to localStorage and mirrors state onto <html data-*> attributes.
  */
 
 import { create } from "zustand";
-import type { LangKey } from "./types";
+import type { LangKey, Localized } from "./types";
 
 export type { LangKey } from "./types";
 
@@ -27,50 +27,51 @@ const STORAGE_KEY = "himmat.a11y";
 
 function apply(lang: LangKey, textSize: TextSize, highContrast: boolean) {
   const html = document.documentElement;
-  html.dataset.text = textSize === "normal" ? "normal" : textSize;
+  html.dataset.text = textSize;
   html.dataset.contrast = highContrast ? "high" : "normal";
-  // Urdu script stays LTR in Phase 2 (ur-Latn). Script Urdu (ur, RTL) lands in
-  // Phase 5 — dir switching handled there.
-  html.lang = lang === "en" ? "en" : "en"; // ur-Latn renders LTR with Share Tech
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ lang, textSize, highContrast }));
+  html.lang = lang;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ lang, textSize, highContrast }));
+  } catch {
+    // Private mode: settings still apply for this visit.
+  }
 }
 
-export const useA11y = create<A11yState>((set) => ({
+export const useA11y = create<A11yState>((set, get) => ({
   lang: "en",
   textSize: "large",
   highContrast: false,
   hydrate: () => {
+    let saved: Partial<Pick<A11yState, "lang" | "textSize" | "highContrast">> = {};
     try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}") as Partial<
-        Pick<A11yState, "lang" | "textSize" | "highContrast">
-      >;
-      const lang = saved.lang === "ur-Latn" ? "ur-Latn" : "en";
-      const textSize =
-        saved.textSize === "normal" || saved.textSize === "xlarge" ? saved.textSize : "large";
-      const highContrast = Boolean(saved.highContrast);
-      set({ lang, textSize, highContrast });
-      apply(lang, textSize, highContrast);
+      saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
     } catch {
-      apply("en", "large", false);
+      // Unreadable settings: fall back to the defaults below.
     }
+    const lang = saved.lang === "ur-Latn" ? "ur-Latn" : "en";
+    const textSize =
+      saved.textSize === "normal" || saved.textSize === "xlarge" ? saved.textSize : "large";
+    const highContrast = Boolean(saved.highContrast);
+    set({ lang, textSize, highContrast });
+    apply(lang, textSize, highContrast);
   },
   setLang: (lang) => {
     set({ lang });
-    apply(lang, useA11y.getState().textSize, useA11y.getState().highContrast);
+    apply(lang, get().textSize, get().highContrast);
   },
   setTextSize: (textSize) => {
     set({ textSize });
-    apply(useA11y.getState().lang, textSize, useA11y.getState().highContrast);
+    apply(get().lang, textSize, get().highContrast);
   },
   toggleContrast: () => {
-    const highContrast = !useA11y.getState().highContrast;
+    const highContrast = !get().highContrast;
     set({ highContrast });
-    apply(useA11y.getState().lang, useA11y.getState().textSize, highContrast);
+    apply(get().lang, get().textSize, highContrast);
   },
 }));
 
 /** Pick a string out of an inline localized map, falling back to English. */
-export function pick(map: { en: string; [key: string]: string | undefined } | null | undefined, lang: LangKey): string {
+export function pick(map: Localized | null | undefined, lang: LangKey): string {
   if (!map) return "";
   return map[lang] ?? map.en ?? "";
 }

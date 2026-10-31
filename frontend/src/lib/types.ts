@@ -19,15 +19,10 @@ export interface LocalizedContent {
   do_differently: Localized;
 }
 
-export interface Evidence {
-  skill: string;
-  value: number;
-  weight: number;
-}
-
 export interface ActionDef {
   id: string;
   label: Localized;
+  slot: string;
   needs_input?: string | null;
 }
 
@@ -41,17 +36,23 @@ export interface NodePayload {
   type: "screen" | "outcome";
   ui: NodeUI | null;
   actions: ActionDef[];
+  has_hints?: boolean;
 }
 
-export interface OutcomeTag {
-  tag: "safe" | "close_call" | "affected" | "neutral";
-  consequence: LocalizedContent | null;
-  recovery?: string | null;
-}
+export type OutcomeTagName = "safe" | "close_call" | "affected" | "neutral";
+export type StepTag = "safe" | "risky" | "neutral";
+export type SessionMode = "practice" | "mastery";
 
 export interface ChatMessage {
   from: string;
   text: Localized;
+  link?: string;
+}
+
+export interface SkillChange {
+  skill: string;
+  before: number;
+  after: number;
 }
 
 export interface SessionView {
@@ -62,21 +63,20 @@ export interface SessionView {
   node: NodePayload;
   state: Record<string, boolean | number | string>;
   outcome_id: string | null;
-  outcome_tag: OutcomeTag["tag"] | null;
+  outcome_tag: OutcomeTagName | null;
+  headline: Localized | null;
   consequence: LocalizedContent | null;
   recovery: string | null;
   events_count: number;
   hints_used: number;
+  parent_session_id: string | null;
+  skill_changes: SkillChange[];
 }
 
 export interface ActionResponse {
   session_id: string;
   node: NodePayload;
   state: SessionView["state"];
-  consequence: LocalizedContent | null;
-  outcome_id: string | null;
-  outcome_tag: OutcomeTag["tag"] | null;
-  recovery: string | null;
   status: string;
 }
 
@@ -84,10 +84,13 @@ export interface HintResponse {
   level: 1 | 2 | 3;
   hint: Localized;
   hints_used: number;
+  /** Rephrased by the AI layer when it is available; written hint otherwise. */
+  ai_text?: string | null;
 }
 
 export interface ScenarioMeta {
   id: string;
+  kind?: "practice" | "mastery";
   title: Localized;
   summary: Localized;
   skills: string[];
@@ -96,9 +99,124 @@ export interface ScenarioMeta {
   nodes_count?: number;
 }
 
-/** Engine error shape: { error: { code, message } } surfaced by FastAPI detail. */
 export interface ApiErrorInfo {
   code: string;
   message: string;
   status: number;
+}
+
+// ---- Replay and What-if ----------------------------------------------------
+
+export interface ReplayAlternative {
+  action_id: string;
+  what_if: Localized;
+}
+
+export interface ReplayStep {
+  step_no: number;
+  text: Localized;
+  reason: Localized;
+  tag: StepTag;
+  alternatives: ReplayAlternative[];
+}
+
+export interface ReplayOutcome {
+  id: string;
+  tag: OutcomeTagName;
+  headline: Localized;
+  recovery: string | null;
+  practice_balance: number | null;
+}
+
+export interface ReplayView {
+  session_id: string;
+  scenario_id: string;
+  scenario_title: Localized;
+  start: Localized;
+  steps: ReplayStep[];
+  outcome: ReplayOutcome | null;
+  parent_session_id: string | null;
+  branch_from_step: number | null;
+}
+
+export interface CompareView {
+  scenario_title: Localized;
+  start: Localized;
+  shared_steps: number;
+  original: { session_id: string; steps: ReplayStep[]; outcome: ReplayOutcome | null };
+  branch: { session_id: string; steps: ReplayStep[]; outcome: ReplayOutcome | null };
+}
+
+// ---- Recovery Lab ----------------------------------------------------------
+
+export interface RecoveryCard {
+  id: string;
+  label: Localized;
+}
+
+export interface RecoveryView {
+  id: string;
+  title: Localized;
+  intro: Localized;
+  cards: RecoveryCard[];
+}
+
+export interface RecoveryStepResult {
+  id: string;
+  label: Localized;
+  verdict: "good" | "order" | "harmful";
+  explain: Localized;
+}
+
+export interface RecoveryResult {
+  passed: boolean;
+  completeness: number;
+  steps: RecoveryStepResult[];
+  missed: RecoveryStepResult[];
+  skill_changes: SkillChange[];
+}
+
+// ---- Digital DNA -----------------------------------------------------------
+
+export interface DnaSkill {
+  id: string;
+  name: Localized;
+  mastery: number;
+  practised: boolean;
+}
+
+export interface DnaHistoryPoint {
+  label: string;
+  average: number;
+}
+
+export interface Recommendation {
+  kind: "scenario" | "recovery" | "mastery" | "done";
+  target: string | null;
+  skill: string | null;
+  title: Localized;
+  reason: Localized;
+}
+
+export interface DnaView {
+  learner_id: string;
+  name: string;
+  skills: DnaSkill[];
+  history: DnaHistoryPoint[];
+  confidence: { before: number | null; after: number | null };
+  recommendation: Recommendation;
+}
+
+// ---- Family dashboard ------------------------------------------------------
+
+export type ConsentCategory = "skills_summary" | "difficulty_areas" | "activity_timeline";
+
+export interface FamilyView {
+  learner_name: string;
+  supporter_name: string;
+  consents: Record<ConsentCategory, boolean>;
+  skills_summary: DnaSkill[] | null;
+  difficulty_areas: { skill: DnaSkill; tip: Localized }[] | null;
+  activity_timeline: { label: string; text: Localized }[] | null;
+  history: DnaHistoryPoint[] | null;
 }

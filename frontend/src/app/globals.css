@@ -49,6 +49,8 @@
   --color-wine-dark: var(--wine-dark);
   --color-wine-tint: var(--wine-tint);
   --color-sand: var(--sand);
+  --color-text-subtle: var(--text-subtle);
+  --color-border-strong-solid: var(--c-border-strong);
   --color-surface: var(--surface);
   --color-ink: var(--ink);
   --color-on-wine: var(--on-wine);
@@ -205,5 +207,37 @@
   .hero-label {
     text-transform: uppercase;
     letter-spacing: 0.04em;
+  }
+  .btn-primary {
+    display: inline-flex;
+    min-height: 56px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--wine);
+    color: var(--on-wine);
+    padding-inline: 32px;
+    text-align: center;
+    font-size: var(--text-lg);
+    transition: background-color 150ms ease-out;
+  }
+  .btn-primary:hover {
+    background: var(--wine-dark);
+  }
+  .btn-secondary {
+    display: inline-flex;
+    min-height: 56px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    border: 2px solid var(--wine);
+    color: var(--wine);
+    padding-inline: 24px;
+    text-align: center;
+    font-size: var(--text-base);
+    transition: background-color 150ms ease-out;
+  }
+  .btn-secondary:hover {
+    background: var(--wine-tint);
   }
 }

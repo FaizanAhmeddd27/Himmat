@@ -1,66 +1,56 @@
 "use client";
 
 /**
- * A11yBar (UI_UX.md §7): text size, contrast and language controls.
- * Always visible; changes mirror onto <html data-text / data-contrast>.
- *
- * Renders nothing server-side until hydration (preferences come from
- * localStorage), so the server default in layout.tsx stands first.
+ * A11yControls (UI_UX.md §7): language, text size and contrast, reachable from
+ * every page. Changes mirror onto <html data-text / data-contrast>.
  */
 
-import { useEffect, useState } from "react";
 import { Contrast, Languages } from "lucide-react";
-import { useA11y } from "@/lib/a11y";
+import { useA11y, type TextSize } from "@/lib/a11y";
+import { useT } from "@/lib/i18n";
 
-const SIZE_LABELS: Record<"normal" | "large" | "xlarge", string> = {
-  normal: "18px",
-  large: "20px",
-  xlarge: "24px",
-};
+const SIZES: { id: TextSize; glyph: string; px: string }[] = [
+  { id: "normal", glyph: "A", px: "18px" },
+  { id: "large", glyph: "A+", px: "20px" },
+  { id: "xlarge", glyph: "A++", px: "24px" },
+];
 
-export function A11yBar() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    useA11y.getState().hydrate();
-    setMounted(true);
-  }, []);
+const control =
+  "inline-flex min-h-12 items-center justify-center rounded-[10px] px-2.5 text-sm transition-colors";
+const idle = "text-wine hover:bg-wine-tint";
+const active = "bg-wine text-on-wine hover:bg-wine-dark";
 
+export function A11yControls() {
+  const t = useT();
   const lang = useA11y((s) => s.lang);
   const textSize = useA11y((s) => s.textSize);
   const highContrast = useA11y((s) => s.highContrast);
-  const { setLang, setTextSize, toggleContrast } = useA11y.getState();
-
-  if (!mounted) return null;
-
-  const nextLang = lang === "en" ? "ur-Latn" : "en";
+  const setLang = useA11y((s) => s.setLang);
+  const setTextSize = useA11y((s) => s.setTextSize);
+  const toggleContrast = useA11y((s) => s.toggleContrast);
 
   return (
-    <div className="flex items-center justify-end gap-1 px-4 py-1.5 text-sm">
+    <div className="flex flex-wrap items-center gap-x-1" role="group" aria-label={t("a11y.settings")}>
       <button
         type="button"
-        onClick={() => setLang(nextLang)}
-        className="inline-flex min-h-9 items-center gap-1.5 rounded-[10px] px-3 text-wine underline-offset-4 hover:bg-wine-tint hover:underline"
+        onClick={() => setLang(lang === "en" ? "ur-Latn" : "en")}
+        className={`${control} ${idle} gap-1.5`}
       >
         <Languages aria-hidden className="size-5" />
-        {lang === "en" ? "اردو (Roman)" : "English"}
+        {t("a11y.switchLang")}
       </button>
 
-      <div className="flex items-center gap-1" role="group" aria-label="Text size">
-        {(["normal", "large", "xlarge"] as const).map((size) => (
+      <div className="flex items-center" role="group" aria-label={t("a11y.textSize")}>
+        {SIZES.map((size) => (
           <button
-            key={size}
+            key={size.id}
             type="button"
-            onClick={() => setTextSize(size)}
-            aria-pressed={textSize === size}
-            aria-label={`Text size ${SIZE_LABELS[size]}`}
-            className={
-              "inline-flex min-h-9 min-w-9 items-center justify-center rounded-[10px] px-2 transition-colors " +
-              (textSize === size
-                ? "bg-wine text-on-wine"
-                : "text-wine hover:bg-wine-tint")
-            }
+            onClick={() => setTextSize(size.id)}
+            aria-pressed={textSize === size.id}
+            aria-label={`${t("a11y.textSize")} ${size.px}`}
+            className={`${control} min-w-11 ${textSize === size.id ? active : idle}`}
           >
-            {size === "normal" ? "A" : size === "large" ? "A+" : "A++"}
+            {size.glyph}
           </button>
         ))}
       </div>
@@ -69,10 +59,11 @@ export function A11yBar() {
         type="button"
         onClick={toggleContrast}
         aria-pressed={highContrast}
-        className="inline-flex min-h-9 items-center gap-1.5 rounded-[10px] px-3 text-wine hover:bg-wine-tint"
+        aria-label={t("a11y.contrast")}
+        className={`${control} min-w-12 gap-1.5 ${highContrast ? active : idle}`}
       >
         <Contrast aria-hidden className="size-5" />
-        {highContrast ? "Contrast: high" : "High contrast"}
+        <span className="hidden lg:inline">{t("a11y.contrast")}</span>
       </button>
     </div>
   );

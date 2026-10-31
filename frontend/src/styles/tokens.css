@@ -101,3 +101,9 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* "Show me what I can tap": outlines every spot equally, no risk hints (§5.1) */
+[data-reveal="true"] .tap-spot:not(:disabled) {
+  outline: 3px dashed #f59e0b;
+  outline-offset: -2px;
+}
