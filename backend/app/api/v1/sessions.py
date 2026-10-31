@@ -6,19 +6,17 @@ Conventions (docs/ARCH §12): JSON, snake_case, structured errors.
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from app.engine import service
-from app.engine.models import EngineError
+from app.engine.models import EngineError, SessionMode
 
 router = APIRouter(tags=["sessions"])
 
 
 class CreateSessionRequest(BaseModel):
     scenario_id: str
-    mode: str = Field(
-        default="practice", pattern="^(practice|mastery|recovery|assessment)$"
-    )
+    mode: SessionMode = "practice"
 
 
 class ActionRequest(BaseModel):
@@ -70,6 +68,7 @@ async def apply_action(session_id: str, body: ActionRequest) -> dict:
         ),
         "outcome_id": outcome.outcome_id,
         "outcome_tag": outcome.outcome_tag,
+        "headline": outcome.headline,
         "recovery": outcome.recovery,
         "status": outcome.status,
     }

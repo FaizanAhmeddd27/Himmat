@@ -13,9 +13,9 @@ import threading
 import time
 import uuid
 from pathlib import Path
-from typing import Dict, Literal, Optional
+from typing import Dict, Optional
 
-from app.engine.models import EngineError, SessionRecord
+from app.engine.models import EngineError, SessionMode, SessionRecord
 
 DATA_DIR = Path(
     os.getenv("HIMMAT_DATA_DIR", Path(__file__).resolve().parent.parent.parent / "data")
@@ -61,7 +61,7 @@ class SessionStore:
         scenario_id: str,
         current_node: str,
         initial_state: dict,
-        mode: Literal["practice", "mastery", "recovery", "assessment"] = "practice",
+        mode: SessionMode = "practice",
     ) -> SessionRecord:
         now = time.time()
         session = SessionRecord(

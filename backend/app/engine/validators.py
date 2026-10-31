@@ -5,6 +5,7 @@ Validators here are used by the engine on any free-text input.
 """
 
 import re
+from typing import Optional
 
 from app.engine.models import EngineError
 
@@ -37,10 +38,14 @@ def card_like(text: str) -> bool:
     return bool(re.fullmatch(r"\d{14,16}", d))
 
 
-def validate_practice_input(value: str, field_kind: str = "text") -> str:
+def validate_practice_input(
+    value: Optional[str], field_kind: str = "text", expected: Optional[str] = None
+) -> str:
     """Validate a learner free-text input; raise EngineError on real-looking data.
 
     field_kind: "otp" (required, short code) or generic "text".
+    expected: when set, only this practice value is accepted, so nothing else a
+    learner types (possibly a real code) ever moves the simulation forward.
     """
     text = (value or "").strip()
 
@@ -76,6 +81,13 @@ def validate_practice_input(value: str, field_kind: str = "text") -> str:
                 "This looks like a real number. "
                 "Please use the practice values shown on the screen."
             ),
+            status=422,
+        )
+
+    if expected is not None and digits_only(text) != digits_only(expected):
+        raise EngineError(
+            code="wrong_practice_code",
+            message="That is not the practice code. Please type the code shown on the screen.",
             status=422,
         )
 

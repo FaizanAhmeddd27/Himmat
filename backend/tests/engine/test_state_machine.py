@@ -99,6 +99,7 @@ def test_compromised_ending_reachable_with_practice_otp(scenario):
         [
             ("open_link", None),
             ("enter_otp", "246810"),  # 6-digit practice code must be accepted
+            ("see_what_happened", None),
         ],
     )
 
@@ -162,3 +163,82 @@ def test_completed_session_state_recorded(scenario):
     assert [e.action_id for e in session.events] == ["check_sender", "report_block"]
     assert session.events[0].state_after.get("checked_sender") is True
     assert session.events[1].state_after.get("reported") is True
+
+
+# ---- event log records where each choice was made (needed by replay) --------
+
+
+def test_event_records_source_node_not_target(scenario):
+    _outcome, session = run_script(
+        scenario, [("check_sender", None), ("report_block", None)]
+    )
+    assert session.events[0].node_id == "n_msg"
+    assert session.events[0].to_node == "n_sender"
+    assert session.events[1].node_id == "n_sender"
+    assert session.events[1].to_node == "n_safe"
+
+
+def test_event_keeps_skill_evidence(scenario):
+    _outcome, session = run_script(scenario, [("check_sender", None)])
+    assert session.events[0].evidence[0].skill == "scam_detection"
+
+
+# ---- the OTP path plays out before the outcome -------------------------------
+
+
+def test_compromised_path_changes_practice_balance(scenario):
+    _outcome, session = run_script(
+        scenario, [("open_link", None), ("enter_otp", "246810")]
+    )
+    assert session.current_node == "n_debit"
+    assert session.state["practice_balance"] == 1500
+
+
+@pytest.mark.parametrize("wrong", ["hello", "111111", ""])
+def test_only_the_practice_code_is_accepted(scenario, wrong):
+    session = make_session(scenario)
+    apply_action(scenario, session, "open_link")
+    with pytest.raises(EngineError) as exc:
+        apply_action(scenario, session, "enter_otp", text_input=wrong)
+    assert exc.value.status == 422
+    assert session.current_node == "n_fake_page"
+    assert session.state["shared_otp"] is False
+
+
+def test_rejected_input_records_no_event(scenario):
+    session = make_session(scenario)
+    with pytest.raises(EngineError):
+        apply_action(scenario, session, "report_block")
+    assert session.events == []
+
+
+# ---- hints belong to one screen ----------------------------------------------
+
+
+def test_hint_count_resets_on_next_screen(scenario):
+    session = make_session(scenario)
+    session.hints_used = 2
+    apply_action(scenario, session, "check_sender")
+    assert session.events[0].hints_used == 2
+    assert session.hints_used == 0
+
+
+# ---- the client never learns which choice is risky ---------------------------
+
+
+def test_public_node_hides_tags_evidence_and_targets(scenario):
+    payload = apply_action(
+        scenario, make_session(scenario), "check_sender"
+    ).next_node.model_dump()
+    for action in payload["actions"]:
+        assert set(action) == {"id", "label", "slot", "needs_input"}
+
+
+# ---- scenario text uses fictional brands only --------------------------------
+
+
+def test_no_real_bank_names_in_scenarios():
+    for path in loader.SCENARIOS_DIR.rglob("*.json"):
+        text = path.read_text(encoding="utf-8").lower()
+        for banned in ("hbl", "meezan", "ubl", "jazzcash", "easypaisa", "whatsapp"):
+            assert banned not in text, f"{banned} found in {path.name}"

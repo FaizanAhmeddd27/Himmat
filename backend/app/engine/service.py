@@ -4,6 +4,7 @@ import time
 
 from app.engine import loader
 from app.engine.models import (
+    SessionMode,
     ActionOutcome,
     EngineError,
     NodePayload,
@@ -15,7 +16,7 @@ from app.engine.store import get_store
 
 
 def create_session(
-    scenario_id: str, mode: str = "practice"
+    scenario_id: str, mode: SessionMode = "practice"
 ) -> tuple[Scenario, SessionRecord]:
     scenario = loader.get_scenario(scenario_id)
     session = get_store().create(
@@ -56,6 +57,7 @@ def session_payload(scenario: Scenario, session: SessionRecord) -> dict:
         "state": session.state,
         "outcome_id": session.outcome_id,
         "outcome_tag": outcome.tag if outcome else None,
+        "headline": outcome.headline if outcome else None,
         "consequence": outcome.consequence.model_dump() if outcome else None,
         "recovery": outcome.recovery if outcome else None,
         "events_count": len(session.events),
@@ -81,6 +83,7 @@ def use_hint(session_id: str, level: int) -> dict:
             status=400,
         )
     # A higher hint level implies the lower ones were seen too.
+    session.total_hints_used += max(0, level - session.hints_used)
     session.hints_used = max(session.hints_used, level)
     session.updated_at = time.time()
     get_store().update(session)

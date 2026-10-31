@@ -12,10 +12,12 @@ from app.engine.models import (
     EngineError,
     Node,
     NodePayload,
+    PublicAction,
     Scenario,
     SessionEvent,
     SessionRecord,
 )
+from app.engine.validators import validate_practice_input
 
 
 def render_node(scenario: Scenario, node: Node, node_id: str) -> NodePayload:
@@ -24,7 +26,16 @@ def render_node(scenario: Scenario, node: Node, node_id: str) -> NodePayload:
         id=node_id,
         type=node.type,
         ui=node.ui,
-        actions=node.actions,
+        actions=[
+            PublicAction(
+                id=action.id,
+                label=action.label,
+                slot=action.slot,
+                needs_input=action.needs_input,
+            )
+            for action in node.actions
+        ],
+        has_hints=node.hints is not None,
     )
 
 
@@ -42,32 +53,11 @@ def apply_effects(state: dict, effects) -> dict:
     return new_state
 
 
-def session_event(
-    step_no: int,
-    node_id: str,
-    action_id: str,
-    state_before: dict,
-    state_after: dict,
-    consequence_tag: Optional[str],
-    hints_used: int,
-) -> SessionEvent:
-    return SessionEvent(
-        step_no=step_no,
-        node_id=node_id,
-        action_id=action_id,
-        state_before=state_before,
-        state_after=state_after,
-        consequence_tag=consequence_tag,
-        hints_used=hints_used,
-    )
-
-
 def apply_action(
     scenario: Scenario,
     session: SessionRecord,
     action_id: str,
     text_input: Optional[str] = None,
-    validate_input=None,
 ) -> ActionOutcome:
     """The one transition function of the engine. Raises EngineError.
 
@@ -76,13 +66,13 @@ def apply_action(
         session: mutable session record (state, current_node updated in place).
         action_id: the chosen action on the current node.
         text_input: optional learner input (e.g. the practice OTP).
-        validate_input: callable(text, kind) -> str (dependency-injected for tests).
     """
-    node = scenario.nodes.get(session.current_node)
+    from_node_id = session.current_node
+    node = scenario.nodes.get(from_node_id)
     if node is None:
         raise EngineError(
             code="node_not_found",
-            message=f"Session is on unknown node '{session.current_node}'.",
+            message=f"Session is on unknown node '{from_node_id}'.",
             status=500,
         )
 
@@ -90,7 +80,7 @@ def apply_action(
     if action is None:
         raise EngineError(
             code="invalid_action",
-            message=f"Action '{action_id}' is not available on node '{session.current_node}'.",
+            message=f"Action '{action_id}' is not available on node '{from_node_id}'.",
             status=400,
         )
 
@@ -103,30 +93,19 @@ def apply_action(
                 status=409,
             )
 
-    # Input safety (SRS FR-2.5) — engine never stores real-looking data.
+    # Input safety (SRS FR-2.5): the engine never stores real-looking data.
     if action.needs_input:
-        if validate_input is None:
-            from app.engine.validators import validate_practice_input as validate_input
-        text_input = validate_input(text_input, action.needs_input)
+        validate_practice_input(
+            text_input, action.needs_input, expected=action.expected_input
+        )
 
     state_before = dict(session.state)
-    session.state = apply_effects(session.state, action.effects)
-
-    consequence = None
-    outcome_def = None
     next_node_id = action.next
+    outcome_def = scenario.outcomes.get(next_node_id)
 
-    if next_node_id in scenario.outcomes:
+    if outcome_def is not None:
         # Outcome nodes live only in `outcomes` (docs/ARCH.md §6.6): terminal.
-        outcome_def = scenario.outcomes[next_node_id]
-        consequence = outcome_def.consequence
-        session.status = "completed"
-        session.outcome_id = next_node_id
-        next_node = Node(
-            type="outcome",
-            ui=None,
-            actions=[],
-        )
+        next_node = Node(type="outcome", ui=None, actions=[])
     elif next_node_id in scenario.nodes:
         next_node = scenario.nodes[next_node_id]
     else:
@@ -136,26 +115,37 @@ def apply_action(
             status=500,
         )
 
+    session.state = apply_effects(session.state, action.effects)
     session.current_node = next_node_id
-    event = session_event(
-        step_no=len(session.events) + 1,
-        node_id=session.current_node,
-        action_id=action.id,
-        state_before=state_before,
-        state_after=session.state,
-        consequence_tag=outcome_def.tag if outcome_def else None,
-        hints_used=session.hints_used,
+    if outcome_def is not None:
+        session.status = "completed"
+        session.outcome_id = next_node_id
+
+    session.events.append(
+        SessionEvent(
+            step_no=len(session.events) + 1,
+            node_id=from_node_id,
+            to_node=next_node_id,
+            action_id=action.id,
+            state_before=state_before,
+            state_after=dict(session.state),
+            consequence_tag=outcome_def.tag if outcome_def else None,
+            hints_used=session.hints_used,
+            evidence=list(action.evidence),
+        )
     )
-    session.events.append(event)
+    # Hints belong to one screen: the next screen starts fresh.
+    session.hints_used = 0
     session.updated_at = time.time()
 
     return ActionOutcome(
         session_id=session.id,
         next_node=render_node(scenario, next_node, next_node_id),
         state=session.state,
-        consequence=consequence,
+        consequence=outcome_def.consequence if outcome_def else None,
         outcome_id=session.outcome_id,
         outcome_tag=outcome_def.tag if outcome_def else None,
+        headline=outcome_def.headline if outcome_def else None,
         recovery=outcome_def.recovery if outcome_def else None,
         status=session.status,
     )
