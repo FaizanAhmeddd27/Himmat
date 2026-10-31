@@ -1,56 +1,79 @@
 "use client";
 
 /**
- * SenderDetails — "who sent this?" contact-info screen, still inside the
- * fake ChatLine app (teal header). Lists the scam signs as info rows.
+ * SenderDetails: the contact-info screen in the fictional ChatLine app. It
+ * shows facts, not conclusions, so the learner does the spotting.
  */
 
-import { ArrowLeft, Globe, Phone, ShieldAlert, Ban, ChevronRight } from "lucide-react";
-import { FakeStatusBar } from "@/components/simulator/PhoneFrame";
-import { pickText, type ScreenProps } from "@/components/simulator/screen-props";
+import { ArrowLeft, BadgeCheck, CreditCard, Globe, Phone, User } from "lucide-react";
+import { pick } from "@/lib/a11y";
 import type { Localized } from "@/lib/types";
+import { FakeStatusBar } from "@/components/simulator/PhoneFrame";
+import { allInSlot, asLocalized, inSlot, type ScreenProps } from "@/components/simulator/screen-props";
 
-const ROW_ICONS = [Phone, Globe, ShieldAlert];
+const ROW_ICONS = { phone: Phone, badge: BadgeCheck, link: Globe, card: CreditCard } as const;
+
+interface Row {
+  icon: keyof typeof ROW_ICONS;
+  label: Localized;
+  value: Localized;
+}
 
 export function SenderDetails({ lang, ui, actions, choose }: ScreenProps) {
-  const points = ((ui.points as Localized[] | undefined) ?? []).map((p, i) => ({
-    icon: ROW_ICONS[i % ROW_ICONS.length],
-    text: pickText(p, lang),
-  }));
+  const rows = (ui.rows as Row[] | undefined) ?? [];
+  const back = inSlot(actions, "back");
+  const primary = allInSlot(actions, "primary");
 
   return (
     <div className="flex h-full flex-col bg-white">
       <div className="bg-[#0E7490]">
         <FakeStatusBar dark />
-        <div className="flex items-center gap-3 px-3 pb-3 text-white">
-          <ArrowLeft aria-hidden className="size-6" />
+        <div className="flex items-center gap-1 pb-1 pl-1 pr-3 text-white">
+          <button
+            type="button"
+            disabled={!back}
+            onClick={() => back && choose(back)}
+            aria-label={back ? pick(back.label, lang) : undefined}
+            className="tap-spot flex size-12 shrink-0 items-center justify-center rounded-xl active:bg-white/10"
+          >
+            <ArrowLeft aria-hidden className="size-6" />
+          </button>
           <span className="text-base text-white">Contact info</span>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-white px-4 py-4">
-        <p className="text-sm text-ink/60">What we can see about this sender</p>
-        <ul className="mt-3 divide-y divide-black/10 rounded-xl border border-black/10">
-          {points.map((point, index) => (
-            <li key={index} className="flex items-start gap-3 px-3 py-3">
-              <point.icon aria-hidden className="mt-0.5 size-5 shrink-0 text-ink/70" />
-              <span className="text-sm leading-relaxed text-ink/90">{point.text}</span>
-            </li>
-          ))}
+      <div className="flex-1 overflow-y-auto">
+        <div className="flex items-center gap-3 border-b border-black/10 px-4 py-2">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#E9EEF0] text-ink/70">
+            <User aria-hidden className="size-5" />
+          </span>
+          <p className="text-base text-ink">{pick(asLocalized(ui.sender_name), lang)}</p>
+        </div>
+        <ul>
+          {rows.map((row, index) => {
+            const Icon = ROW_ICONS[row.icon] ?? Globe;
+            return (
+              <li key={index} className="flex items-start gap-3 border-b border-black/10 px-4 py-1.5">
+                <Icon aria-hidden className="mt-1 size-5 shrink-0 text-[#0E7490]" />
+                <span className="min-w-0">
+                  <span className="block text-xs leading-tight text-ink/70">{pick(row.label, lang)}</span>
+                  <span className="block break-words text-sm leading-snug text-ink">{pick(row.value, lang)}</span>
+                </span>
+              </li>
+            );
+          })}
         </ul>
       </div>
 
-      <div className="border-t border-black/5 bg-white px-3 py-3">
-        {actions.map((action) => (
+      <div className="space-y-2 border-t border-black/10 px-3 py-3">
+        {primary.map((action) => (
           <button
             key={action.id}
             type="button"
             onClick={() => choose(action)}
-            className="mb-2 inline-flex min-h-12 w-full items-center justify-start gap-2 rounded-xl border border-black/15 bg-white px-4 text-sm text-ink/85 active:scale-[0.98]"
+            className="tap-spot flex min-h-12 w-full items-center justify-center rounded-xl border border-[#0E7490] px-3 text-center text-sm text-[#0B5F77] active:bg-[#0E7490]/10"
           >
-            <Ban aria-hidden className="size-4" />
-            <span className="flex-1 text-start">{pickText(action.label, lang)}</span>
-            <ChevronRight aria-hidden className="size-4" />
+            {pick(action.label, lang)}
           </button>
         ))}
       </div>

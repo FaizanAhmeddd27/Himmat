@@ -1,253 +1,257 @@
 "use client";
 
 /**
- * ScenarioPlayer — orchestrates the practice phone and the side panel
- * (docs/UI_UX.md §6.3). Layout: phone frame left, "What would you like to
- * do?" + hints right. On mobile everything stacks.
- *
- * Progress survives a refresh: the session id lives in localStorage and the
- * engine store keeps state server-side; GET /sessions/{id} resumes exactly.
+ * ScenarioPlayer orchestrates the practice phone and the coach panel
+ * (docs/UI_UX.md §6.3). Choices happen on the phone itself; the panel only
+ * guides. Progress survives a refresh: the session id lives in localStorage and
+ * the engine keeps state server-side.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { api, parse_api_error } from "@/lib/api";
-import { pick, useA11y } from "@/lib/a11y";
-import type {
-  ActionDef,
-  HintResponse,
-  ScenarioMeta,
-  SessionView,
-} from "@/lib/types";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
+import { TriangleAlert } from "lucide-react";
+import { api, toApiError } from "@/lib/api";
+import { useA11y } from "@/lib/a11y";
+import { useT } from "@/lib/i18n";
+import type { ActionDef, ApiErrorInfo, HintResponse, ScenarioMeta, SessionMode, SessionView } from "@/lib/types";
+import { PracticeBanner } from "@/components/layout/PracticeBanner";
 import { PhoneFrame } from "@/components/simulator/PhoneFrame";
 import { ChatThread } from "@/components/simulator/ChatThread";
 import { SenderDetails } from "@/components/simulator/SenderDetails";
 import { FakeVerifyPage } from "@/components/simulator/FakeVerifyPage";
+import { BankAlert, OfficialCall } from "@/components/simulator/PhoneScreens";
 import { ConsequencePanel } from "@/components/simulator/ConsequencePanel";
 import { HintDrawer } from "@/components/simulator/HintDrawer";
 import { ScenarioIntro } from "@/components/simulator/ScenarioIntro";
 import type { ScreenProps } from "@/components/simulator/screen-props";
 
-const MASCOT_SCREEN_TITLE = "What would you like to do?";
-
 /** node.ui.component -> React component (engine stays UI-agnostic) */
-const SCREENS: Record<string, (props: ScreenProps) => React.ReactNode> = {
+export const SCREENS: Record<string, (props: ScreenProps) => React.ReactNode> = {
   "ChatLine/ChatThread": ChatThread,
   "ChatLine/SenderDetails": SenderDetails,
   "ChatLine/FakeVerifyPage": FakeVerifyPage,
+  "Phone/OfficialCall": OfficialCall,
+  "Phone/BankAlert": BankAlert,
 };
 
-type Phase = "intro" | "play" | "outcome";
-
-export function ScenarioPlayer({ scenario }: { scenario: ScenarioMeta }) {
+export function ScenarioPlayer({
+  scenario,
+  mode,
+  branchSessionId,
+  firstAction,
+}: {
+  scenario: ScenarioMeta;
+  mode: SessionMode;
+  /** Set when playing on from a What-if rewind. */
+  branchSessionId?: string;
+  /** Set when the learner already tapped something on the landing page phone. */
+  firstAction?: string;
+}) {
   const lang = useA11y((s) => s.lang);
-  const hydrate = useA11y((s) => s.hydrate);
+  const t = useT();
 
-  const [phase, setPhase] = useState<Phase>("intro");
   const [session, setSession] = useState<SessionView | null>(null);
+  const [resuming, setResuming] = useState(true);
   const [hints, setHints] = useState<HintResponse[]>([]);
-  const [error, setError] = useState<ScreenProps["error"]>(null);
+  const [error, setError] = useState<ApiErrorInfo | null>(null);
   const [starting, setStarting] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const outcome = useRef<{
-    consequence: NonNullable<SessionView["consequence"]>;
-    outcomeTag: NonNullable<SessionView["outcome_tag"]>;
-    recovery: string | null;
-  } | null>(null);
+  const [reveal, setReveal] = useState(false);
+  const busy = useRef(false);
 
-  const storageKey = `himmat.session.${scenario.id}`;
+  const storageKey = `himmat.session.${scenario.id}.${mode}`;
 
-  const reset = useCallback(() => {
-    localStorage.removeItem(storageKey);
-    outcome.current = null;
-    setSession(null);
-    setHints([]);
-    setError(null);
-  }, [storageKey]);
-
-  // hydrate a11y prefs + resume a saved session (refresh mid-game)
-  useEffect(() => {
-    hydrate();
-    const savedId = localStorage.getItem(storageKey);
-    if (!savedId) return;
-    api
-      .getSession(savedId)
-      .then((view) => {
-        setSession(view);
-        if (view.status === "completed" && view.consequence && view.outcome_tag) {
-          outcome.current = {
-            consequence: view.consequence,
-            outcomeTag: view.outcome_tag,
-            recovery: view.recovery,
-          };
-          setPhase("outcome");
-        } else {
-          setPhase("play");
+  const start = useCallback(
+    async (thenAction?: string) => {
+      setStarting(true);
+      setError(null);
+      setHints([]);
+      setReveal(false);
+      try {
+        let view = await api.createSession(scenario.id, mode);
+        localStorage.setItem(storageKey, view.session_id);
+        if (thenAction) {
+          await api.applyAction(view.session_id, thenAction);
+          view = await api.getSession(view.session_id);
         }
-      })
-      .catch(() => {
-        // session gone or server unreachable — start fresh
-        localStorage.removeItem(storageKey);
-      });
-  }, [hydrate, storageKey]);
+        setSession(view);
+      } catch (err) {
+        setError(toApiError(err));
+      } finally {
+        setStarting(false);
+      }
+    },
+    [mode, scenario.id, storageKey],
+  );
 
-  const start = useCallback(async () => {
-    setStarting(true);
-    setError(null);
-    try {
-      reset();
-      const view = await api.createSession(scenario.id);
-      localStorage.setItem(storageKey, view.session_id);
-      setSession(view);
-      setPhase("play");
-    } catch (err) {
-      setError(err as ScreenProps["error"]);
-    } finally {
-      setStarting(false);
-    }
-  }, [reset, scenario.id, storageKey]);
+  // Resume a saved session (refresh mid-game), a branch, or start from a landing tap.
+  useEffect(() => {
+    const open = async () => {
+      if (firstAction) {
+        await start(firstAction);
+        return;
+      }
+      const savedId = branchSessionId ?? localStorage.getItem(storageKey);
+      if (!savedId) return;
+      try {
+        setSession(await api.getSession(savedId));
+      } catch {
+        // Session gone or server unreachable: the intro offers a fresh start.
+        localStorage.removeItem(storageKey);
+      }
+    };
+    open().finally(() => setResuming(false));
+  }, [branchSessionId, firstAction, start, storageKey]);
 
   const choose = useCallback(
     async (action: ActionDef, input?: string) => {
-      if (!session || busy) return;
-      setBusy(true);
+      if (!session || busy.current) return;
+      busy.current = true;
       setError(null);
       try {
-        const result = await api.applyAction(session.session_id, {
-          id: action.id,
-          input: input ?? null,
-        });
-        if (result.outcome_tag && result.consequence) {
-          outcome.current = {
-            consequence: result.consequence,
-            outcomeTag: result.outcome_tag,
-            recovery: result.recovery,
-          };
-          setPhase("outcome");
+        const result = await api.applyAction(session.session_id, action.id, input);
+        if (result.status === "completed") {
+          setSession(await api.getSession(session.session_id));
         } else {
-          // append the fresh node view into the session snapshot
-          setSession({
-            ...session,
-            node: result.node,
-            state: result.state,
-            events_count: session.events_count + 1,
-          });
+          setSession({ ...session, node: result.node, state: result.state });
         }
+        setHints([]);
+        setReveal(false);
       } catch (err) {
-        const info = await parse_api_error_from(err);
-        setError(info);
+        setError(toApiError(err));
       } finally {
-        setBusy(false);
+        busy.current = false;
       }
     },
-    [busy, session],
+    [session],
   );
 
-  const screens = useMemo(() => phase === "play" && session ? SCREENS[session.node.ui?.component ?? ""] : undefined, [phase, session]);
-  const Screen = screens;
-
-  // ---- outcome screen ------------------------------------------------------
-  if (phase === "outcome" && outcome.current) {
+  if (resuming) {
     return (
-      <ConsequencePanel
-        lang={lang}
-        consequence={outcome.current.consequence}
-        outcomeId={session?.outcome_id ?? ""}
-        outcomeTag={outcome.current.outcomeTag}
-        recovery={outcome.current.recovery}
-        onPlayAgain={start}
-      />
+      <>
+        <PracticeBanner />
+        <main className="flex flex-1 items-center justify-center px-6 py-24">
+          <p className="text-lg text-muted-foreground">{t("common.loading")}</p>
+        </main>
+      </>
     );
   }
 
-  // ---- intro ---------------------------------------------------------------
-  if (phase === "intro") {
-    return <ScenarioIntro scenario={scenario} lang={lang} onStart={start} starting={starting} />;
+  if (session?.status === "completed") {
+    return (
+      <>
+        <PracticeBanner />
+        <main className="flex flex-1 flex-col">
+          <ConsequencePanel lang={lang} session={session} onPlayAgain={() => start()} />
+        </main>
+      </>
+    );
   }
 
-  // ---- play ----------------------------------------------------------------
   if (!session) {
     return (
-      <div className="flex flex-1 items-center justify-center px-6 py-24">
-        <p className="text-lg text-muted-foreground">Opening the practice phone…</p>
-      </div>
+      <>
+        <PracticeBanner />
+        <main className="flex flex-1 flex-col">
+          <ScenarioIntro scenario={scenario} lang={lang} mode={mode} onStart={() => start()} starting={starting} />
+          {error ? (
+            <p role="alert" className="mx-auto mb-8 flex max-w-5xl items-start gap-2 px-6 text-base text-caution">
+              <TriangleAlert aria-hidden className="mt-1 size-5 shrink-0" />
+              {error.message}
+            </p>
+          ) : null}
+        </main>
+      </>
     );
   }
 
+  const Screen = SCREENS[session.node.ui?.component ?? ""];
+  const inlineError = session.node.actions.some((action) => action.needs_input);
+
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 lg:flex-row lg:items-start">
-      {/* phone */}
-      <div className="w-full lg:w-[400px] lg:shrink-0">
-        {Screen ? (
-          <PhoneFrame>
-            <Screen lang={lang} ui={session.node.ui?.props ?? {}} actions={session.node.actions} choose={choose} error={error} />
-          </PhoneFrame>
-        ) : (
-          <PhoneFrame>
-            <div className="flex h-full flex-col items-center justify-center gap-3 bg-white px-6 text-center">
-              <p className="text-ink">This screen is not wired yet: {session.node.id}</p>
-            </div>
-          </PhoneFrame>
-        )}
-      </div>
-
-      {/* side panel */}
-      <div className="flex flex-1 flex-col gap-4">
-        <div className="card-meta">
-          <p className="hero-label text-xs text-wine">{MASCOT_SCREEN_TITLE}</p>
-          <p className="mt-2 text-base text-ink">
-            Read the screen, then choose. There is no time limit and no wrong button — every
-            choice teaches something.
-          </p>
-
-          {/* choices echoed outside the phone, for screen readers and the a11y path */}
-          <div className="mt-4 flex flex-col gap-3" aria-label={`${MASCOT_SCREEN_TITLE} choices`}>
-            {session.node.actions.map((action) => (
-              <button
-                key={action.id}
-                type="button"
-                onClick={() => choose(action)}
-                disabled={busy}
-                className="inline-flex min-h-12 items-center justify-start gap-2 rounded-[12px] border-2 border-wine px-4 text-wine transition-colors hover:bg-wine-tint disabled:opacity-60"
+    <>
+      <PracticeBanner />
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-4 py-6 sm:px-6 lg:flex-row lg:items-start lg:gap-14">
+        <div className="w-full lg:sticky lg:top-14 lg:w-[360px] lg:shrink-0">
+          <PhoneFrame reveal={reveal}>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={session.node.id}
+                initial={{ opacity: 0, x: 16 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -16 }}
+                transition={{ duration: 0.16, ease: "easeOut" }}
+                className="h-full"
               >
-                {pick(action.label, lang)}
-              </button>
-            ))}
+                {Screen ? (
+                  <Screen
+                    lang={lang}
+                    ui={session.node.ui?.props ?? {}}
+                    actions={session.node.actions}
+                    choose={choose}
+                    error={error}
+                  />
+                ) : null}
+              </motion.div>
+            </AnimatePresence>
+          </PhoneFrame>
+        </div>
+
+        <aside className="flex min-w-0 flex-1 flex-col gap-4 lg:pt-6">
+          <div>
+            <h1 className="text-xl text-wine sm:text-2xl">{t("player.title")}</h1>
+            <p className="mt-2 max-w-md text-lg text-ink">
+              {mode === "mastery" ? t("player.bodyMastery") : t("player.body")}
+            </p>
+            {session.parent_session_id ? (
+              <p className="mt-2 max-w-md text-base text-muted-foreground">{t("player.branchNote")}</p>
+            ) : null}
+            <button
+              type="button"
+              aria-pressed={reveal}
+              onClick={() => setReveal((value) => !value)}
+              className="mt-4 inline-flex min-h-12 items-center rounded-[12px] border-2 border-wine px-4 text-base text-wine transition-colors hover:bg-wine-tint"
+            >
+              {reveal ? t("player.hideTaps") : t("player.showTaps")}
+            </button>
           </div>
 
-          {error ? (
-            <p role="status" className="mt-4 flex items-start gap-2 rounded-[12px] bg-caution-tint p-3 text-base text-caution">
-              <span aria-hidden>⚠</span>
-              <span>{error.message}</span>
+          {error && !inlineError ? (
+            <p role="alert" className="flex items-start gap-2 text-base text-caution">
+              <TriangleAlert aria-hidden className="mt-1 size-5 shrink-0" />
+              {error.message}
             </p>
           ) : null}
-        </div>
 
-        <HintDrawer
-          scenarioId={scenario.id}
-          sessionId={session.session_id}
-          lang={lang}
-          hints={hints}
-          onReveal={(next, hint) => setHints((prev) => [...prev, hint])}
-        />
+          {mode !== "mastery" && session.node.has_hints ? (
+            <HintDrawer
+              key={session.node.id}
+              sessionId={session.session_id}
+              lang={lang}
+              hints={hints}
+              onReveal={(hint) => setHints((prev) => [...prev, hint])}
+            />
+          ) : null}
 
-        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-          <button
-            type="button"
-            onClick={start}
-            className="inline-flex min-h-12 items-center rounded-[12px] border-2 border-wine px-4 text-wine hover:bg-wine-tint"
-          >
-            Restart from the beginning
-          </button>
-          <span>Session progress saves itself — you can refresh any time.</span>
-        </div>
-      </div>
-    </div>
+          <div className="flex flex-wrap items-center gap-x-6 border-t border-border pt-2">
+            {!session.parent_session_id ? (
+              <button
+                type="button"
+                onClick={() => start()}
+                className="inline-flex min-h-12 items-center text-base text-wine underline-offset-4 hover:underline"
+              >
+                {t("player.restart")}
+              </button>
+            ) : null}
+            <Link
+              href="/simulations"
+              className="inline-flex min-h-12 items-center text-base text-wine underline-offset-4 hover:underline"
+            >
+              {t("player.exit")}
+            </Link>
+          </div>
+        </aside>
+      </main>
+    </>
   );
-}
-
-/** Normalize thrown api errors into the calm ScreenProps error shape. */
-async function parse_api_error_from(err: unknown): Promise<{ code: string; message: string; status: number }> {
-  const e = err as { code?: string; message?: string; status?: number };
-  if (e && e.code && e.message) return { code: e.code, message: e.message, status: e.status ?? 0 };
-  return { code: "network_error", message: "The practice phone could not be reached. Make sure the backend is running, then try again.", status: 0 };
 }

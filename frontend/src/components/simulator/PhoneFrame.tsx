@@ -1,24 +1,19 @@
 import type { ReactNode } from "react";
+import { BatteryMedium, SignalHigh, Wifi } from "lucide-react";
 
 /**
- * Phone frame (UI_UX.md §5.3): 12px ink bezel, white inner screen,
- * "PRACTICE" tag on the bezel in sand text. Content scrolls internally.
+ * Phone frame (UI_UX.md §5.3): ink bezel, white inner screen, "PRACTICE" tag on
+ * the bezel in sand text. `reveal` outlines every tappable spot equally, so it
+ * helps people find controls without hinting which choice is risky.
  */
-export function PhoneFrame({ children }: { children: ReactNode }) {
+export function PhoneFrame({ children, reveal = false }: { children: ReactNode; reveal?: boolean }) {
   return (
-    <div className="relative mx-auto w-full max-w-[360px]">
-      {/* bezel */}
-      <div className="relative rounded-[30px] bg-ink p-3 shadow-lg">
-        <span
-          aria-hidden
-          className="absolute left-1/2 top-1 z-10 -translate-x-1/2 text-[10px] uppercase tracking-[0.25em] text-on-wine-muted"
-        >
-          Practice
-        </span>
-        {/* screen */}
-        <div className="h-[600px] overflow-hidden rounded-[20px] bg-white sm:h-[660px]">
-          {children}
-        </div>
+    <div className="relative mx-auto w-full max-w-[360px]" data-reveal={reveal ? "true" : undefined}>
+      <div className="rounded-[34px] bg-ink px-2.5 pb-3 pt-1 shadow-[0_18px_40px_-18px_rgba(42,10,16,0.55)]">
+        <p aria-hidden className="py-1 text-center text-[10px] tracking-[0.3em] text-on-wine-muted">
+          PRACTICE
+        </p>
+        <div className="h-[640px] overflow-hidden rounded-[24px] bg-white">{children}</div>
       </div>
     </div>
   );
@@ -28,17 +23,14 @@ export function PhoneFrame({ children }: { children: ReactNode }) {
 export function FakeStatusBar({ dark = false }: { dark?: boolean }) {
   return (
     <div
-      className={
-        "flex items-center justify-between px-4 pb-1 pt-2 text-xs " +
-        (dark ? "text-white/90" : "text-ink/80")
-      }
+      className={`flex items-center justify-between px-4 pb-1 pt-2 text-xs ${dark ? "text-white/90" : "text-ink/80"}`}
       aria-hidden
     >
       <span>1:04 PM</span>
-      <span className="flex items-center gap-1.5">
-        <span aria-hidden>▲</span>
-        <span aria-hidden>▮</span>
-        <span>82%</span>
+      <span className="flex items-center gap-1">
+        <SignalHigh className="size-4" />
+        <Wifi className="size-4" />
+        <BatteryMedium className="size-4" />
       </span>
     </div>
   );

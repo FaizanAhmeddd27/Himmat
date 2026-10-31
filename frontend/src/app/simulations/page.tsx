@@ -1,140 +1,101 @@
 "use client";
 
 /**
- * Simulations catalogue (docs/UI_UX.md §6.2). Real scenario cards come from
- * the engine catalogue API; other cards are labelled Coming soon.
+ * Practice list (docs/UI_UX.md §6.2). Playable scenarios come from the engine
+ * catalogue; planned ones are listed quietly so the road ahead is honest.
  */
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Lock } from "lucide-react";
+import Link from "next/link";
 import { api } from "@/lib/api";
 import { pick, useA11y } from "@/lib/a11y";
+import { useT } from "@/lib/i18n";
 import type { ScenarioMeta } from "@/lib/types";
 
-/** Static mascot + tagline casting per scenario id (Phase 2 ships #1). */
-const CASTING: Record<string, { mascot: string; blurb: Record<string, string> }> = {
-  fake_bank_message: {
-    mascot: "/himmat2.png",
-    blurb: {
-      en: "A message that looks like your bank asks for a code. Pause, check, decide.",
-      "ur-Latn":
-        "Aik message jo bank jaisa lagta hai code mangta hai. Rukein, check karein, faisla karein.",
-    },
-  },
+const MASCOTS: Record<string, string> = {
+  fake_bank_message: "/himmat3.png",
+  lucky_draw_message: "/himmat7.png",
 };
 
 const UPCOMING = [
-  { mascot: "/himmat5.png", title: "Send Money Safely" },
-  { mascot: "/himmat6.png", title: "Wrong Number Transfer" },
-  { mascot: "/himmat7.png", title: "The Prize Call" },
+  { en: "Send Money Safely", "ur-Latn": "Paise mehfooz tareeqe se bhejein" },
+  { en: "Video Call Rescue", "ur-Latn": "Video call ki mushkil" },
+  { en: "Online Shopping Trap", "ur-Latn": "Online shopping ka jaal" },
+  { en: "Government Portal Challenge", "ur-Latn": "Sarkari portal ka form" },
 ];
 
 export default function SimulationsPage() {
-  const hydrate = useA11y((s) => s.hydrate);
   const lang = useA11y((s) => s.lang);
+  const t = useT();
   const [scenarios, setScenarios] = useState<ScenarioMeta[] | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
-    hydrate();
     api
       .listScenarios()
       .then(setScenarios)
-      .catch(() =>
-        setLoadError(
-          "The practice world engine is not reachable right now. Start the backend, then refresh.",
-        ),
-      );
-  }, [hydrate]);
+      .catch(() => setLoadError(true));
+  }, []);
 
   return (
-    <div className="flex flex-1 flex-col">
-      {/* wine band */}
-      <section className="hero-band px-6 py-12 sm:px-10 sm:py-16">
+    <main className="flex flex-1 flex-col">
+      <section className="hero-band px-6 py-10 sm:px-10 sm:py-14">
         <div className="mx-auto w-full max-w-5xl">
-          <p className="hero-label text-sm text-on-wine-muted">Simulations</p>
-          <h1 className="mt-3 text-2xl text-on-wine sm:text-3xl">
-            Practise everyday digital situations
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg text-on-wine-muted">
-            Short stories inside a practice phone. You choose at each step, see what happens, and
-            learn the recovery too. Nothing is real; nothing can break.
-          </p>
+          <h1 className="text-2xl text-on-wine sm:text-3xl">{t("catalogue.title")}</h1>
+          <p className="mt-4 max-w-2xl text-lg text-on-wine-muted">{t("catalogue.body")}</p>
         </div>
       </section>
 
-      {/* sand area */}
-      <section className="px-6 py-12 sm:px-10">
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
+      <section className="px-6 py-8 sm:px-10">
+        <div className="mx-auto flex w-full max-w-5xl flex-col">
           {loadError ? (
-            <p role="status" className="card-meta text-lg text-ink">
-              {loadError}
+            <p role="alert" className="text-lg text-caution">
+              {t("catalogue.loadError")}
             </p>
           ) : null}
-
           {scenarios === null && !loadError ? (
-            <p className="text-lg text-muted-foreground">Loading the practice world…</p>
+            <p className="text-lg text-muted-foreground">{t("common.loading")}</p>
           ) : null}
 
-          {scenarios?.map((scenario) => {
-            const casting = CASTING[scenario.id];
-            return (
-              <a
-                key={scenario.id}
-                href={`/simulations/${scenario.id}`}
-                className="card-meta group flex flex-wrap items-center gap-6 transition-colors hover:border-wine"
-              >
-                {casting ? (
+          <ul className="divide-y divide-border">
+            {scenarios?.map((scenario) => {
+              const mastery = scenario.kind === "mastery";
+              return (
+                <li key={scenario.id} className="flex flex-col gap-5 py-7 sm:flex-row sm:items-center sm:gap-8">
                   <Image
-                    src={casting.mascot}
+                    src={MASCOTS[scenario.id] ?? "/himmat1.png"}
                     alt=""
-                    aria-hidden
-                    width={120}
+                    width={110}
                     height={120}
-                    className="mix-blend-multiply"
+                    className="h-28 w-auto self-start sm:self-center"
                   />
-                ) : null}
-                <div className="min-w-64 flex-1">
-                  <p className="text-lg text-wine">{pick(scenario.title, lang)}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {casting ? casting.blurb[lang] ?? casting.blurb.en : ""}
-                    {" | "}
-                    Level: {scenario.difficulty === 1 ? "Easy" : `Level ${scenario.difficulty}`}
-                  </p>
-                  <p className="mt-3 text-xl text-ink">{pick(scenario.summary, lang)}</p>
-                  <p className="mt-4 inline-flex h-14 min-w-48 items-center justify-center rounded-[12px] bg-wine px-8 text-lg text-on-wine group-hover:bg-wine-dark">
-                    Start practising
-                  </p>
-                </div>
-              </a>
-            );
-          })}
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-xl text-wine">{pick(scenario.title, lang)}</h2>
+                    <p className="mt-2 max-w-2xl text-lg text-ink">{pick(scenario.summary, lang)}</p>
+                    {mastery ? <p className="mt-1 text-base text-muted-foreground">{t("catalogue.mastery")}</p> : null}
+                  </div>
+                  <Link
+                    href={`/simulations/${scenario.id}${mastery ? "?mode=mastery" : ""}`}
+                    className={mastery ? "btn-secondary shrink-0" : "btn-primary shrink-0"}
+                  >
+                    {t("catalogue.start")}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
 
-          <div>
-            <p className="hero-label text-sm text-muted-foreground">Coming soon</p>
-            <div className="mt-3 grid gap-4 sm:grid-cols-3">
+          <div className="mt-6 border-t-2 border-border pt-6">
+            <h2 className="text-lg text-muted-foreground">{t("catalogue.soon")}</h2>
+            <ul className="mt-2 grid gap-x-8 gap-y-1 text-lg text-muted-foreground sm:grid-cols-2">
               {UPCOMING.map((item) => (
-                <div key={item.title} className="card-meta opacity-80">
-                  <Image
-                    src={item.mascot}
-                    alt=""
-                    aria-hidden
-                    width={96}
-                    height={96}
-                    className="mix-blend-multiply"
-                  />
-                  <p className="mt-2 flex items-center gap-2 text-base text-ink">
-                    <Lock aria-hidden className="size-4 text-text-subtle" />
-                    {item.title}
-                  </p>
-                  <p className="mt-1 text-sm text-muted-foreground">Unlocks in a future phase.</p>
-                </div>
+                <li key={item.en}>{item[lang]}</li>
               ))}
-            </div>
+            </ul>
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

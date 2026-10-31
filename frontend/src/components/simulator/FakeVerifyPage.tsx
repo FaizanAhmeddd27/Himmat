@@ -1,58 +1,56 @@
 "use client";
 
 /**
- * FakeVerifyPage — fake browser screen of the scam page (UI_UX §2.5).
- * The learner types the practice OTP right on the page (like the real scam
- * would ask) and presses Confirm — that fires the enter_otp action.
- * The practice code is shown on the page itself so typing real-looking data
- * is never needed.
+ * FakeVerifyPage: the scam page in a fake browser (UI_UX §2.5). The practice OTP
+ * arrives as a phone notification, the same way a real one does, carrying the
+ * real warning that scammers count on people missing.
  */
 
 import { useState } from "react";
-import { ArrowLeft, Lock, RotateCcw, TriangleAlert, X } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowLeft, Lock, MessageSquareText, RotateCcw, TriangleAlert } from "lucide-react";
+import { pick } from "@/lib/a11y";
 import { FakeStatusBar } from "@/components/simulator/PhoneFrame";
-import { pickText, type ScreenProps } from "@/components/simulator/screen-props";
-import type { Localized } from "@/lib/types";
+import { asLocalized, inSlot, type ScreenProps } from "@/components/simulator/screen-props";
 
 export function FakeVerifyPage({ lang, ui, actions, choose, error }: ScreenProps) {
-  const pageTitle = pickText((ui.page_title as Localized | undefined) ?? null, lang);
-  const pageBody = pickText((ui.page_body as Localized | undefined) ?? null, lang);
   const pageUrl = (ui.page_url as string | undefined) ?? "";
-  const practiceOtp = (ui.practice_otp as string | undefined) ?? "";
-
-  const enterOtp = actions.find((a) => a.needs_input === "otp");
-  const closeAction = actions.find((a) => a.needs_input == null);
-
+  const enterOtp = actions.find((action) => action.needs_input);
+  const close = inSlot(actions, "close");
   const [value, setValue] = useState("");
 
   return (
-    <div className="flex h-full flex-col bg-white">
+    <div className="relative flex h-full flex-col bg-white">
       <FakeStatusBar />
-      {/* fake browser chrome */}
       <div className="flex items-center gap-2 border-b border-black/10 px-3 py-2">
-        <ArrowLeft aria-hidden className="size-5 text-ink/50" />
-        <span className="min-w-0 flex-1 truncate rounded-full bg-black/5 px-3 py-1.5 text-xs text-ink/70">
-          <Lock aria-hidden className="mr-1 inline size-3" />
-          {pageUrl}
+        <ArrowLeft aria-hidden className="size-5 shrink-0 text-ink/60" />
+        <span className="flex min-w-0 flex-1 items-center gap-1 rounded-full bg-black/5 px-3 py-1.5 text-xs text-ink">
+          <Lock aria-hidden className="size-3 shrink-0" />
+          <span className="truncate">{pageUrl}</span>
         </span>
-        <RotateCcw aria-hidden className="size-5 text-ink/50" />
+        <RotateCcw aria-hidden className="size-5 shrink-0 text-ink/60" />
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-white px-6 py-8 text-center">
-        <span
-          aria-hidden
-          className="mx-auto flex size-14 items-center justify-center rounded-full bg-[#0E7490]"
-        >
-          <Lock className="size-7 text-white" />
-        </span>
-        <p className="mt-4 text-lg text-ink">{pageTitle}</p>
-        <p className="mt-3 text-sm leading-relaxed text-ink/80">{pageBody}</p>
+      <motion.div
+        role="status"
+        initial={{ y: -24, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.5, duration: 0.25, ease: "easeOut" }}
+        className="mx-2 mt-2 flex gap-2 rounded-2xl bg-[#1F2937] px-3 py-2.5 text-white"
+      >
+        <MessageSquareText aria-hidden className="mt-0.5 size-5 shrink-0" />
+        <p className="text-sm leading-snug">{pick(asLocalized(ui.otp_sms), lang)}</p>
+      </motion.div>
 
-        <label
-          htmlFor="practice-otp"
-          className="mt-6 block text-start text-sm font-normal text-ink/80"
-        >
-          Practice code (shown for the exercise):
+      <div className="flex-1 overflow-y-auto px-5 py-4 text-center">
+        <span aria-hidden className="mx-auto flex size-11 items-center justify-center rounded-full bg-[#1E3A8A]">
+          <Lock className="size-5 text-white" />
+        </span>
+        <p className="mt-2 text-lg text-[#1E3A8A]">{pick(asLocalized(ui.page_title), lang)}</p>
+        <p className="mt-1 text-sm leading-snug text-ink">{pick(asLocalized(ui.page_body), lang)}</p>
+
+        <label htmlFor="practice-otp" className="mt-3 block text-start text-sm text-ink">
+          {pick(asLocalized(ui.field_label), lang)}
         </label>
         <input
           id="practice-otp"
@@ -62,39 +60,33 @@ export function FakeVerifyPage({ lang, ui, actions, choose, error }: ScreenProps
           spellCheck={false}
           value={value}
           onChange={(event) => setValue(event.target.value)}
-          placeholder={practiceOtp.split("").join(" ")}
-          className="otp-digits mt-2 min-h-12 w-full rounded-[12px] border-2 border-[#0E7490]/50 bg-white px-4 text-lg text-ink focus:border-[#0E7490] focus:outline-none"
+          className="otp-digits mt-1 min-h-12 w-full rounded-[10px] border-2 border-[#1E3A8A]/60 bg-white px-3 text-center text-lg text-ink focus:border-[#1E3A8A]"
         />
-        <p className="mt-2 text-start text-xs text-ink/50">
-          Example practice code: {practiceOtp}.
-        </p>
-
         {error ? (
-          <p role="status" className="mt-3 flex items-start gap-1.5 text-start text-sm text-caution">
+          <p role="alert" className="mt-2 flex items-start gap-1.5 text-start text-sm text-caution">
             <TriangleAlert aria-hidden className="mt-0.5 size-4 shrink-0" />
             <span>{error.message}</span>
           </p>
         ) : null}
       </div>
 
-      <div className="border-t border-black/5 bg-white px-3 py-3">
+      <div className="space-y-2 border-t border-black/10 px-3 py-3">
         {enterOtp ? (
           <button
             type="button"
             onClick={() => choose(enterOtp, value)}
-            className="mb-2 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#0E7490] px-4 text-base text-white active:scale-[0.98]"
+            className="tap-spot flex min-h-12 w-full items-center justify-center rounded-[10px] bg-[#1E3A8A] px-4 text-base text-white active:bg-[#172E6E]"
           >
-            {pickText(enterOtp.label, lang)}
+            {pick(enterOtp.label, lang)}
           </button>
         ) : null}
-        {closeAction ? (
+        {close ? (
           <button
             type="button"
-            onClick={() => choose(closeAction)}
-            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-black/15 bg-white px-4 text-base text-ink/85 active:scale-[0.98]"
+            onClick={() => choose(close)}
+            className="tap-spot flex min-h-12 w-full items-center justify-center rounded-[10px] border border-black/25 px-4 text-base text-ink active:bg-black/5"
           >
-            <X aria-hidden className="size-4" />
-            {pickText(closeAction.label, lang)}
+            {pick(close.label, lang)}
           </button>
         ) : null}
       </div>
