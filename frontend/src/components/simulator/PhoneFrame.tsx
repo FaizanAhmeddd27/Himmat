@@ -8,7 +8,7 @@ import { BatteryMedium, SignalHigh, Wifi } from "lucide-react";
  */
 export function PhoneFrame({ children, reveal = false }: { children: ReactNode; reveal?: boolean }) {
   return (
-    <div className="relative mx-auto w-full max-w-[360px]" data-reveal={reveal ? "true" : undefined}>
+    <div className="relative mx-auto w-full max-w-[360px]" data-ui data-reveal={reveal ? "true" : undefined}>
       <div className="rounded-[34px] bg-ink px-2.5 pb-3 pt-1 shadow-[0_18px_40px_-18px_rgba(42,10,16,0.55)]">
         <p aria-hidden className="py-1 text-center text-[10px] tracking-[0.3em] text-on-wine-muted">
           PRACTICE

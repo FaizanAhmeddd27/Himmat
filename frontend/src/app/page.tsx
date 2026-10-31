@@ -73,7 +73,7 @@ function Hero() {
       <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 px-6 pb-10 pt-10 md:min-h-[calc(100svh-61px)] md:grid-cols-[minmax(0,1fr)_380px] md:px-10 md:py-8">
         <div className="md:max-w-[min(540px,calc(56vw-96px))]">
           <h1 className="text-balance text-[clamp(52px,6vw,88px)] leading-[0.98] text-wine">{t("home.title")}</h1>
-          <p className="mt-6 text-xl text-ink">{t("home.sentence")}</p>
+          <p className="mt-6 text-base text-ink md:text-lg">{t("home.sentence")}</p>
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
             <Link href={`/simulations/${SCENARIO}`} className="btn-primary">
               {t("home.start")}
@@ -169,8 +169,8 @@ function Journey() {
         {JOURNEY.map((step, index) => (
           <li key={step.clause} className={`flex min-h-[560px] flex-col p-7 ${step.field} ${step.text}`}>
             <motion.div {...rise} transition={{ ...rise.transition, delay: index * 0.07 }} className="flex flex-1 flex-col">
-              <p className="text-2xl leading-tight">{t(step.clause)}</p>
-              <p className="mt-3 text-lg">{t(step.body)}</p>
+              <p className="text-xl leading-tight">{t(step.clause)}</p>
+              <p className="mt-3 text-base">{t(step.body)}</p>
               <div data-ui className="mt-6 rounded-[12px] bg-white p-4 text-ink">
                 <p className="text-sm text-muted-foreground">{t(step.card.label)}</p>
                 <p className="mt-0.5 text-2xl tabular-nums text-ink">
@@ -198,7 +198,7 @@ function Rewind() {
           <h2 id="rewind-title" className="text-[clamp(32px,3.6vw,52px)] leading-tight text-wine">
             {t("home.rewind")}
           </h2>
-          <p className="mt-4 text-xl text-ink">{t("home.rewindBody")}</p>
+          <p className="mt-4 text-base text-ink md:text-lg">{t("home.rewindBody")}</p>
         </motion.div>
 
         <motion.div {...rise} data-ui className="relative">
@@ -267,14 +267,14 @@ function Ustad() {
   return (
     <section className="bg-surface" aria-labelledby="ustad-title">
       <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-6 py-20 md:grid-cols-2 md:px-10">
-        <div className="relative mx-auto flex size-[min(78vw,430px)] items-end justify-center rounded-full bg-wine">
-          <Image src="/himmat1.png" alt="Ustad, the HIMMAT guide" width={345} height={640} className="h-[112%] w-auto max-w-none" />
+        <div className="relative mx-auto aspect-square w-full max-w-[min(78vw,430px)] rounded-full bg-wine">
+          <Image src="/himmat1.png" alt="Ustad, the HIMMAT guide" width={345} height={640} className="absolute bottom-0 left-1/2 h-[112%] w-auto max-w-none -translate-x-1/2" />
         </div>
         <div>
           <h2 id="ustad-title" className="text-[clamp(32px,3.6vw,52px)] leading-tight text-wine">
             {t("home.ustad")}
           </h2>
-          <p className="mt-4 text-xl text-ink">{t("home.ustadBody")}</p>
+          <p className="mt-4 text-base text-ink md:text-lg">{t("home.ustadBody")}</p>
           <div className="mt-6 flex flex-wrap gap-2" role="group" aria-label={t("hint.open")}>
             {USTAD_HINTS.map((item, index) => (
               <button
@@ -290,7 +290,7 @@ function Ustad() {
               </button>
             ))}
           </div>
-          <p aria-live="polite" className="mt-4 min-h-20 text-xl text-ink">
+          <p aria-live="polite" className="mt-4 min-h-20 text-base text-ink md:text-lg">
             {hint}
           </p>
           <button
@@ -317,7 +317,7 @@ function Family() {
           <h2 id="family-title" className="text-[clamp(32px,3.6vw,52px)] leading-tight text-wine">
             {t("home.family")}
           </h2>
-          <p className="mt-4 max-w-xl text-xl text-ink">{t("home.familyBody")}</p>
+          <p className="mt-4 max-w-xl text-base text-ink md:text-lg">{t("home.familyBody")}</p>
           <Link href="/family" className="btn-secondary mt-6">
             {t("home.familyLink")}
           </Link>
@@ -338,7 +338,7 @@ function Close() {
       <div className="mx-auto flex w-full max-w-6xl flex-col items-start gap-8 md:flex-row md:items-end md:justify-between">
         <div>
           <h2 className="text-balance text-[clamp(32px,4vw,60px)] leading-tight text-on-wine">{t("home.close")}</h2>
-          <p className="mt-4 text-xl text-on-wine-muted">{t("footer.tag")}</p>
+          <p className="mt-4 text-base text-on-wine-muted md:text-lg">{t("footer.tag")}</p>
         </div>
         <Link
           href={`/simulations/${SCENARIO}`}
