@@ -1,13 +1,10 @@
-"""Session storage: in-memory dict + JSON file persistence.
+"""Session storage: records live in memory and are saved through a backend.
 
-A crash-free file store means a refresh mid-game resumes and the server can
-restart without losing progress. Swapping to Postgres only touches this module:
-the engine never knows how sessions are stored.
+Supabase Postgres when DATABASE_URL is set, JSON files otherwise (see persistence.py).
+The engine never knows which one is in use.
 """
 
-import json
 import os
-import tempfile
 import threading
 import time
 import uuid
@@ -15,6 +12,7 @@ from pathlib import Path
 from typing import Dict, Optional
 
 from app.engine.models import EngineError, SessionMode, SessionRecord
+from app.engine.persistence import make_backend
 
 DATA_DIR = Path(
     os.getenv("HIMMAT_DATA_DIR", Path(__file__).resolve().parent.parent.parent / "data")
@@ -22,42 +20,19 @@ DATA_DIR = Path(
 SESSIONS_FILE = DATA_DIR / "sessions.json"
 
 
-def write_json_atomic(path: Path, payload: dict) -> None:
-    """Write to a temp file first, so a crash never leaves a half-written store."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    fd, tmp_path = tempfile.mkstemp(dir=path.parent, suffix=".tmp")
-    try:
-        with os.fdopen(fd, "w", encoding="utf-8") as fh:
-            json.dump(payload, fh, ensure_ascii=False)
-        os.replace(tmp_path, path)
-    finally:
-        if os.path.exists(tmp_path):
-            os.unlink(tmp_path)
-
-
 class SessionStore:
     def __init__(self) -> None:
         self._lock = threading.Lock()
+        self._backend = make_backend("himmat_sessions", SESSIONS_FILE)
         self._sessions: Dict[str, SessionRecord] = {}
-        self._load()
+        for sid, document in self._backend.load().items():
+            try:
+                self._sessions[sid] = SessionRecord.model_validate(document)
+            except ValueError:
+                continue  # An old record this version cannot read: skip that one.
 
-    # ---- persistence helpers -------------------------------------------------
-    def _load(self) -> None:
-        if not SESSIONS_FILE.exists():
-            return
-        try:
-            raw = json.loads(SESSIONS_FILE.read_text(encoding="utf-8"))
-            for sid, obj in raw.items():
-                self._sessions[sid] = SessionRecord.model_validate(obj)
-        except (json.JSONDecodeError, OSError, ValueError):
-            # Corrupt file: never crash the app, start empty.
-            self._sessions = {}
-
-    def _save(self) -> None:
-        write_json_atomic(
-            SESSIONS_FILE,
-            {sid: rec.model_dump(mode="json") for sid, rec in self._sessions.items()},
-        )
+    def _save(self, session: SessionRecord) -> None:
+        self._backend.put(session.id, session.model_dump(mode="json"))
 
     # ---- api -------------------------------------------------------------------
     def create(
@@ -81,7 +56,7 @@ class SessionStore:
         )
         with self._lock:
             self._sessions[session.id] = session
-            self._save()
+            self._save(session)
         return session
 
     def get(self, session_id: str) -> SessionRecord:
@@ -98,17 +73,15 @@ class SessionStore:
     def update(self, session: SessionRecord) -> SessionRecord:
         with self._lock:
             self._sessions[session.id] = session
-            self._save()
+            self._save(session)
         return session
 
     def delete_for_learner(self, learner_id: str) -> None:
         with self._lock:
-            self._sessions = {
-                sid: rec
-                for sid, rec in self._sessions.items()
-                if rec.learner_id != learner_id
-            }
-            self._save()
+            for sid, record in list(self._sessions.items()):
+                if record.learner_id == learner_id:
+                    del self._sessions[sid]
+                    self._backend.remove(sid)
 
 
 _store: Optional[SessionStore] = None

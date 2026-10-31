@@ -29,9 +29,9 @@ _PICKS_ANSWER = re.compile(
 
 # The learner judges the message: a reply must not call it real or fake.
 _GIVES_VERDICT = re.compile(
-    r"\b(scam|fake|fraud|phishing)\b|\b(nakli|dhoka|dhoke|jali)\b"
+    r"\b(scam|fake|fraud|phishing)\b|\b(nakli|dhoka|dhoke|jali|jhoot|jhooth)\b"
     r"|\b(is|looks|seems)\s+(real|genuine)\b"
-    r"|فریب|دھوکا|دھوکہ|دھوکے|جعلی|نقلی|فراڈ",
+    r"|فریب|دھوکا|دھوکہ|دھوکے|جعلی|نقلی|فراڈ|جھوٹ",
     re.IGNORECASE,
 )
 

@@ -51,6 +51,7 @@ def test_short_numbers_survive_redaction():
         "This message looks like a scam.",
         "This message is real.",
         "Yeh message nakli hai.",
+        "Yeh message shayad koi jhooth ho sakta hai.",
         "یہ پیغام ایک فریب لگ رہا ہے۔",
         "یہ جعلی پیغام ہے۔",
         "word " * 200,

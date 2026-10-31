@@ -1,10 +1,8 @@
 """Guest learner profiles: file-backed store and the Digital DNA read models."""
 
-import json
 import math
 import threading
 import time
-from pathlib import Path
 from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
@@ -12,6 +10,7 @@ from pydantic import BaseModel, Field
 from app.engine import loader
 from app.engine import store as session_store
 from app.engine.models import Languages, Scenario, SessionRecord, SkillChange
+from app.engine.persistence import make_backend
 from app.skills.mastery import apply_events
 from app.skills.taxonomy import BY_ID, SKILLS
 
@@ -74,17 +73,15 @@ def _new_learner(learner_id: str) -> LearnerRecord:
 class LearnerStore:
     def __init__(self) -> None:
         self._lock = threading.Lock()
-        self._path: Path = session_store.DATA_DIR / "learners.json"
+        self._backend = make_backend(
+            "himmat_learners", session_store.DATA_DIR / "learners.json"
+        )
         self._learners: Dict[str, LearnerRecord] = {}
-        if self._path.exists():
+        for key, document in self._backend.load().items():
             try:
-                raw = json.loads(self._path.read_text(encoding="utf-8"))
-                self._learners = {
-                    key: LearnerRecord.model_validate(value)
-                    for key, value in raw.items()
-                }
-            except (json.JSONDecodeError, OSError, ValueError):
-                self._learners = {}
+                self._learners[key] = LearnerRecord.model_validate(document)
+            except ValueError:
+                continue  # An old record this version cannot read: skip that one.
 
     def get(self, learner_id: str) -> LearnerRecord:
         with self._lock:
@@ -95,13 +92,7 @@ class LearnerStore:
     def save(self, learner: LearnerRecord) -> None:
         with self._lock:
             self._learners[learner.id] = learner
-            self._write()
-
-    def _write(self) -> None:
-        session_store.write_json_atomic(
-            self._path,
-            {key: rec.model_dump(mode="json") for key, rec in self._learners.items()},
-        )
+            self._backend.put(learner.id, learner.model_dump(mode="json"))
 
     def reset(self, learner_id: str) -> LearnerRecord:
         learner = _new_learner(learner_id)
@@ -116,7 +107,7 @@ class LearnerStore:
     def delete(self, learner_id: str) -> None:
         with self._lock:
             self._learners.pop(learner_id, None)
-            self._write()
+            self._backend.remove(learner_id)
 
     def mark_onboarded(self, learner_id: str) -> None:
         learner = self.get(learner_id)
