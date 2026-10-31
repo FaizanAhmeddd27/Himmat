@@ -3,12 +3,20 @@
 import time
 
 from app.engine import loader
-from app.engine.models import ActionOutcome, EngineError, NodePayload, Scenario, SessionRecord
+from app.engine.models import (
+    ActionOutcome,
+    EngineError,
+    NodePayload,
+    Scenario,
+    SessionRecord,
+)
 from app.engine.state_machine import apply_action, render_node
 from app.engine.store import get_store
 
 
-def create_session(scenario_id: str, mode: str = "practice") -> tuple[Scenario, SessionRecord]:
+def create_session(
+    scenario_id: str, mode: str = "practice"
+) -> tuple[Scenario, SessionRecord]:
     scenario = loader.get_scenario(scenario_id)
     session = get_store().create(
         scenario_id=scenario.id,
@@ -79,7 +87,9 @@ def use_hint(session_id: str, level: int) -> dict:
     return {"level": level, "hint": hint, "hints_used": session.hints_used}
 
 
-def perform_action(session_id: str, action_id: str, text_input=None) -> tuple[Scenario, SessionRecord, ActionOutcome]:
+def perform_action(
+    session_id: str, action_id: str, text_input=None
+) -> tuple[Scenario, SessionRecord, ActionOutcome]:
     scenario, session = get_session(session_id)
     if session.status == "completed":
         raise EngineError(

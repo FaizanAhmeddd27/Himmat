@@ -13,11 +13,13 @@ import threading
 import time
 import uuid
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Literal, Optional
 
 from app.engine.models import EngineError, SessionRecord
 
-DATA_DIR = Path(os.getenv("HIMMAT_DATA_DIR", Path(__file__).resolve().parent.parent.parent / "data"))
+DATA_DIR = Path(
+    os.getenv("HIMMAT_DATA_DIR", Path(__file__).resolve().parent.parent.parent / "data")
+)
 SESSIONS_FILE = DATA_DIR / "sessions.json"
 
 
@@ -41,7 +43,9 @@ class SessionStore:
 
     def _save(self) -> None:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
-        payload = {sid: rec.model_dump(mode="json") for sid, rec in self._sessions.items()}
+        payload = {
+            sid: rec.model_dump(mode="json") for sid, rec in self._sessions.items()
+        }
         fd, tmp_path = tempfile.mkstemp(dir=DATA_DIR, suffix=".tmp")
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as fh:
@@ -52,7 +56,13 @@ class SessionStore:
                 os.unlink(tmp_path)
 
     # ---- api -------------------------------------------------------------------
-    def create(self, scenario_id: str, current_node: str, initial_state: dict, mode: str = "practice") -> SessionRecord:
+    def create(
+        self,
+        scenario_id: str,
+        current_node: str,
+        initial_state: dict,
+        mode: Literal["practice", "mastery", "recovery", "assessment"] = "practice",
+    ) -> SessionRecord:
         now = time.time()
         session = SessionRecord(
             id=str(uuid.uuid4()),

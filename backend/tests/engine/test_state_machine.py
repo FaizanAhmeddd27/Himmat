@@ -63,15 +63,21 @@ def test_determinism_event_log_fully_replays(scenario):
     _outcome, session = run_script(scenario, steps)
     _outcome2, session2 = run_script(scenario, steps)
 
-    assert [e.action_id for e in session.events] == [e.action_id for e in session2.events]
-    assert [e.state_after for e in session.events] == [e.state_after for e in session2.events]
+    assert [e.action_id for e in session.events] == [
+        e.action_id for e in session2.events
+    ]
+    assert [e.state_after for e in session.events] == [
+        e.state_after for e in session2.events
+    ]
 
 
 # ---- safe ending -----------------------------------------------------------
 
 
 def test_safe_ending_reachable(scenario):
-    outcome, session = run_script(scenario, [("check_sender", None), ("report_block", None)])
+    outcome, session = run_script(
+        scenario, [("check_sender", None), ("report_block", None)]
+    )
 
     assert session.status == "completed"
     assert session.outcome_id == "n_safe"
@@ -139,7 +145,9 @@ def test_invalid_action_rejected(scenario):
 
 
 def test_go_back_returns_to_message_node(scenario):
-    _outcome, session = run_script(scenario, [("check_sender", None), ("go_back", None)])
+    _outcome, session = run_script(
+        scenario, [("check_sender", None), ("go_back", None)]
+    )
 
     assert session.status == "active"
     assert session.current_node == "n_msg"
@@ -147,7 +155,9 @@ def test_go_back_returns_to_message_node(scenario):
 
 
 def test_completed_session_state_recorded(scenario):
-    _outcome, session = run_script(scenario, [("check_sender", None), ("report_block", None)])
+    _outcome, session = run_script(
+        scenario, [("check_sender", None), ("report_block", None)]
+    )
     # 2 events, each recording state before/after
     assert [e.action_id for e in session.events] == ["check_sender", "report_block"]
     assert session.events[0].state_after.get("checked_sender") is True

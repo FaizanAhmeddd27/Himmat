@@ -30,7 +30,9 @@ async def get_scenario(scenario_id: str) -> dict:
     try:
         scenario = loader.get_scenario(scenario_id)
     except EngineError as exc:
-        raise HTTPException(status_code=exc.status, detail={"code": exc.code, "message": exc.message})
+        raise HTTPException(
+            status_code=exc.status, detail={"code": exc.code, "message": exc.message}
+        )
     return {
         "id": scenario.id,
         "version": scenario.version,

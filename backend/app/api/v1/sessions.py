@@ -16,7 +16,9 @@ router = APIRouter(tags=["sessions"])
 
 class CreateSessionRequest(BaseModel):
     scenario_id: str
-    mode: str = Field(default="practice", pattern="^(practice|mastery|recovery|assessment)$")
+    mode: str = Field(
+        default="practice", pattern="^(practice|mastery|recovery|assessment)$"
+    )
 
 
 class ActionRequest(BaseModel):
@@ -28,7 +30,9 @@ class ActionRequest(BaseModel):
 
 
 def _http_error(exc: EngineError) -> HTTPException:
-    return HTTPException(status_code=exc.status, detail={"code": exc.code, "message": exc.message})
+    return HTTPException(
+        status_code=exc.status, detail={"code": exc.code, "message": exc.message}
+    )
 
 
 @router.post("/sessions", status_code=201)
@@ -52,14 +56,18 @@ async def get_session(session_id: str) -> dict:
 @router.post("/sessions/{session_id}/actions")
 async def apply_action(session_id: str, body: ActionRequest) -> dict:
     try:
-        _scenario, _session, outcome = service.perform_action(session_id, body.action_id, text_input=body.input)
+        _scenario, _session, outcome = service.perform_action(
+            session_id, body.action_id, text_input=body.input
+        )
     except EngineError as exc:
         raise _http_error(exc)
     return {
         "session_id": outcome.session_id,
         "node": outcome.next_node.model_dump(mode="json"),
         "state": outcome.state,
-        "consequence": outcome.consequence.model_dump() if outcome.consequence else None,
+        "consequence": (
+            outcome.consequence.model_dump() if outcome.consequence else None
+        ),
         "outcome_id": outcome.outcome_id,
         "outcome_tag": outcome.outcome_tag,
         "recovery": outcome.recovery,

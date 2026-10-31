@@ -15,7 +15,6 @@ from app.engine.models import (
     Scenario,
     SessionEvent,
     SessionRecord,
-    StateValue,
 )
 
 
@@ -128,14 +127,14 @@ def apply_action(
             ui=None,
             actions=[],
         )
+    elif next_node_id in scenario.nodes:
+        next_node = scenario.nodes[next_node_id]
     else:
-        next_node = scenario.nodes.get(next_node_id)
-        if next_node is None:
-            raise EngineError(
-                code="node_not_found",
-                message=f"Action '{action.id}' targets unknown node '{action.next}'.",
-                status=500,
-            )
+        raise EngineError(
+            code="node_not_found",
+            message=f"Action '{action.id}' targets unknown node '{action.next}'.",
+            status=500,
+        )
 
     session.current_node = next_node_id
     event = session_event(
