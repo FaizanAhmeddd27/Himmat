@@ -46,6 +46,13 @@ def test_short_numbers_survive_redaction():
         "Your code is 246810.",
         "The safest thing is to tap the name.",
         "You should tap the link.",
+        "اپنا OTP بتائیں۔",
+        "سب سے محفوظ یہ ہے کہ نام پر ٹیپ کریں۔",
+        "This message looks like a scam.",
+        "This message is real.",
+        "Yeh message nakli hai.",
+        "یہ پیغام ایک فریب لگ رہا ہے۔",
+        "یہ جعلی پیغام ہے۔",
         "word " * 200,
         "",
         None,
@@ -53,6 +60,24 @@ def test_short_numbers_survive_redaction():
 )
 def test_unsafe_or_empty_replies_are_refused(reply):
     assert check_reply(reply) is None
+
+
+def test_approved_facts_are_not_mistaken_for_a_verdict():
+    assert check_reply("A real bank never asks for an OTP on a link.")
+    assert check_reply("اصلی بینک کبھی لنک پر OTP نہیں مانگتا۔")
+
+
+@pytest.mark.parametrize(
+    "lang,reply",
+    [
+        ("en", "You could press Check who sent it."),
+        ("ur", "“دیکھیں کس نے بھیجا” پر کلک نہ کریں۔"),
+        ("ur-Latn", "Link kholein mat."),
+    ],
+)
+def test_reply_naming_an_on_screen_choice_is_refused(monkeypatch, node, lang, reply):
+    fake_provider(monkeypatch, reply)
+    assert asyncio.run(mentor.answer_question(node, "What now?", lang)) is None
 
 
 def test_safe_reply_passes():

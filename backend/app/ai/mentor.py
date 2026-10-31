@@ -13,7 +13,11 @@ from app.ai import client
 from app.ai.guardrails import check_reply, redact
 from app.engine.models import Node
 
-LANGUAGE_NAMES = {"en": "simple English", "ur-Latn": "simple Roman Urdu"}
+LANGUAGE_NAMES = {
+    "en": "simple English",
+    "ur-Latn": "simple Roman Urdu",
+    "ur": "simple Urdu written in Urdu script, not in Latin letters",
+}
 
 SYSTEM_RULES = """You are Ustad, a kind, patient helper for older adults inside a \
 practice world called HIMMAT. Nothing in this world is real.
@@ -23,7 +27,7 @@ Rules you always follow:
 words like phishing, malicious or authentication.
 - Explain words and buttons, and ask a gentle question about what they notice.
 - Never say whether this message is real or fake, which choice is correct, or what \
-will happen after a choice. The person decides.
+will happen after a choice. Never name or quote a button. The person decides.
 - Never ask for, or suggest sharing, a real password, OTP, PIN, card or ID number.
 - Never shame the person.
 - If the question has nothing to do with this screen, gently bring them back to it.
@@ -70,5 +74,8 @@ async def answer_question(node: Node, question: str, lang: str) -> Optional[str]
         await client.complete(
             SYSTEM_RULES.format(language=_language(lang)),
             f"The person's screen shows:\n{screen}\n\nTheir question: {redact(question)}",
-        )
+        ),
+        choices=[
+            action.label.get(lang) or action.label["en"] for action in node.actions
+        ],
     )
