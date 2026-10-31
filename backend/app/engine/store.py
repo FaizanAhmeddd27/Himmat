@@ -1,9 +1,8 @@
-"""Session storage — in-memory dict + JSON file persistence.
+"""Session storage: in-memory dict + JSON file persistence.
 
-A crash-free file store is the fastest safe path for Phase 2: refresh
-mid-game resumes (GET re-loads state) and the server can restart without
-losing progress. Swap for Supabase/SQLAlchemy in Phase 4 without touching
-the engine (only this module).
+A crash-free file store means a refresh mid-game resumes and the server can
+restart without losing progress. Swapping to Postgres only touches this module:
+the engine never knows how sessions are stored.
 """
 
 import json
@@ -21,6 +20,19 @@ DATA_DIR = Path(
     os.getenv("HIMMAT_DATA_DIR", Path(__file__).resolve().parent.parent.parent / "data")
 )
 SESSIONS_FILE = DATA_DIR / "sessions.json"
+
+
+def write_json_atomic(path: Path, payload: dict) -> None:
+    """Write to a temp file first, so a crash never leaves a half-written store."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp_path = tempfile.mkstemp(dir=path.parent, suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            json.dump(payload, fh, ensure_ascii=False)
+        os.replace(tmp_path, path)
+    finally:
+        if os.path.exists(tmp_path):
+            os.unlink(tmp_path)
 
 
 class SessionStore:
@@ -42,18 +54,10 @@ class SessionStore:
             self._sessions = {}
 
     def _save(self) -> None:
-        DATA_DIR.mkdir(parents=True, exist_ok=True)
-        payload = {
-            sid: rec.model_dump(mode="json") for sid, rec in self._sessions.items()
-        }
-        fd, tmp_path = tempfile.mkstemp(dir=DATA_DIR, suffix=".tmp")
-        try:
-            with os.fdopen(fd, "w", encoding="utf-8") as fh:
-                json.dump(payload, fh, ensure_ascii=False)
-            os.replace(tmp_path, SESSIONS_FILE)
-        finally:
-            if os.path.exists(tmp_path):
-                os.unlink(tmp_path)
+        write_json_atomic(
+            SESSIONS_FILE,
+            {sid: rec.model_dump(mode="json") for sid, rec in self._sessions.items()},
+        )
 
     # ---- api -------------------------------------------------------------------
     def create(
@@ -62,12 +66,14 @@ class SessionStore:
         current_node: str,
         initial_state: dict,
         mode: SessionMode = "practice",
+        learner_id: str = "guest",
     ) -> SessionRecord:
         now = time.time()
         session = SessionRecord(
             id=str(uuid.uuid4()),
             scenario_id=scenario_id,
             mode=mode,
+            learner_id=learner_id,
             current_node=current_node,
             state=dict(initial_state),
             started_at=now,
@@ -84,7 +90,7 @@ class SessionStore:
         if session is None:
             raise EngineError(
                 code="session_not_found",
-                message=f"Unknown session '{session_id}'.",
+                message="That practice session could not be found. Please start a new one.",
                 status=404,
             )
         return session
