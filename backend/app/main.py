@@ -1,10 +1,23 @@
 """HIMMAT FastAPI application factory."""
 
+from contextlib import asynccontextmanager
+from typing import AsyncIterator
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1 import health, scenarios, sessions, skills
 from app.config import get_settings
+from app.engine.store import get_store
+from app.skills.learners import get_learner_store
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+    """Open storage before serving, so no learner's tap ever waits on the database."""
+    get_store()
+    get_learner_store()
+    yield
 
 
 def create_app() -> FastAPI:
@@ -20,6 +33,7 @@ def create_app() -> FastAPI:
             "AI is an explanation layer, never the decider."
         ),
         debug=settings.debug,
+        lifespan=lifespan,
     )
 
     # CORS — restrict to known frontend origins

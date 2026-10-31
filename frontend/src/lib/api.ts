@@ -1,6 +1,6 @@
 /**
  * Thin typed client for the HIMMAT scenario engine API.
- * Base URL comes from NEXT_PUBLIC_API_URL (default http://localhost:8000).
+ * Base URL comes from NEXT_PUBLIC_API_URL (default http://127.0.0.1:8000).
  */
 
 import { useA11y } from "./a11y";
@@ -25,7 +25,7 @@ import type {
   SessionView,
 } from "./types";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
 const V1 = `${API_BASE}/api/v1`;
 

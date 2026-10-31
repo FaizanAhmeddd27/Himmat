@@ -109,13 +109,19 @@ class PostgresBackend:
                     if attempt == 2:
                         raise
 
-    def load(self) -> Dict[str, dict]:
+    def prepare(self) -> None:
+        """Connect and create the tables if needed. Raises if the database is down."""
         with self._lock:
             connection = self._connect()
             connection.execute(MIGRATION.read_text(encoding="utf-8"))  # type: ignore[arg-type]
-            rows = connection.execute(
-                f"select id, data from {self._table}"  # type: ignore[arg-type]
-            ).fetchall()
+
+    def load(self) -> Dict[str, dict]:
+        with self._lock:
+            rows = (
+                self._connect()
+                .execute(f"select id, data from {self._table}")  # type: ignore[arg-type]
+                .fetchall()
+            )
         return {row[0]: row[1] for row in rows}
 
     def _write_safely(self, sql: str, params: tuple) -> None:
@@ -148,7 +154,7 @@ def make_backend(table: str, file_path: Path) -> Backend:
     if url:
         backend = PostgresBackend(url, table)
         try:
-            backend.load()
+            backend.prepare()
             logger.info("Storing %s in Postgres", table)
             return backend
         except (psycopg.Error, OSError) as exc:
