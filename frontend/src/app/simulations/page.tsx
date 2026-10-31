@@ -19,13 +19,6 @@ const MASCOTS: Record<string, string> = {
   lucky_draw_message: "/himmat7.png",
 };
 
-const UPCOMING = [
-  { en: "Send Money Safely", "ur-Latn": "Paise mehfooz tareeqe se bhejein", "ur": "محفوظ طریقے سے پیسے بھیجیں" },
-  { en: "Video Call Rescue", "ur-Latn": "Video call ki mushkil", "ur": "ویڈیو کال کی مشکل" },
-  { en: "Online Shopping Trap", "ur-Latn": "Online shopping ka jaal", "ur": "آن لائن خریداری کا جال" },
-  { en: "Government Portal Challenge", "ur-Latn": "Sarkari portal ka form", "ur": "سرکاری پورٹل کا فارم" },
-];
-
 export default function SimulationsPage() {
   const lang = useA11y((s) => s.lang);
   const t = useT();
@@ -86,15 +79,6 @@ export default function SimulationsPage() {
               );
             })}
           </ul>
-
-          <div className="mt-6 border-t-2 border-border pt-6">
-            <h2 className="text-lg text-muted-foreground">{t("catalogue.soon")}</h2>
-            <ul className="mt-2 grid gap-x-8 gap-y-1 text-lg text-muted-foreground sm:grid-cols-2">
-              {UPCOMING.map((item) => (
-                <li key={item.en}>{item[lang]}</li>
-              ))}
-            </ul>
-          </div>
         </div>
       </section>
     </main>

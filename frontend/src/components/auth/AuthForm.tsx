@@ -1,10 +1,6 @@
 "use client";
 
-/**
- * Sign in and create account (SRS FR-1.1). An account keeps the guest's progress:
- * the learner id is stored with the account and restored on any device.
- * Without Supabase keys the page says so and offers guest mode.
- */
+/** Sign in and create an account (SRS FR-1.1). */
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
@@ -33,13 +29,20 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     if (!supabase) return;
     setBusy(true);
     setError(null);
+    // ?next= from the auth guard: send the learner back to the page they
+    // wanted (root-relative only, no external redirects).
+    let next: string | null = null;
+    if (typeof window !== "undefined") {
+      const candidate = new URLSearchParams(window.location.search).get("next");
+      next = candidate?.startsWith("/") && !candidate.startsWith("//") ? candidate : null;
+    }
     try {
       if (isLogin) {
         const { data, error: failure } = await supabase.auth.signInWithPassword({ email, password });
         if (failure) throw failure;
         const saved = data.user?.user_metadata?.himmat_learner;
         if (typeof saved === "string") setLearnerId(saved);
-        router.push("/dashboard");
+        router.push(next ?? "/dashboard");
       } else {
         const { data, error: failure } = await supabase.auth.signUp({
           email,
@@ -47,7 +50,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           options: { data: { himmat_learner: getLearnerId() } },
         });
         if (failure) throw failure;
-        if (data.session) router.push("/onboarding");
+        if (data.session) router.push(next ?? "/onboarding");
         else setCheckEmail(true);
       }
     } catch {
@@ -129,9 +132,6 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
               </p>
             </form>
           )}
-          <Link href="/dashboard" className="btn-secondary mt-6 w-full">
-            {t("auth.guest")}
-          </Link>
         </div>
       </section>
     </main>

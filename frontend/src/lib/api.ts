@@ -116,8 +116,6 @@ export const api = {
     post<DnaView>("/assessment/submit", { answers }),
   skipAssessment: () => post<{ ok: boolean }>("/assessment/skip"),
   deleteAccount: () => fetchJson<{ ok: boolean }>("/account", { method: "DELETE" }),
-  seedDemo: () => post<{ ok: boolean }>("/demo/seed"),
-
   getFamily: () => fetchJson<FamilyView>("/family/dashboard"),
   getSupporterView: (learnerId: string) =>
     fetchJson<FamilyView>(`/family/dashboard/${encodeURIComponent(learnerId)}`),

@@ -75,7 +75,6 @@ export default function SettingsPage() {
               </button>
             ) : (
               <>
-                <p className="mt-1 text-lg text-ink">{t("settings.guestBody")}</p>
                 <div className="mt-3 flex flex-wrap gap-3">
                   <Link href="/signup" className="btn-secondary">
                     {t("auth.signup")}

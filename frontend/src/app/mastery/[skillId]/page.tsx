@@ -5,31 +5,40 @@
  * scenario that tests it. Skills with no test yet say so.
  */
 
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useT } from "@/lib/i18n";
 import { ThemedLoader } from "@/components/common/ThemedLoader";
-
-const TEST_FOR_SKILL: Record<string, string> = {
-  scam_detection: "lucky_draw_message",
-  otp_safety: "lucky_draw_message",
-  reporting: "lucky_draw_message",
-};
+import { api, toApiError } from "@/lib/api";
+import type { ApiErrorInfo, ScenarioMeta } from "@/lib/types";
 
 function Mastery() {
   const t = useT();
   const router = useRouter();
   const { skillId } = useParams<{ skillId: string }>();
-  const scenario = TEST_FOR_SKILL[skillId];
+  const [scenario, setScenario] = useState<ScenarioMeta | null>(null);
+  const [error, setError] = useState<ApiErrorInfo | null>(null);
 
   useEffect(() => {
-    if (scenario) router.replace(`/simulations/${scenario}?mode=mastery`);
+    api
+      .listScenarios()
+      .then((scenarios) => {
+        const match = scenarios.find((item) => item.kind === "mastery" && item.skills.includes(skillId));
+        if (match) setScenario(match);
+      })
+      .catch((err) => setError(toApiError(err)));
+  }, [skillId]);
+
+  useEffect(() => {
+    if (scenario) router.replace(`/simulations/${scenario.id}?mode=mastery`);
   }, [router, scenario]);
 
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-24 text-center">
-      {scenario ? (
+      {error ? (
+        <p role="alert" className="max-w-xl text-lg text-caution">{error.message}</p>
+      ) : scenario ? (
         <ThemedLoader />
       ) : (
         <>

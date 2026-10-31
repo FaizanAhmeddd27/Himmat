@@ -22,9 +22,9 @@ const SIZES: { id: TextSize; glyph: string; px: string }[] = [
 ];
 
 const control =
-  "inline-flex min-h-12 items-center justify-center rounded-[10px] px-2.5 text-sm transition-colors";
+  "inline-flex min-h-8 sm:min-h-9 items-center justify-center rounded-[8px] px-2 text-xs font-medium transition-colors sm:px-2.5";
 const idle = "text-wine hover:bg-wine-tint";
-const active = "bg-wine text-on-wine hover:bg-wine-dark";
+const active = "bg-wine text-on-wine hover:bg-wine-dark shadow-xs";
 
 export function A11yControls() {
   const t = useT();
@@ -36,9 +36,9 @@ export function A11yControls() {
   const toggleContrast = useA11y((s) => s.toggleContrast);
 
   return (
-    <div className="flex flex-wrap items-center gap-x-1" role="group" aria-label={t("a11y.settings")}>
-      <div className="flex items-center gap-x-0.5" role="group" aria-label={t("settings.language")}>
-        <Languages aria-hidden className="mx-1 size-5 text-wine" />
+    <div className="flex items-center gap-1 sm:gap-1.5" role="group" aria-label={t("a11y.settings")}>
+      <div className="flex items-center gap-0.5 rounded-lg bg-sand/30 p-0.5" role="group" aria-label={t("settings.language")}>
+        <Languages aria-hidden className="mx-1 size-3.5 text-wine/70 shrink-0 hidden sm:block" />
         {LANGUAGES.map((item) => (
           <button
             key={item.id}
@@ -53,7 +53,7 @@ export function A11yControls() {
         ))}
       </div>
 
-      <div className="flex items-center" role="group" aria-label={t("a11y.textSize")}>
+      <div className="flex items-center gap-0.5 rounded-lg bg-sand/30 p-0.5" role="group" aria-label={t("a11y.textSize")}>
         {SIZES.map((size) => (
           <button
             key={size.id}
@@ -62,7 +62,7 @@ export function A11yControls() {
             dir="ltr"
             aria-pressed={textSize === size.id}
             aria-label={`${t("a11y.textSize")} ${size.px}`}
-            className={`${control} min-w-11 ${textSize === size.id ? active : idle}`}
+            className={`${control} min-w-8 ${textSize === size.id ? active : idle}`}
           >
             {size.glyph}
           </button>
@@ -74,10 +74,11 @@ export function A11yControls() {
         onClick={toggleContrast}
         aria-pressed={highContrast}
         aria-label={t("a11y.contrast")}
-        className={`${control} min-w-12 gap-1.5 ${highContrast ? active : idle}`}
+        title={t("a11y.contrast")}
+        className={`${control} min-w-8 gap-1.5 ${highContrast ? active : idle}`}
       >
-        <Contrast aria-hidden className="size-5" />
-        <span className="hidden 2xl:inline">{t("a11y.contrast")}</span>
+        <Contrast aria-hidden className="size-4 shrink-0" />
+        <span className="hidden xl:inline">{t("a11y.contrast")}</span>
       </button>
     </div>
   );
