@@ -112,23 +112,22 @@ Follow this path to see every feature. It is also the order of the demo video.
 | `/dashboard` | Home: next step, skills snapshot and when to practise again |
 | `/settings` | Language, text size, contrast, account, and deleting your data |
 | `/family/dashboard/<id>` | Bilal's read-only view. Get the link from **Copy a link for Bilal** on the Family page |
-| `/demo` | For judges: start fresh, or open a learner who has already practised |
 | `/login`, `/signup` | Accounts, once Supabase keys are set (see below) |
 
 ### Turning accounts on
 
-Accounts are off until you create `frontend\.env.local` with these two lines from your Supabase project, then restart the frontend:
+Sign-in is required for most pages, so create `frontend\.env.local` with these two lines from your Supabase project, then restart the frontend:
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
-Without them, the sign-in pages say so and guest mode carries on working.
+Without them, you cannot get past the sign-in page.
 
 ### Starting fresh
 
-Open **/demo** and press **Try it yourself** for a brand-new profile. Do this before recording, so the numbers start low.
+Open **My skills** and press **Start over with a new profile**. Do this before recording, so the numbers start low.
 
 ---
 

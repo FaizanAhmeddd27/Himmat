@@ -8,6 +8,8 @@ HIMMAT is a practice phone for parents, grandparents and anyone who did not grow
 
 Built for the Build4Better hackathon, 31 October 2026.
 
+**Team:** Faizan Ahmed, Syeda Aliza Ayaz
+
 ## What you can do
 
 | Feature | What it does |
@@ -37,12 +39,13 @@ Full steps, a guided walkthrough and troubleshooting are in **[docs/HOW_TO_RUN.m
 cd backend
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
-copy .env.example .env
+copy .env.example .env   # add DATABASE_URL and GROQ_API_KEY
 .venv\Scripts\python -m uvicorn app.main:app --port 8000
 
 # Terminal 2
 cd frontend
 npm ci
+# Sign-in needs frontend\.env.local with NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
 npm run dev
 ```
 
@@ -90,7 +93,7 @@ The rules ask for this, so here it is in full. Details are in [docs/AI_USAGE.md]
 Built in one day, so here is what is not done:
 
 - **Content:** one practice scenario, one mastery scenario and one recovery lab. Send Money, Video Calls, Shopping and Government Forms are planned, and Digital DNA shows those skills as sample starting points.
-- **Accounts:** guest mode is the default, with a random ID kept in the browser. Sign-in pages are built on Supabase but need its keys, and the backend does not check sign-in tokens yet, so a profile is protected only by its long random ID.
+- **Accounts:** learners sign in with Supabase, and most pages require it. The backend does not check sign-in tokens yet, so a profile is protected only by its long random ID.
 - **Family:** a supporter opens a private link rather than linking two accounts. Anyone with that link sees what the learner chose to share.
 - **Storage:** Supabase Postgres, with each session and profile saved as a JSON document rather than the full table design in `docs/ARCH.md`. The app reads from memory, so running more than one backend at once is not supported yet.
 - **Language:** the Urdu and Roman Urdu text was written with AI and still needs review by a fluent reader. Read aloud works in English, and in Urdu only on devices with an Urdu voice. Roman Urdu has no read aloud, because an English voice cannot pronounce it.
@@ -106,4 +109,4 @@ Built in one day, so here is what is not done:
 
 ## Final commit
 
-`8e5f0ad` is the final code commit. The only later commit adds this line.
+`24d7904` is the final code commit. The only later commit adds this line.
