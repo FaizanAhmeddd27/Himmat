@@ -1,0 +1,22 @@
+# Local development stack: Postgres (+ backend/frontend optional)
+# Usage: docker compose up -d db
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: himmat_db
+    environment:
+      POSTGRES_USER: himmat
+      POSTGRES_PASSWORD: himmat_local
+      POSTGRES_DB: himmat
+    ports:
+      - "5432:5432"
+    volumes:
+      - himmat_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U himmat"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  himmat_pgdata:

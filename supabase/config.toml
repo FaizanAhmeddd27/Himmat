@@ -1,0 +1,15 @@
+# Supabase project configuration (placeholder — Phase 2).
+# Replace with `supabase init` output / linked project values when connecting a real project.
+project_id = "himmat"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+
+[db]
+port = 54322
+major_version = 15
+
+[auth]
+enabled = true

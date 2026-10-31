@@ -1,0 +1,2 @@
+-- HIMMAT seed data (placeholder — Phase 4/5 will seed demo learner "Amna" and supporter "Bilal").
+-- Intentionally empty in Phase 1.
