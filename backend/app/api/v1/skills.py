@@ -1,6 +1,6 @@
 """Digital DNA, Recovery Lab and family dashboard endpoints."""
 
-from typing import List, Literal
+from typing import Dict, List, Literal
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
@@ -8,7 +8,8 @@ from pydantic import BaseModel, Field
 from app.deps import learner_id
 from app.engine import recovery as recovery_engine
 from app.engine.models import EngineError
-from app.skills import learners
+from app.engine.store import get_store
+from app.skills import assessment, demo, learners
 
 router = APIRouter()
 
@@ -28,6 +29,10 @@ class RecoverySubmit(BaseModel):
     steps: List[str]
 
 
+class AssessmentSubmit(BaseModel):
+    answers: Dict[str, str]
+
+
 @router.get("/skills/dna", tags=["skills"])
 async def get_dna(learner: str = Depends(learner_id)) -> dict:
     return learners.dna_view(learners.get_learner_store().get(learner))
@@ -37,10 +42,7 @@ async def get_dna(learner: str = Depends(learner_id)) -> dict:
 async def rate_confidence(
     body: ConfidenceRequest, learner: str = Depends(learner_id)
 ) -> dict:
-    store = learners.get_learner_store()
-    record = store.get(learner)
-    record.confidence[body.phase] = body.rating
-    store.save(record)
+    learners.get_learner_store().set_confidence(learner, body.phase, body.rating)
     return {"ok": True}
 
 
@@ -76,6 +78,58 @@ async def submit_recovery(
     )
     result["skill_changes"] = [change.model_dump() for change in changes]
     return result
+
+
+@router.get("/assessment", tags=["assessment"])
+async def get_assessment() -> dict:
+    return assessment.public_view()
+
+
+@router.post("/assessment/submit", tags=["assessment"])
+async def submit_assessment(
+    body: AssessmentSubmit, learner: str = Depends(learner_id)
+) -> dict:
+    try:
+        scores = assessment.score(body.answers)
+    except EngineError as exc:
+        raise HTTPException(
+            status_code=exc.status, detail={"code": exc.code, "message": exc.message}
+        )
+    store = learners.get_learner_store()
+    store.apply_assessment(learner, scores)
+    return learners.dna_view(store.get(learner))
+
+
+@router.post("/assessment/skip", tags=["assessment"])
+async def skip_assessment(learner: str = Depends(learner_id)) -> dict:
+    learners.get_learner_store().mark_onboarded(learner)
+    return {"ok": True}
+
+
+@router.delete("/account", tags=["account"])
+async def delete_account(learner: str = Depends(learner_id)) -> dict:
+    """Removes the profile and every session (FR-1.6)."""
+    learners.get_learner_store().delete(learner)
+    get_store().delete_for_learner(learner)
+    return {"ok": True}
+
+
+@router.post("/demo/seed", tags=["demo"])
+async def seed_demo(learner: str = Depends(learner_id)) -> dict:
+    demo.seed_demo_learner(learner)
+    return {"ok": True}
+
+
+@router.get("/family/dashboard/{target_id}", tags=["family"])
+async def supporter_view(target_id: str) -> dict:
+    """What a supporter sees from a shared link: consent-filtered, read-only."""
+    record = learners.get_learner_store().find(target_id)
+    if record is None:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "learner_not_found", "message": "This link is not valid."},
+        )
+    return learners.family_view(record)
 
 
 @router.get("/family/dashboard", tags=["family"])

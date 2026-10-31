@@ -101,6 +101,15 @@ class SessionStore:
             self._save()
         return session
 
+    def delete_for_learner(self, learner_id: str) -> None:
+        with self._lock:
+            self._sessions = {
+                sid: rec
+                for sid, rec in self._sessions.items()
+                if rec.learner_id != learner_id
+            }
+            self._save()
+
 
 _store: Optional[SessionStore] = None
 

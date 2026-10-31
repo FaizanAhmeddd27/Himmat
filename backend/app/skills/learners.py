@@ -1,6 +1,7 @@
 """Guest learner profiles: file-backed store and the Digital DNA read models."""
 
 import json
+import math
 import threading
 import time
 from pathlib import Path
@@ -8,10 +9,14 @@ from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
+from app.engine import loader
 from app.engine import store as session_store
 from app.engine.models import Languages, Scenario, SessionRecord, SkillChange
 from app.skills.mastery import apply_events
 from app.skills.taxonomy import BY_ID, SKILLS
+
+REVIEW_DAYS = (1, 3, 7, 14)
+DAY_SECONDS = 86400
 
 LEARNER_NAME = "Amna"
 SUPPORTER_NAME = "Bilal"
@@ -44,6 +49,10 @@ class LearnerRecord(BaseModel):
     completed_scenarios: List[str] = Field(default_factory=list)
     recovery_pending: Optional[str] = None
     mastery_passed: bool = False
+    onboarded: bool = False
+    assessed: bool = False
+    # When each scenario was finished, for the review schedule (FR-6.8).
+    scenario_log: Dict[str, List[float]] = Field(default_factory=dict)
 
 
 def _average(scores: Dict[str, float]) -> float:
@@ -83,18 +92,49 @@ class LearnerStore:
     def save(self, learner: LearnerRecord) -> None:
         with self._lock:
             self._learners[learner.id] = learner
-            session_store.write_json_atomic(
-                self._path,
-                {
-                    key: rec.model_dump(mode="json")
-                    for key, rec in self._learners.items()
-                },
-            )
+            self._write()
+
+    def _write(self) -> None:
+        session_store.write_json_atomic(
+            self._path,
+            {key: rec.model_dump(mode="json") for key, rec in self._learners.items()},
+        )
 
     def reset(self, learner_id: str) -> LearnerRecord:
         learner = _new_learner(learner_id)
         self.save(learner)
         return learner
+
+    def find(self, learner_id: str) -> Optional[LearnerRecord]:
+        """Look up without creating, for links someone else opens."""
+        with self._lock:
+            return self._learners.get(learner_id)
+
+    def delete(self, learner_id: str) -> None:
+        with self._lock:
+            self._learners.pop(learner_id, None)
+            self._write()
+
+    def mark_onboarded(self, learner_id: str) -> None:
+        learner = self.get(learner_id)
+        learner.onboarded = True
+        self.save(learner)
+
+    def set_confidence(self, learner_id: str, phase: str, rating: int) -> None:
+        learner = self.get(learner_id)
+        learner.confidence[phase] = rating
+        self.save(learner)
+
+    def apply_assessment(self, learner_id: str, scores: Dict[str, float]) -> None:
+        """Real answers replace the sample starting point."""
+        learner = self.get(learner_id)
+        learner.scores.update(scores)
+        learner.assessed = True
+        learner.onboarded = True
+        learner.history = [
+            HistoryPoint(label="Start", average=_average(learner.scores))
+        ]
+        self.save(learner)
 
 
 _learner_store: Optional[LearnerStore] = None
@@ -135,6 +175,7 @@ def apply_session_result(scenario: Scenario, session: SessionRecord) -> None:
     outcome = scenario.outcomes[session.outcome_id]
     if scenario.id not in learner.completed_scenarios:
         learner.completed_scenarios.append(scenario.id)
+    learner.scenario_log.setdefault(scenario.id, []).append(time.time())
     if outcome.recovery:
         learner.recovery_pending = outcome.recovery
     if session.mode == "mastery" and outcome.tag == "safe":
@@ -238,6 +279,26 @@ def recommendation(learner: LearnerRecord) -> dict:
     }
 
 
+def review_schedule(learner: LearnerRecord, now: Optional[float] = None) -> List[dict]:
+    """Come back at growing intervals: 1, 3, 7, then 14 days (FR-6.8)."""
+    current = time.time() if now is None else now
+    reviews = []
+    for scenario_id, finished in learner.scenario_log.items():
+        interval = REVIEW_DAYS[min(len(finished), len(REVIEW_DAYS)) - 1]
+        due_at = finished[-1] + interval * DAY_SECONDS
+        scenario = loader.get_scenario(scenario_id)
+        reviews.append(
+            {
+                "scenario_id": scenario_id,
+                "kind": scenario.kind,
+                "title": scenario.title,
+                "due": current >= due_at,
+                "days_left": max(0, math.ceil((due_at - current) / DAY_SECONDS)),
+            }
+        )
+    return sorted(reviews, key=lambda review: review["days_left"])
+
+
 def skill_views(learner: LearnerRecord) -> List[dict]:
     return [
         {
@@ -261,6 +322,9 @@ def dna_view(learner: LearnerRecord) -> dict:
             "after": learner.confidence.get("after"),
         },
         "recommendation": recommendation(learner),
+        "assessed": learner.assessed,
+        "onboarded": learner.onboarded,
+        "reviews": review_schedule(learner),
     }
 
 
