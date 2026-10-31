@@ -123,4 +123,4 @@ Built in one day, so here is what is not done:
 
 ## Final commit
 
-`24d7904` is the final code commit. Later commits change documentation only.
+`98b528a` is the final code commit. Later commits change documentation only.
