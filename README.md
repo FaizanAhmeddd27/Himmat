@@ -105,4 +105,4 @@ Built in one day, so here is what is not done:
 
 ## Final commit
 
-See [docs/FINAL_COMMIT.md](docs/FINAL_COMMIT.md).
+`b89abfc` is the final code commit. The only later commit adds this line.
