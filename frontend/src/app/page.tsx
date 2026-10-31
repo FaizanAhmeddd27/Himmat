@@ -13,9 +13,10 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ShieldCheck } from "lucide-react";
 import { api } from "@/lib/api";
-import { canReadAloud, pick, speak, useA11y } from "@/lib/a11y";
+import { pick, useA11y } from "@/lib/a11y";
 import { useT, type I18nKey } from "@/lib/i18n";
 import type { ActionDef, Localized, NodePayload } from "@/lib/types";
+import { ListenButton } from "@/components/common/ListenButton";
 import { ThemedLoader } from "@/components/common/ThemedLoader";
 import { ChatThread } from "@/components/simulator/ChatThread";
 import { PhoneFrame } from "@/components/simulator/PhoneFrame";
@@ -68,7 +69,7 @@ function Hero() {
       {/* The arc starts past the text column, so it can never cover the headline. */}
       <span
         aria-hidden
-        className="absolute left-[56vw] top-1/2 hidden size-[max(125vh,1000px)] -translate-y-1/2 rounded-full bg-wine md:block"
+        className="absolute start-[56vw] top-1/2 hidden size-[max(125vh,1000px)] -translate-y-1/2 rounded-full bg-wine md:block"
       />
       <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 px-6 pb-10 pt-10 md:min-h-[calc(100svh-61px)] md:grid-cols-[minmax(0,1fr)_380px] md:px-10 md:py-8">
         <div className="md:max-w-[min(540px,calc(56vw-96px))]">
@@ -104,7 +105,7 @@ function Hero() {
             width={310}
             height={640}
             priority
-            className="pointer-events-none absolute -bottom-2 -left-36 hidden h-72 w-auto xl:block"
+            className="pointer-events-none absolute -bottom-2 -start-36 hidden h-72 w-auto xl:block"
           />
         </div>
       </div>
@@ -202,7 +203,7 @@ function Rewind() {
         </motion.div>
 
         <motion.div {...rise} data-ui className="relative">
-          <svg viewBox="0 0 600 110" className="w-full" aria-hidden preserveAspectRatio="none">
+          <svg viewBox="0 0 600 110" className="w-full rtl:-scale-x-100" aria-hidden preserveAspectRatio="none">
             <path d="M0 8 H150 C300 8 300 8 600 8" fill="none" stroke="var(--wine)" strokeWidth="3" />
             <motion.path
               d="M150 8 C300 8 310 100 600 100"
@@ -239,21 +240,21 @@ const USTAD_HINTS: { key: I18nKey; hint: Localized }[] = [
     key: "hint.nudge",
     hint: {
       en: "Take a breath. This message wants you to hurry.",
-      "ur-Latn": "Aik gehri saans lein. Yeh message aap ko jaldi karwana chahta hai.",
+      "ur-Latn": "Aik gehri saans lein. Yeh message aap ko jaldi karwana chahta hai.", "ur": "ایک گہری سانس لیں۔ یہ پیغام آپ سے جلدی کروانا چاہتا ہے۔",
     },
   },
   {
     key: "hint.where",
     hint: {
       en: "Look at the top of the chat. Tap the name to see who really sent it.",
-      "ur-Latn": "Chat ke upar dekhein. Naam par tap kar ke dekhein asal mein kis ne bheja.",
+      "ur-Latn": "Chat ke upar dekhein. Naam par tap kar ke dekhein asal mein kis ne bheja.", "ur": "چیٹ کے اوپر دیکھیں۔ نام پر ٹیپ کر کے دیکھیں کہ اصل میں کس نے بھیجا۔",
     },
   },
   {
     key: "hint.explain",
     hint: {
       en: "A real bank never asks for your OTP through a link.",
-      "ur-Latn": "Asli bank link par kabhi OTP nahi mangta.",
+      "ur-Latn": "Asli bank link par kabhi OTP nahi mangta.", "ur": "اصلی بینک کبھی لنک کے ذریعے OTP نہیں مانگتا۔",
     },
   },
 ];
@@ -293,15 +294,7 @@ function Ustad() {
           <p aria-live="polite" className="mt-4 min-h-20 text-base text-ink md:text-lg">
             {hint}
           </p>
-          {canReadAloud(lang) ? (
-          <button
-            type="button"
-            onClick={() => speak(hint)}
-            className="inline-flex min-h-12 items-center text-base text-wine underline underline-offset-4"
-          >
-            {t("common.listen")}
-          </button>
-          ) : null}
+          <ListenButton text={hint} />
         </div>
       </div>
     </section>

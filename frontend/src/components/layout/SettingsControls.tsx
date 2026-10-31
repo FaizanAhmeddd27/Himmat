@@ -2,12 +2,13 @@
 
 /** Language, text size and contrast at full size, for onboarding and settings. */
 
-import { useA11y, type LangKey, type TextSize } from "@/lib/a11y";
+import { useA11y, useHasUrduVoice, type LangKey, type TextSize } from "@/lib/a11y";
 import { useT, type I18nKey } from "@/lib/i18n";
 
 const LANGUAGES: { id: LangKey; label: string }[] = [
   { id: "en", label: "English" },
   { id: "ur-Latn", label: "Roman Urdu" },
+  { id: "ur", label: "اردو" },
 ];
 
 const SIZES: { id: TextSize; label: I18nKey }[] = [
@@ -29,6 +30,7 @@ export function SettingsControls() {
   const setLang = useA11y((s) => s.setLang);
   const setTextSize = useA11y((s) => s.setTextSize);
   const toggleContrast = useA11y((s) => s.toggleContrast);
+  const hasUrduVoice = useHasUrduVoice();
 
   return (
     <div className="space-y-7">
@@ -39,6 +41,7 @@ export function SettingsControls() {
             <button
               key={item.id}
               type="button"
+              lang={item.id}
               aria-pressed={lang === item.id}
               onClick={() => setLang(item.id)}
               className={choice(lang === item.id)}
@@ -47,6 +50,9 @@ export function SettingsControls() {
             </button>
           ))}
         </div>
+        {lang === "ur" && !hasUrduVoice ? (
+          <p className="mt-2 text-base text-muted-foreground">{t("common.noVoice")}</p>
+        ) : null}
       </fieldset>
       <fieldset>
         <legend className="text-lg text-wine">{t("a11y.textSize")}</legend>

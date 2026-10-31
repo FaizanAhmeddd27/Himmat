@@ -8,6 +8,7 @@
 import { motion } from "framer-motion";
 import { Landmark, PhoneOff, ShieldCheck } from "lucide-react";
 import { pick } from "@/lib/a11y";
+import { translate } from "@/lib/i18n";
 import type { Localized } from "@/lib/types";
 import { FakeStatusBar } from "@/components/simulator/PhoneFrame";
 import { asLocalized, inSlot, type ScreenProps } from "@/components/simulator/screen-props";
@@ -24,7 +25,7 @@ export function OfficialCall({ lang, ui, actions, choose }: ScreenProps) {
           <Landmark aria-hidden className="size-8" />
         </span>
         <p className="mt-2 text-center text-lg text-white">{pick(asLocalized(ui.caller), lang)}</p>
-        <p className="text-sm text-white/80">{(ui.number as string | undefined) ?? ""}</p>
+        <p dir="ltr" className="text-sm text-white/80">{(ui.number as string | undefined) ?? ""}</p>
       </div>
       <div className="flex-1 space-y-3 overflow-y-auto px-4">
         {lines.map((line, index) => (
@@ -33,7 +34,7 @@ export function OfficialCall({ lang, ui, actions, choose }: ScreenProps) {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 + index * 0.5, duration: 0.2 }}
-            className="rounded-2xl rounded-tl-sm bg-white/10 px-3.5 py-2.5 text-sm leading-relaxed text-white"
+            className="rounded-2xl rounded-ss-sm bg-white/10 px-3.5 py-2.5 text-sm leading-relaxed text-white"
           >
             {pick(line, lang)}
           </motion.p>
@@ -61,9 +62,9 @@ export function BankAlert({ lang, ui, actions, choose }: ScreenProps) {
   return (
     <div className="flex h-full flex-col bg-[#1F2937] text-white">
       <FakeStatusBar dark />
-      <p className="mt-10 text-center text-5xl tabular-nums text-white">1:05</p>
+      <p dir="ltr" className="mt-10 text-center text-5xl tabular-nums text-white">1:05</p>
       <p className="mt-1 text-center text-sm text-white/80" aria-hidden>
-        Today
+        {translate("phone.today", lang)}
       </p>
       <motion.div
         role="alert"

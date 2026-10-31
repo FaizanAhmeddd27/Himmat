@@ -191,6 +191,7 @@ def apply_session_result(scenario: Scenario, session: SessionRecord) -> None:
             text={
                 "en": f"Practised: {scenario.title['en']}",
                 "ur-Latn": f"Practice ki: {scenario.title.get('ur-Latn', scenario.title['en'])}",
+                "ur": f"پریکٹس کی: {scenario.title.get('ur', scenario.title['en'])}",
             },
         )
     )
@@ -215,6 +216,7 @@ def apply_recovery_result(
             text={
                 "en": "Practised: what to do after sharing an OTP",
                 "ur-Latn": "Practice ki: OTP dene ke baad kya karna hai",
+                "ur": "پریکٹس کی: OTP دینے کے بعد کیا کرنا ہے",
             },
         )
     )
@@ -232,10 +234,12 @@ def recommendation(learner: LearnerRecord) -> dict:
             "title": {
                 "en": "What to do after sharing an OTP",
                 "ur-Latn": "OTP dene ke baad kya karna hai",
+                "ur": "OTP دینے کے بعد کیا کرنا ہے",
             },
             "reason": {
                 "en": "Knowing the first steps can save your money if this ever really happens.",
                 "ur-Latn": "Agar sach mein aisa ho to pehle qadam jaanna aap ke paise bacha sakta hai.",
+                "ur": "اگر سچ میں ایسا ہو تو پہلے قدم جاننا آپ کے پیسے بچا سکتا ہے۔",
             },
         }
     if "fake_bank_message" not in learner.completed_scenarios:
@@ -246,10 +250,12 @@ def recommendation(learner: LearnerRecord) -> dict:
             "title": {
                 "en": "The Fake Bank Message",
                 "ur-Latn": "Nakli Bank ka Message",
+                "ur": "جعلی بینک کا پیغام",
             },
             "reason": {
                 "en": "Scam messages are the most common risk, and this skill has the most room to grow.",
                 "ur-Latn": "Dhoke ke messages sab se aam khatra hain, aur is salahiyat mein sab se zyada gunjaish hai.",
+                "ur": "دھوکے کے پیغام سب سے عام خطرہ ہیں، اور اس صلاحیت میں بڑھنے کی سب سے زیادہ گنجائش ہے۔",
             },
         }
     if not learner.mastery_passed:
@@ -260,10 +266,12 @@ def recommendation(learner: LearnerRecord) -> dict:
             "title": {
                 "en": "The Lucky Draw Message",
                 "ur-Latn": "Inami Qurandazi ka Message",
+                "ur": "انعامی قرعہ اندازی کا پیغام",
             },
             "reason": {
                 "en": "A new situation with no hints shows what you can really do on your own.",
                 "ur-Latn": "Baghair hint naya mauqa dikhata hai ke aap khud kya kar sakti hain.",
+                "ur": "بغیر اشارے کے نیا موقع دکھاتا ہے کہ آپ خود کیا کر سکتی ہیں۔",
             },
         }
     weakest = min(
@@ -278,6 +286,7 @@ def recommendation(learner: LearnerRecord) -> dict:
         "reason": {
             "en": "This is your lowest skill right now. A little more practice will keep it fresh.",
             "ur-Latn": "Abhi yeh aap ki sab se kam salahiyat hai. Thori aur practice se yaad rahegi.",
+            "ur": "ابھی یہ آپ کی سب سے کم صلاحیت ہے۔ تھوڑی اور پریکٹس سے یہ یاد رہے گی۔",
         },
     }
 

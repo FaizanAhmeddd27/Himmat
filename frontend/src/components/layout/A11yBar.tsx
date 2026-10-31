@@ -6,8 +6,14 @@
  */
 
 import { Contrast, Languages } from "lucide-react";
-import { useA11y, type TextSize } from "@/lib/a11y";
+import { useA11y, type LangKey, type TextSize } from "@/lib/a11y";
 import { useT } from "@/lib/i18n";
+
+const LANGUAGES: { id: LangKey; label: string }[] = [
+  { id: "en", label: "English" },
+  { id: "ur-Latn", label: "Roman Urdu" },
+  { id: "ur", label: "اردو" },
+];
 
 const SIZES: { id: TextSize; glyph: string; px: string }[] = [
   { id: "normal", glyph: "A", px: "18px" },
@@ -31,14 +37,21 @@ export function A11yControls() {
 
   return (
     <div className="flex flex-wrap items-center gap-x-1" role="group" aria-label={t("a11y.settings")}>
-      <button
-        type="button"
-        onClick={() => setLang(lang === "en" ? "ur-Latn" : "en")}
-        className={`${control} ${idle} gap-1.5`}
-      >
-        <Languages aria-hidden className="size-5" />
-        {t("a11y.switchLang")}
-      </button>
+      <div className="flex items-center gap-x-0.5" role="group" aria-label={t("settings.language")}>
+        <Languages aria-hidden className="mx-1 size-5 text-wine" />
+        {LANGUAGES.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            lang={item.id}
+            onClick={() => setLang(item.id)}
+            aria-pressed={lang === item.id}
+            className={`${control} whitespace-nowrap ${lang === item.id ? active : idle}`}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
 
       <div className="flex items-center" role="group" aria-label={t("a11y.textSize")}>
         {SIZES.map((size) => (
@@ -46,6 +59,7 @@ export function A11yControls() {
             key={size.id}
             type="button"
             onClick={() => setTextSize(size.id)}
+            dir="ltr"
             aria-pressed={textSize === size.id}
             aria-label={`${t("a11y.textSize")} ${size.px}`}
             className={`${control} min-w-11 ${textSize === size.id ? active : idle}`}
@@ -63,7 +77,7 @@ export function A11yControls() {
         className={`${control} min-w-12 gap-1.5 ${highContrast ? active : idle}`}
       >
         <Contrast aria-hidden className="size-5" />
-        <span className="hidden lg:inline">{t("a11y.contrast")}</span>
+        <span className="hidden 2xl:inline">{t("a11y.contrast")}</span>
       </button>
     </div>
   );

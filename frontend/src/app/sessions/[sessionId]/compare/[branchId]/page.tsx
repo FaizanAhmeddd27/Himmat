@@ -45,7 +45,7 @@ function Column({
         {outcome ? <OutcomeBead outcome={outcome} lang={lang} tone={tone} /> : null}
       </Thread>
       {outcome?.practice_balance != null ? (
-        <p className="mt-5 pl-12">
+        <p className="mt-5 ps-12">
           <span className="block text-base text-muted-foreground">{t("compare.balance")}</span>
           <span className={`block text-3xl tabular-nums ${tone === "wine" ? "text-wine" : "text-safe"}`}>
             {money(outcome.practice_balance)}
@@ -110,23 +110,23 @@ function Compare() {
 
           {/* The fork: runs from the shared thread to the second column. */}
           <div aria-hidden className="relative -mt-4 mb-1 hidden h-24 md:block">
-            <span className="absolute inset-y-0 left-[15px] w-0.5 bg-wine" />
-            <svg
-              className="absolute inset-y-0 left-4 h-full w-[calc(50%+16px)] overflow-visible"
+            <span className="absolute inset-y-0 start-[15px] w-0.5 bg-wine" />
+            <motion.svg
+              className="absolute inset-y-0 start-4 h-full w-[calc(50%+16px)] overflow-visible rtl:-scale-x-100"
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
+              initial={{ clipPath: "inset(0 100% 0 0)" }}
+              animate={{ clipPath: "inset(0 0% 0 0)" }}
+              transition={{ duration: 0.7, ease: "easeInOut", delay: 0.2 }}
             >
-              <motion.path
+              <path
                 d="M0 0 C0 90, 100 10, 100 100"
                 fill="none"
                 stroke="var(--safe)"
                 strokeWidth="2"
                 vectorEffect="non-scaling-stroke"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: 0.7, ease: "easeInOut", delay: 0.2 }}
               />
-            </svg>
+            </motion.svg>
           </div>
 
           <div className="grid gap-10 md:grid-cols-2 md:gap-8">

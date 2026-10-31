@@ -135,7 +135,8 @@ function Lab() {
                 <p key={change.skill} className="mt-6 flex flex-wrap justify-between gap-x-4 text-lg text-ink">
                   <span>{pick(SKILL_NAMES[change.skill], lang)}</span>
                   <span className="tabular-nums text-wine">
-                    {Math.round(change.before)}% {t("common.to")} {Math.round(change.after)}%
+                    <span dir="ltr">{Math.round(change.before)}%</span> {t("common.to")}{" "}
+                      <span dir="ltr">{Math.round(change.after)}%</span>
                   </span>
                 </p>
               ))}
@@ -153,7 +154,7 @@ function Lab() {
                   }}
                   className={result.passed ? "btn-secondary" : "btn-primary"}
                 >
-                  <RotateCcw aria-hidden className="mr-2 size-5" />
+                  <RotateCcw aria-hidden className="me-2 size-5" />
                   {t("recovery.again")}
                 </button>
                 <Link href="/digital-dna" className="btn-secondary">

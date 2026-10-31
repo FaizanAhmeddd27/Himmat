@@ -5,6 +5,7 @@
  * Persists to localStorage and mirrors state onto <html data-*> attributes.
  */
 
+import { useSyncExternalStore } from "react";
 import { create } from "zustand";
 import type { LangKey, Localized } from "./types";
 
@@ -30,6 +31,7 @@ function apply(lang: LangKey, textSize: TextSize, highContrast: boolean) {
   html.dataset.text = textSize;
   html.dataset.contrast = highContrast ? "high" : "normal";
   html.lang = lang;
+  html.dir = lang === "ur" ? "rtl" : "ltr";
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ lang, textSize, highContrast }));
   } catch {
@@ -48,7 +50,7 @@ export const useA11y = create<A11yState>((set, get) => ({
     } catch {
       // Unreadable settings: fall back to the defaults below.
     }
-    const lang = saved.lang === "ur-Latn" ? "ur-Latn" : "en";
+    const lang = saved.lang === "ur-Latn" || saved.lang === "ur" ? saved.lang : "en";
     const textSize =
       saved.textSize === "normal" || saved.textSize === "xlarge" ? saved.textSize : "large";
     const highContrast = Boolean(saved.highContrast);
@@ -76,16 +78,32 @@ export function pick(map: Localized | null | undefined, lang: LangKey): string {
   return map[lang] ?? map.en ?? "";
 }
 
-/** An English voice cannot pronounce Roman Urdu, so read-aloud stays off for it. */
-export function canReadAloud(lang: LangKey): boolean {
-  return lang === "en";
+function urduVoice(): SpeechSynthesisVoice | undefined {
+  if (typeof window === "undefined" || !window.speechSynthesis) return undefined;
+  return window.speechSynthesis.getVoices().find((voice) => voice.lang.toLowerCase().startsWith("ur"));
+}
+
+function subscribeToVoices(onChange: () => void) {
+  const synth = typeof window === "undefined" ? undefined : window.speechSynthesis;
+  synth?.addEventListener("voiceschanged", onChange);
+  return () => synth?.removeEventListener("voiceschanged", onChange);
+}
+
+/** Browsers load voices late, so this updates once the list arrives. */
+export function useHasUrduVoice(): boolean {
+  return useSyncExternalStore(
+    subscribeToVoices,
+    () => Boolean(urduVoice()),
+    () => false,
+  );
 }
 
 /** Read-aloud helper (UI_UX §5.4.1). */
-export function speak(text: string) {
+export function speak(text: string, lang: LangKey) {
   if (typeof window === "undefined" || !window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en";
+  utterance.lang = lang === "ur" ? "ur-PK" : "en";
+  if (lang === "ur") utterance.voice = urduVoice() ?? null;
   window.speechSynthesis.speak(utterance);
 }

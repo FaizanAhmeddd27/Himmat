@@ -21,6 +21,7 @@ const urdu = Noto_Nastaliq_Urdu({
   subsets: ["arabic"],
   variable: "--font-urdu",
   display: "swap",
+  preload: false, // A large font: only fetched when Urdu is actually on screen.
 });
 
 export const metadata: Metadata = {

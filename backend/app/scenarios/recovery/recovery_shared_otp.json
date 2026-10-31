@@ -3,11 +3,13 @@
   "skill": "account_recovery",
   "title": {
     "en": "You shared your OTP. What now?",
-    "ur-Latn": "Aap ne OTP de diya. Ab kya karein?"
+    "ur-Latn": "Aap ne OTP de diya. Ab kya karein?",
+    "ur": "آپ نے OTP دے دیا۔ اب کیا کریں؟"
   },
   "intro": {
     "en": "It can happen to anyone, and quick steps can often still save your money. Tap the steps you would take, in the order you would take them. Leave out anything you would not do.",
-    "ur-Latn": "Aisa kisi ke saath bhi ho sakta hai, aur jaldi uthaye qadam aksar paise bacha lete hain. Jo qadam aap uthayengi unhein usi tarteeb se tap karein. Jo nahi karengi use chhor dein."
+    "ur-Latn": "Aisa kisi ke saath bhi ho sakta hai, aur jaldi uthaye qadam aksar paise bacha lete hain. Jo qadam aap uthayengi unhein usi tarteeb se tap karein. Jo nahi karengi use chhor dein.",
+    "ur": "ایسا کسی کے ساتھ بھی ہو سکتا ہے، اور جلدی اٹھائے گئے قدم اکثر پیسے بچا لیتے ہیں۔ جو قدم آپ اٹھائیں گی انہیں اسی ترتیب سے ٹیپ کریں۔ جو نہیں کریں گی اسے چھوڑ دیں۔"
   },
   "cards": [
     {
@@ -15,11 +17,13 @@
       "harmful": true,
       "label": {
         "en": "Message the sender and ask for the money back",
-        "ur-Latn": "Bhejne wale ko message kar ke paise wapis mangein"
+        "ur-Latn": "Bhejne wale ko message kar ke paise wapis mangein",
+        "ur": "بھیجنے والے کو پیغام کر کے پیسے واپس مانگیں"
       },
       "explain": {
         "en": "The sender will only ask for more. Do not contact them again.",
-        "ur-Latn": "Woh sirf aur mangega. Us se dobara rabta na karein."
+        "ur-Latn": "Woh sirf aur mangega. Us se dobara rabta na karein.",
+        "ur": "وہ صرف مزید مانگے گا۔ اس سے دوبارہ رابطہ نہ کریں۔"
       }
     },
     {
@@ -28,11 +32,13 @@
       "critical": true,
       "label": {
         "en": "Call the helpline printed on your bank card",
-        "ur-Latn": "Bank card par likhe helpline number par call karein"
+        "ur-Latn": "Bank card par likhe helpline number par call karein",
+        "ur": "بینک کارڈ پر لکھی ہیلپ لائن پر کال کریں"
       },
       "explain": {
         "en": "The bank can often stop or reverse a transfer if it hears from you quickly, so this comes straight after you stop.",
-        "ur-Latn": "Agar bank ko jaldi pata chale to woh aksar paise rok ya wapis kar sakta hai, is liye yeh rukne ke foran baad aata hai."
+        "ur-Latn": "Agar bank ko jaldi pata chale to woh aksar paise rok ya wapis kar sakta hai, is liye yeh rukne ke foran baad aata hai.",
+        "ur": "اگر بینک کو جلدی پتا چلے تو وہ اکثر رقم روک یا واپس کر سکتا ہے، اس لیے یہ رکنے کے فوراً بعد آتا ہے۔"
       }
     },
     {
@@ -40,11 +46,13 @@
       "rank": 4,
       "label": {
         "en": "Change your banking app password",
-        "ur-Latn": "Banking app ka password badlein"
+        "ur-Latn": "Banking app ka password badlein",
+        "ur": "بینکنگ ایپ کا پاس ورڈ بدلیں"
       },
       "explain": {
         "en": "This locks the door again, once the bank has secured the account.",
-        "ur-Latn": "Bank ke account mehfooz karne ke baad yeh darwaza dobara band kar deta hai."
+        "ur-Latn": "Bank ke account mehfooz karne ke baad yeh darwaza dobara band kar deta hai.",
+        "ur": "بینک کے اکاؤنٹ محفوظ کرنے کے بعد یہ دروازہ دوبارہ بند کر دیتا ہے۔"
       }
     },
     {
@@ -52,11 +60,13 @@
       "harmful": true,
       "label": {
         "en": "Wait a few days to see what happens",
-        "ur-Latn": "Kuch din intezar kar ke dekhein kya hota hai"
+        "ur-Latn": "Kuch din intezar kar ke dekhein kya hota hai",
+        "ur": "چند دن انتظار کر کے دیکھیں کیا ہوتا ہے"
       },
       "explain": {
         "en": "Every hour matters here. Waiting makes the money harder to get back.",
-        "ur-Latn": "Yahan har ghanta ahem hai. Intezar se paise wapis milna mushkil ho jata hai."
+        "ur-Latn": "Yahan har ghanta ahem hai. Intezar se paise wapis milna mushkil ho jata hai.",
+        "ur": "یہاں ہر گھنٹہ اہم ہے۔ انتظار سے پیسے واپس ملنا مشکل ہو جاتا ہے۔"
       }
     },
     {
@@ -65,11 +75,13 @@
       "critical": true,
       "label": {
         "en": "Stop: close the page and do not reply",
-        "ur-Latn": "Rukein: page band karein aur jawab na dein"
+        "ur-Latn": "Rukein: page band karein aur jawab na dein",
+        "ur": "رکیں: صفحہ بند کریں اور جواب نہ دیں"
       },
       "explain": {
         "en": "Stopping first means nothing more can be taken from you on that page.",
-        "ur-Latn": "Pehle rukne se us page par aap se mazeed kuch nahi liya ja sakta."
+        "ur-Latn": "Pehle rukne se us page par aap se mazeed kuch nahi liya ja sakta.",
+        "ur": "پہلے رکنے سے اس صفحے پر آپ سے مزید کچھ نہیں لیا جا سکتا۔"
       }
     },
     {
@@ -77,11 +89,13 @@
       "rank": 5,
       "label": {
         "en": "Report it to the national cybercrime helpline",
-        "ur-Latn": "National cybercrime helpline par report karein"
+        "ur-Latn": "National cybercrime helpline par report karein",
+        "ur": "قومی سائبر کرائم ہیلپ لائن پر رپورٹ کریں"
       },
       "explain": {
         "en": "A report creates a record and helps protect other people. Do this after the bank knows.",
-        "ur-Latn": "Report se record banta hai aur doosre bhi bachte hain. Bank ko batane ke baad karein."
+        "ur-Latn": "Report se record banta hai aur doosre bhi bachte hain. Bank ko batane ke baad karein.",
+        "ur": "رپورٹ سے ریکارڈ بنتا ہے اور دوسرے لوگ بھی بچتے ہیں۔ بینک کو بتانے کے بعد کریں۔"
       }
     },
     {
@@ -89,11 +103,13 @@
       "harmful": true,
       "label": {
         "en": "Pay a recovery agent who messages you offering help",
-        "ur-Latn": "Madad ki peshkash karne wale recovery agent ko paise dein"
+        "ur-Latn": "Madad ki peshkash karne wale recovery agent ko paise dein",
+        "ur": "مدد کی پیشکش کرنے والے ریکوری ایجنٹ کو پیسے دیں"
       },
       "explain": {
         "en": "This is a second scam aimed at people who were just scammed. Your bank never charges for this.",
-        "ur-Latn": "Yeh dhoka khaye logon ke liye doosra dhoka hai. Aap ka bank is ke paise nahi leta."
+        "ur-Latn": "Yeh dhoka khaye logon ke liye doosra dhoka hai. Aap ka bank is ke paise nahi leta.",
+        "ur": "یہ دھوکا کھائے ہوئے لوگوں کے لیے دوسرا دھوکا ہے۔ آپ کا بینک اس کے پیسے نہیں لیتا۔"
       }
     },
     {
@@ -102,11 +118,13 @@
       "critical": true,
       "label": {
         "en": "Ask the bank to block your card and reset your PIN",
-        "ur-Latn": "Bank se card block aur PIN reset karwayein"
+        "ur-Latn": "Bank se card block aur PIN reset karwayein",
+        "ur": "بینک سے کارڈ بلاک اور PIN تبدیل کروائیں"
       },
       "explain": {
         "en": "Do this while you are on the call, so nobody can use the account any more.",
-        "ur-Latn": "Call ke dauran hi yeh karwayein, taake koi aur account istemal na kar sake."
+        "ur-Latn": "Call ke dauran hi yeh karwayein, taake koi aur account istemal na kar sake.",
+        "ur": "کال کے دوران ہی یہ کروائیں، تاکہ کوئی اور اکاؤنٹ استعمال نہ کر سکے۔"
       }
     }
   ]

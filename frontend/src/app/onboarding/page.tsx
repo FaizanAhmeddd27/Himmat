@@ -117,7 +117,7 @@ function Onboarding() {
                 onClick={() => setStep(step === 0 ? "setup" : step - 1)}
                 className="mt-4 inline-flex min-h-12 items-center gap-2 text-base text-wine underline-offset-4 hover:underline"
               >
-                <ArrowLeft aria-hidden className="size-5" />
+                <ArrowLeft aria-hidden className="size-5 rtl:-scale-x-100" />
                 {t("onboarding.back")}
               </button>
             </div>

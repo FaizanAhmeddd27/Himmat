@@ -2,17 +2,27 @@
   "id": "fake_bank_message",
   "version": 2,
   "kind": "practice",
-  "title": { "en": "The Fake Bank Message", "ur-Latn": "Nakli Bank ka Message" },
+  "title": {
+    "en": "The Fake Bank Message",
+    "ur-Latn": "Nakli Bank ka Message",
+    "ur": "جعلی بینک کا پیغام"
+  },
   "summary": {
     "en": "A message says your SafeTrust Bank account will be blocked at 5 PM unless you confirm a code. What do you do?",
-    "ur-Latn": "Message aata hai ke aap ka SafeTrust Bank account sham 5 baje band ho jayega agar code confirm na kiya. Aap kya karengi?"
+    "ur-Latn": "Message aata hai ke aap ka SafeTrust Bank account sham 5 baje band ho jayega agar code confirm na kiya. Aap kya karengi?",
+    "ur": "پیغام آتا ہے کہ اگر آپ نے کوڈ کی تصدیق نہ کی تو آپ کا SafeTrust Bank اکاؤنٹ شام 5 بجے بند ہو جائے گا۔ آپ کیا کریں گی؟"
   },
-  "skills": ["scam_detection", "otp_safety", "reporting"],
+  "skills": [
+    "scam_detection",
+    "otp_safety",
+    "reporting"
+  ],
   "difficulty": 1,
   "is_active": true,
   "replay_start": {
     "en": "A message arrived saying your account would be blocked at 5 PM.",
-    "ur-Latn": "Message aaya ke aap ka account sham 5 baje band ho jayega."
+    "ur-Latn": "Message aaya ke aap ka account sham 5 baje band ho jayega.",
+    "ur": "پیغام آیا کہ آپ کا اکاؤنٹ شام 5 بجے بند ہو جائے گا۔"
   },
   "initial_node": "n_msg",
   "initial_state": {
@@ -29,7 +39,11 @@
       "ui": {
         "component": "ChatLine/ChatThread",
         "props": {
-          "sender_name": { "en": "SafeTrust Alert", "ur-Latn": "SafeTrust Alert" },
+          "sender_name": {
+            "en": "SafeTrust Alert",
+            "ur-Latn": "SafeTrust Alert",
+            "ur": "SafeTrust Alert"
+          },
           "sender_number": "+92 300 0000000",
           "avatar": "bank",
           "messages": [
@@ -37,7 +51,8 @@
               "from": "sender",
               "text": {
                 "en": "URGENT: Your SafeTrust account will be BLOCKED today at 5 PM. Someone tried your password. Confirm your OTP code now to keep your account safe.",
-                "ur-Latn": "FORI: Aap ka SafeTrust account aaj sham 5 baje BAND ho jayega. Kisi ne aap ka password try kiya. Account mehfooz rakhne ke liye abhi apna OTP code confirm karein."
+                "ur-Latn": "FORI: Aap ka SafeTrust account aaj sham 5 baje BAND ho jayega. Kisi ne aap ka password try kiya. Account mehfooz rakhne ke liye abhi apna OTP code confirm karein.",
+                "ur": "فوری: آپ کا SafeTrust اکاؤنٹ آج شام 5 بجے بند ہو جائے گا۔ کسی نے آپ کا پاس ورڈ آزمایا ہے۔ اکاؤنٹ محفوظ رکھنے کے لیے ابھی اپنے OTP کوڈ کی تصدیق کریں۔"
               },
               "link": "safetrust-verify.example/secure"
             }
@@ -47,78 +62,132 @@
       "hints": {
         "l1": {
           "en": "Take a breath. This message wants you to hurry. You have all the time you need here.",
-          "ur-Latn": "Aik gehri saans lein. Yeh message aap ko jaldi karwana chahta hai. Yahan aap ke paas poora waqt hai."
+          "ur-Latn": "Aik gehri saans lein. Yeh message aap ko jaldi karwana chahta hai. Yahan aap ke paas poora waqt hai.",
+          "ur": "ایک گہری سانس لیں۔ یہ پیغام آپ سے جلدی کروانا چاہتا ہے۔ یہاں آپ کے پاس پورا وقت ہے۔"
         },
         "l2": {
           "en": "Look at the top of the chat. Tap the name to see who really sent this message.",
-          "ur-Latn": "Chat ke upar dekhein. Naam par tap kar ke dekhein yeh message asal mein kis ne bheja."
+          "ur-Latn": "Chat ke upar dekhein. Naam par tap kar ke dekhein yeh message asal mein kis ne bheja.",
+          "ur": "چیٹ کے اوپر دیکھیں۔ نام پر ٹیپ کر کے دیکھیں کہ یہ پیغام اصل میں کس نے بھیجا۔"
         },
         "l3": {
           "en": "A real bank never asks for your OTP through a link. Check the sender before you tap anything else.",
-          "ur-Latn": "Asli bank link par kabhi OTP nahi mangta. Kuch aur tap karne se pehle bhejne wale ko check karein."
+          "ur-Latn": "Asli bank link par kabhi OTP nahi mangta. Kuch aur tap karne se pehle bhejne wale ko check karein.",
+          "ur": "اصلی بینک کبھی لنک کے ذریعے OTP نہیں مانگتا۔ کچھ اور ٹیپ کرنے سے پہلے بھیجنے والے کو جانچ لیں۔"
         }
       },
       "actions": [
         {
           "id": "check_sender",
           "slot": "sender",
-          "label": { "en": "Check who sent it", "ur-Latn": "Dekhein kis ne bheja" },
-          "effects": { "set": { "checked_sender": true } },
-          "evidence": [{ "skill": "scam_detection", "value": 1.0, "weight": 0.8 }],
+          "label": {
+            "en": "Check who sent it",
+            "ur-Latn": "Dekhein kis ne bheja",
+            "ur": "دیکھیں کس نے بھیجا"
+          },
+          "effects": {
+            "set": {
+              "checked_sender": true
+            }
+          },
+          "evidence": [
+            {
+              "skill": "scam_detection",
+              "value": 1.0,
+              "weight": 0.8
+            }
+          ],
           "tag": "safe",
           "replay": {
             "en": "You stopped and checked who sent the message.",
-            "ur-Latn": "Aap ne ruk kar dekha ke message kis ne bheja."
+            "ur-Latn": "Aap ne ruk kar dekha ke message kis ne bheja.",
+            "ur": "آپ نے رک کر دیکھا کہ پیغام کس نے بھیجا۔"
           },
           "reason": {
             "en": "Checking first takes away the sender's biggest weapon: hurry.",
-            "ur-Latn": "Pehle check karne se bhejne wale ka sab se bara hathiyar, jaldi, khatam ho jata hai."
+            "ur-Latn": "Pehle check karne se bhejne wale ka sab se bara hathiyar, jaldi, khatam ho jata hai.",
+            "ur": "پہلے جانچنے سے بھیجنے والے کا سب سے بڑا ہتھیار، یعنی جلدی، ختم ہو جاتا ہے۔"
           },
           "what_if": {
             "en": "What if I checked the sender first?",
-            "ur-Latn": "Agar main pehle bhejne wale ko check karti?"
+            "ur-Latn": "Agar main pehle bhejne wale ko check karti?",
+            "ur": "اگر میں پہلے بھیجنے والے کو جانچتی تو؟"
           },
           "next": "n_sender"
         },
         {
           "id": "open_link",
           "slot": "link",
-          "label": { "en": "Open the link", "ur-Latn": "Link kholein" },
-          "effects": { "set": { "opened_link": true } },
-          "evidence": [{ "skill": "scam_detection", "value": 0.0, "weight": 1.0 }],
+          "label": {
+            "en": "Open the link",
+            "ur-Latn": "Link kholein",
+            "ur": "لنک کھولیں"
+          },
+          "effects": {
+            "set": {
+              "opened_link": true
+            }
+          },
+          "evidence": [
+            {
+              "skill": "scam_detection",
+              "value": 0.0,
+              "weight": 1.0
+            }
+          ],
           "tag": "risky",
           "replay": {
             "en": "You trusted the message and opened its link.",
-            "ur-Latn": "Aap ne message par bharosa kiya aur link khol liya."
+            "ur-Latn": "Aap ne message par bharosa kiya aur link khol liya.",
+            "ur": "آپ نے پیغام پر بھروسا کیا اور اس کا لنک کھول لیا۔"
           },
           "reason": {
             "en": "The link came from a number you had not checked, and the message was rushing you.",
-            "ur-Latn": "Link aise number se aaya tha jo aap ne check nahi kiya tha, aur message aap ko jaldi karwa raha tha."
+            "ur-Latn": "Link aise number se aaya tha jo aap ne check nahi kiya tha, aur message aap ko jaldi karwa raha tha.",
+            "ur": "لنک ایسے نمبر سے آیا تھا جسے آپ نے جانچا نہیں تھا، اور پیغام آپ سے جلدی کروا رہا تھا۔"
           },
           "what_if": {
             "en": "What if I opened the link?",
-            "ur-Latn": "Agar main link khol leti?"
+            "ur-Latn": "Agar main link khol leti?",
+            "ur": "اگر میں لنک کھول لیتی تو؟"
           },
           "next": "n_fake_page"
         },
         {
           "id": "call_son",
           "slot": "quick",
-          "label": { "en": "Call Bilal (your son)", "ur-Latn": "Bilal (beta) ko call karein" },
-          "effects": { "set": { "called_family": true } },
-          "evidence": [{ "skill": "scam_detection", "value": 0.4, "weight": 0.4 }],
+          "label": {
+            "en": "Call Bilal (your son)",
+            "ur-Latn": "Bilal (beta) ko call karein",
+            "ur": "بلال (بیٹے) کو کال کریں"
+          },
+          "effects": {
+            "set": {
+              "called_family": true
+            }
+          },
+          "evidence": [
+            {
+              "skill": "scam_detection",
+              "value": 0.4,
+              "weight": 0.4
+            }
+          ],
           "tag": "neutral",
           "replay": {
             "en": "You called your son before doing anything.",
-            "ur-Latn": "Aap ne kuch karne se pehle betay ko call ki."
+            "ur-Latn": "Aap ne kuch karne se pehle betay ko call ki.",
+            "ur": "آپ نے کچھ کرنے سے پہلے بیٹے کو کال کی۔"
           },
           "reason": {
             "en": "That kept you safe today. Bilal will not always be free, so it helps to know the signs yourself.",
-            "ur-Latn": "Aaj is se aap mehfooz rahin. Bilal hamesha farigh nahi hoga, is liye nishaniyan khud pehchanna faida deta hai."
+            "ur-Latn": "Aaj is se aap mehfooz rahin. Bilal hamesha farigh nahi hoga, is liye nishaniyan khud pehchanna faida deta hai.",
+            "ur": "آج اس سے آپ محفوظ رہیں۔ بلال ہمیشہ فارغ نہیں ہوگا، اس لیے نشانیاں خود پہچاننا فائدہ مند ہے۔"
           },
           "what_if": {
             "en": "What if I called my son?",
-            "ur-Latn": "Agar main betay ko call karti?"
+            "ur-Latn": "Agar main betay ko call karti?",
+            "ur": "اگر میں بیٹے کو کال کرتی تو؟"
           },
           "next": "n_helped"
         }
@@ -129,33 +198,77 @@
       "ui": {
         "component": "ChatLine/SenderDetails",
         "props": {
-          "sender_name": { "en": "SafeTrust Alert", "ur-Latn": "SafeTrust Alert" },
+          "sender_name": {
+            "en": "SafeTrust Alert",
+            "ur-Latn": "SafeTrust Alert",
+            "ur": "SafeTrust Alert"
+          },
           "sender_number": "+92 300 0000000",
           "rows": [
             {
               "icon": "phone",
-              "label": { "en": "Number", "ur-Latn": "Number" },
-              "value": { "en": "+92 300 0000000, an ordinary mobile number", "ur-Latn": "+92 300 0000000, aik aam mobile number" }
+              "label": {
+                "en": "Number",
+                "ur-Latn": "Number",
+                "ur": "نمبر"
+              },
+              "value": {
+                "en": "+92 300 0000000, an ordinary mobile number",
+                "ur-Latn": "+92 300 0000000, aik aam mobile number",
+                "ur": "ایک عام موبائل نمبر: ⁦+92 300 0000000⁩"
+              }
             },
             {
               "icon": "badge",
-              "label": { "en": "Verified business", "ur-Latn": "Tasdeeq shuda karobar" },
-              "value": { "en": "No badge on this profile", "ur-Latn": "Is profile par koi nishan nahi" }
+              "label": {
+                "en": "Verified business",
+                "ur-Latn": "Tasdeeq shuda karobar",
+                "ur": "تصدیق شدہ کاروبار"
+              },
+              "value": {
+                "en": "No badge on this profile",
+                "ur-Latn": "Is profile par koi nishan nahi",
+                "ur": "اس پروفائل پر کوئی نشان نہیں"
+              }
             },
             {
               "icon": "link",
-              "label": { "en": "Link in the message", "ur-Latn": "Message wala link" },
-              "value": { "en": "safetrust-verify.example", "ur-Latn": "safetrust-verify.example" }
+              "label": {
+                "en": "Link in the message",
+                "ur-Latn": "Message wala link",
+                "ur": "پیغام والا لنک"
+              },
+              "value": {
+                "en": "safetrust-verify.example",
+                "ur-Latn": "safetrust-verify.example",
+                "ur": "safetrust-verify.example"
+              }
             },
             {
               "icon": "card",
-              "label": { "en": "Website printed on your bank card", "ur-Latn": "Bank card par likhi website" },
-              "value": { "en": "safetrustbank.example", "ur-Latn": "safetrustbank.example" }
+              "label": {
+                "en": "Website printed on your bank card",
+                "ur-Latn": "Bank card par likhi website",
+                "ur": "بینک کارڈ پر لکھی ویب سائٹ"
+              },
+              "value": {
+                "en": "safetrustbank.example",
+                "ur-Latn": "safetrustbank.example",
+                "ur": "safetrustbank.example"
+              }
             },
             {
               "icon": "card",
-              "label": { "en": "Helpline printed on your bank card", "ur-Latn": "Bank card par likha helpline number" },
-              "value": { "en": "0800-000-000", "ur-Latn": "0800-000-000" }
+              "label": {
+                "en": "Helpline printed on your bank card",
+                "ur-Latn": "Bank card par likha helpline number",
+                "ur": "بینک کارڈ پر لکھا ہیلپ لائن نمبر"
+              },
+              "value": {
+                "en": "0800-000-000",
+                "ur-Latn": "0800-000-000",
+                "ur": "0800-000-000"
+              }
             }
           ]
         }
@@ -163,78 +276,122 @@
       "hints": {
         "l1": {
           "en": "Read these rows slowly. Does the website in the message match the one on your card?",
-          "ur-Latn": "Yeh lines aaram se parhein. Kya message wali website aap ke card wali website jaisi hai?"
+          "ur-Latn": "Yeh lines aaram se parhein. Kya message wali website aap ke card wali website jaisi hai?",
+          "ur": "یہ سطریں آرام سے پڑھیں۔ کیا پیغام والی ویب سائٹ آپ کے کارڈ والی ویب سائٹ جیسی ہے؟"
         },
         "l2": {
           "en": "Your card has the bank's real helpline on it. You can also block this number from here.",
-          "ur-Latn": "Aap ke card par bank ka asli helpline number likha hai. Aap yahan se yeh number block bhi kar sakti hain."
+          "ur-Latn": "Aap ke card par bank ka asli helpline number likha hai. Aap yahan se yeh number block bhi kar sakti hain.",
+          "ur": "آپ کے کارڈ پر بینک کا اصلی ہیلپ لائن نمبر لکھا ہے۔ آپ یہاں سے یہ نمبر بلاک بھی کر سکتی ہیں۔"
         },
         "l3": {
           "en": "The two websites are different, so this message did not come from your bank. Call the number on your card, or report and block the sender.",
-          "ur-Latn": "Dono websites alag hain, yani yeh message bank se nahi aaya. Card wale number par call karein, ya report aur block karein."
+          "ur-Latn": "Dono websites alag hain, yani yeh message bank se nahi aaya. Card wale number par call karein, ya report aur block karein.",
+          "ur": "دونوں ویب سائٹیں مختلف ہیں، یعنی یہ پیغام آپ کے بینک سے نہیں آیا۔ کارڈ والے نمبر پر کال کریں، یا بھیجنے والے کو رپورٹ اور بلاک کریں۔"
         }
       },
       "actions": [
         {
           "id": "call_bank",
           "slot": "primary",
-          "label": { "en": "Call the helpline on my card", "ur-Latn": "Card wale helpline par call karein" },
-          "effects": { "set": { "called_bank": true } },
-          "evidence": [{ "skill": "scam_detection", "value": 1.0, "weight": 0.8 }],
+          "label": {
+            "en": "Call the helpline on my card",
+            "ur-Latn": "Card wale helpline par call karein",
+            "ur": "کارڈ والی ہیلپ لائن پر کال کریں"
+          },
+          "effects": {
+            "set": {
+              "called_bank": true
+            }
+          },
+          "evidence": [
+            {
+              "skill": "scam_detection",
+              "value": 1.0,
+              "weight": 0.8
+            }
+          ],
           "tag": "safe",
           "replay": {
             "en": "You called the bank on the number printed on your card.",
-            "ur-Latn": "Aap ne card par likhe number se bank ko call ki."
+            "ur-Latn": "Aap ne card par likhe number se bank ko call ki.",
+            "ur": "آپ نے کارڈ پر لکھے نمبر سے بینک کو کال کی۔"
           },
           "reason": {
             "en": "That number comes from your bank, not from the message.",
-            "ur-Latn": "Yeh number aap ke bank ka hai, message ka nahi."
+            "ur-Latn": "Yeh number aap ke bank ka hai, message ka nahi.",
+            "ur": "یہ نمبر آپ کے بینک کا ہے، پیغام کا نہیں۔"
           },
           "what_if": {
             "en": "What if I called the bank on the number on my card?",
-            "ur-Latn": "Agar main card wale number par bank ko call karti?"
+            "ur-Latn": "Agar main card wale number par bank ko call karti?",
+            "ur": "اگر میں کارڈ والے نمبر پر بینک کو کال کرتی تو؟"
           },
           "next": "n_bank_call"
         },
         {
           "id": "report_block",
           "slot": "primary",
-          "label": { "en": "Report and block", "ur-Latn": "Report aur block karein" },
-          "effects": { "set": { "reported": true } },
-          "evidence": [{ "skill": "reporting", "value": 1.0, "weight": 1.0 }],
+          "label": {
+            "en": "Report and block",
+            "ur-Latn": "Report aur block karein",
+            "ur": "رپورٹ اور بلاک کریں"
+          },
+          "effects": {
+            "set": {
+              "reported": true
+            }
+          },
+          "evidence": [
+            {
+              "skill": "reporting",
+              "value": 1.0,
+              "weight": 1.0
+            }
+          ],
           "tag": "safe",
           "replay": {
             "en": "You reported the sender and blocked the number.",
-            "ur-Latn": "Aap ne bhejne wale ko report aur block kiya."
+            "ur-Latn": "Aap ne bhejne wale ko report aur block kiya.",
+            "ur": "آپ نے بھیجنے والے کو رپورٹ کیا اور نمبر بلاک کر دیا۔"
           },
           "reason": {
             "en": "The number cannot reach you again, and others are protected too.",
-            "ur-Latn": "Yeh number ab aap tak nahi pohanch sakta, aur doosre bhi bach jate hain."
+            "ur-Latn": "Yeh number ab aap tak nahi pohanch sakta, aur doosre bhi bach jate hain.",
+            "ur": "یہ نمبر اب آپ تک نہیں پہنچ سکتا، اور دوسرے بھی محفوظ رہتے ہیں۔"
           },
           "what_if": {
             "en": "What if I reported and blocked the sender?",
-            "ur-Latn": "Agar main report aur block karti?"
+            "ur-Latn": "Agar main report aur block karti?",
+            "ur": "اگر میں رپورٹ اور بلاک کرتی تو؟"
           },
           "next": "n_safe"
         },
         {
           "id": "go_back",
           "slot": "back",
-          "label": { "en": "Back to the message", "ur-Latn": "Wapis message par" },
+          "label": {
+            "en": "Back to the message",
+            "ur-Latn": "Wapis message par",
+            "ur": "واپس پیغام پر"
+          },
           "effects": {},
           "evidence": [],
           "tag": "neutral",
           "replay": {
             "en": "You went back to look at the message again.",
-            "ur-Latn": "Aap dobara message dekhne wapis gayin."
+            "ur-Latn": "Aap dobara message dekhne wapis gayin.",
+            "ur": "آپ پیغام دوبارہ دیکھنے واپس گئیں۔"
           },
           "reason": {
             "en": "Looking twice costs nothing.",
-            "ur-Latn": "Do dafa dekhne mein koi nuqsan nahi."
+            "ur-Latn": "Do dafa dekhne mein koi nuqsan nahi.",
+            "ur": "دو بار دیکھنے میں کوئی نقصان نہیں۔"
           },
           "what_if": {
             "en": "What if I went back to the message?",
-            "ur-Latn": "Agar main wapis message par jati?"
+            "ur-Latn": "Agar main wapis message par jati?",
+            "ur": "اگر میں واپس پیغام پر جاتی تو؟"
           },
           "next": "n_msg"
         }
@@ -245,20 +402,27 @@
       "ui": {
         "component": "Phone/OfficialCall",
         "props": {
-          "caller": { "en": "SafeTrust Bank helpline", "ur-Latn": "SafeTrust Bank helpline" },
+          "caller": {
+            "en": "SafeTrust Bank helpline",
+            "ur-Latn": "SafeTrust Bank helpline",
+            "ur": "SafeTrust Bank ہیلپ لائن"
+          },
           "number": "0800-000-000",
           "lines": [
             {
               "en": "Your account is not blocked. Nobody from the bank sent that message.",
-              "ur-Latn": "Aap ka account band nahi hua. Bank ne yeh message nahi bheja."
+              "ur-Latn": "Aap ka account band nahi hua. Bank ne yeh message nahi bheja.",
+              "ur": "آپ کا اکاؤنٹ بند نہیں ہوا۔ بینک نے یہ پیغام نہیں بھیجا۔"
             },
             {
               "en": "We never ask for an OTP on a link, on a call, or in a message.",
-              "ur-Latn": "Hum kabhi link, call ya message par OTP nahi mangte."
+              "ur-Latn": "Hum kabhi link, call ya message par OTP nahi mangte.",
+              "ur": "ہم کبھی لنک، کال یا پیغام میں OTP نہیں مانگتے۔"
             },
             {
               "en": "Please report and block that number.",
-              "ur-Latn": "Meherbani se us number ko report aur block kar dein."
+              "ur-Latn": "Meherbani se us number ko report aur block kar dein.",
+              "ur": "براہ کرم اس نمبر کو رپورٹ اور بلاک کر دیں۔"
             }
           ]
         }
@@ -266,32 +430,51 @@
       "hints": {
         "l1": {
           "en": "The bank has told you what is true. One small step is left.",
-          "ur-Latn": "Bank ne sach bata diya. Bas aik chhota qadam baqi hai."
+          "ur-Latn": "Bank ne sach bata diya. Bas aik chhota qadam baqi hai.",
+          "ur": "بینک نے آپ کو سچ بتا دیا۔ بس ایک چھوٹا قدم باقی ہے۔"
         },
         "l2": {
           "en": "The bank asked you to do something about that number.",
-          "ur-Latn": "Bank ne us number ke baare mein kuch karne ko kaha hai."
+          "ur-Latn": "Bank ne us number ke baare mein kuch karne ko kaha hai.",
+          "ur": "بینک نے اس نمبر کے بارے میں کچھ کرنے کو کہا ہے۔"
         },
         "l3": {
           "en": "End the call, then report and block the sender.",
-          "ur-Latn": "Call band karein, phir report aur block karein."
+          "ur-Latn": "Call band karein, phir report aur block karein.",
+          "ur": "کال بند کریں، پھر بھیجنے والے کو رپورٹ اور بلاک کریں۔"
         }
       },
       "actions": [
         {
           "id": "report_after_call",
           "slot": "primary",
-          "label": { "en": "End call, report and block", "ur-Latn": "Call band karein, report aur block karein" },
-          "effects": { "set": { "reported": true } },
-          "evidence": [{ "skill": "reporting", "value": 1.0, "weight": 1.0 }],
+          "label": {
+            "en": "End call, report and block",
+            "ur-Latn": "Call band karein, report aur block karein",
+            "ur": "کال بند کریں، رپورٹ اور بلاک کریں"
+          },
+          "effects": {
+            "set": {
+              "reported": true
+            }
+          },
+          "evidence": [
+            {
+              "skill": "reporting",
+              "value": 1.0,
+              "weight": 1.0
+            }
+          ],
           "tag": "safe",
           "replay": {
             "en": "You reported and blocked the sender after the call.",
-            "ur-Latn": "Call ke baad aap ne report aur block kiya."
+            "ur-Latn": "Call ke baad aap ne report aur block kiya.",
+            "ur": "کال کے بعد آپ نے بھیجنے والے کو رپورٹ اور بلاک کیا۔"
           },
           "reason": {
             "en": "You used the bank's real number, then closed the door on the sender.",
-            "ur-Latn": "Aap ne bank ka asli number istemal kiya, phir bhejne wale ka rasta band kar diya."
+            "ur-Latn": "Aap ne bank ka asli number istemal kiya, phir bhejne wale ka rasta band kar diya.",
+            "ur": "آپ نے بینک کا اصلی نمبر استعمال کیا، پھر بھیجنے والے کا راستہ بند کر دیا۔"
           },
           "next": "n_safe"
         }
@@ -302,75 +485,123 @@
       "ui": {
         "component": "ChatLine/FakeVerifyPage",
         "props": {
-          "page_title": { "en": "SafeTrust Secure Verify", "ur-Latn": "SafeTrust Secure Verify" },
+          "page_title": {
+            "en": "SafeTrust Secure Verify",
+            "ur-Latn": "SafeTrust Secure Verify",
+            "ur": "SafeTrust Secure Verify"
+          },
           "page_body": {
             "en": "Enter the 6-digit OTP we sent you to stop your account from being blocked.",
-            "ur-Latn": "Account band hone se rokne ke liye 6 hindason ka OTP darj karein jo hum ne bheja hai."
+            "ur-Latn": "Account band hone se rokne ke liye 6 hindason ka OTP darj karein jo hum ne bheja hai.",
+            "ur": "اکاؤنٹ بند ہونے سے روکنے کے لیے وہ 6 ہندسوں کا OTP درج کریں جو ہم نے بھیجا ہے۔"
           },
           "page_url": "safetrust-verify.example/secure",
-          "field_label": { "en": "OTP code", "ur-Latn": "OTP code" },
+          "field_label": {
+            "en": "OTP code",
+            "ur-Latn": "OTP code",
+            "ur": "OTP کوڈ"
+          },
           "otp_sms": {
             "en": "SafeTrust: your OTP is 246810. Do not share this code with anyone.",
-            "ur-Latn": "SafeTrust: aap ka OTP 246810 hai. Yeh code kisi ko na batayein."
+            "ur-Latn": "SafeTrust: aap ka OTP 246810 hai. Yeh code kisi ko na batayein.",
+            "ur": "SafeTrust: آپ کا OTP 246810 ہے۔ یہ کوڈ کسی کو نہ بتائیں۔"
           }
         }
       },
       "hints": {
         "l1": {
           "en": "This page is inside the practice world. Nothing you type here is real.",
-          "ur-Latn": "Yeh page practice world ke andar hai. Yahan jo bhi likhein woh asli nahi hai."
+          "ur-Latn": "Yeh page practice world ke andar hai. Yahan jo bhi likhein woh asli nahi hai.",
+          "ur": "یہ صفحہ پریکٹس کی دنیا کے اندر ہے۔ یہاں جو بھی لکھیں وہ اصلی نہیں۔"
         },
         "l2": {
           "en": "Read the small message at the top of the phone. What does it tell you to do with the code?",
-          "ur-Latn": "Phone ke upar wala chhota message parhein. Woh code ke baare mein kya kehta hai?"
+          "ur-Latn": "Phone ke upar wala chhota message parhein. Woh code ke baare mein kya kehta hai?",
+          "ur": "فون کے اوپر والا چھوٹا پیغام پڑھیں۔ وہ کوڈ کے بارے میں کیا کہتا ہے؟"
         },
         "l3": {
           "en": "Never type an OTP on a page that came from a message. Closing this page is the safe choice.",
-          "ur-Latn": "OTP kabhi us page par na likhein jo message se aaya ho. Page band karna mehfooz faisla hai."
+          "ur-Latn": "OTP kabhi us page par na likhein jo message se aaya ho. Page band karna mehfooz faisla hai.",
+          "ur": "OTP کبھی اس صفحے پر نہ لکھیں جو پیغام سے آیا ہو۔ صفحہ بند کرنا محفوظ فیصلہ ہے۔"
         }
       },
       "actions": [
         {
           "id": "enter_otp",
           "slot": "primary",
-          "label": { "en": "Confirm code", "ur-Latn": "Code confirm karein" },
+          "label": {
+            "en": "Confirm code",
+            "ur-Latn": "Code confirm karein",
+            "ur": "کوڈ کی تصدیق کریں"
+          },
           "needs_input": "otp",
           "expected_input": "246810",
-          "effects": { "set": { "shared_otp": true, "practice_balance": 1500 } },
-          "evidence": [{ "skill": "otp_safety", "value": 0.0, "weight": 1.0 }],
+          "effects": {
+            "set": {
+              "shared_otp": true,
+              "practice_balance": 1500
+            }
+          },
+          "evidence": [
+            {
+              "skill": "otp_safety",
+              "value": 0.0,
+              "weight": 1.0
+            }
+          ],
           "tag": "risky",
           "replay": {
             "en": "You typed your practice OTP into the page.",
-            "ur-Latn": "Aap ne apna practice OTP page par likh diya."
+            "ur-Latn": "Aap ne apna practice OTP page par likh diya.",
+            "ur": "آپ نے اپنا پریکٹس OTP صفحے پر لکھ دیا۔"
           },
           "reason": {
             "en": "An OTP is the last key to your account. This page was not your bank.",
-            "ur-Latn": "OTP account ki aakhri chaabi hai. Yeh page aap ka bank nahi tha."
+            "ur-Latn": "OTP account ki aakhri chaabi hai. Yeh page aap ka bank nahi tha.",
+            "ur": "OTP آپ کے اکاؤنٹ کی آخری چابی ہے۔ یہ صفحہ آپ کا بینک نہیں تھا۔"
           },
           "what_if": {
             "en": "What if I typed the code?",
-            "ur-Latn": "Agar main code likh deti?"
+            "ur-Latn": "Agar main code likh deti?",
+            "ur": "اگر میں کوڈ لکھ دیتی تو؟"
           },
           "next": "n_debit"
         },
         {
           "id": "close_page",
           "slot": "close",
-          "label": { "en": "Close this page", "ur-Latn": "Yeh page band karein" },
-          "effects": { "set": { "closed_page": true } },
-          "evidence": [{ "skill": "otp_safety", "value": 1.0, "weight": 0.8 }],
+          "label": {
+            "en": "Close this page",
+            "ur-Latn": "Yeh page band karein",
+            "ur": "یہ صفحہ بند کریں"
+          },
+          "effects": {
+            "set": {
+              "closed_page": true
+            }
+          },
+          "evidence": [
+            {
+              "skill": "otp_safety",
+              "value": 1.0,
+              "weight": 0.8
+            }
+          ],
           "tag": "safe",
           "replay": {
             "en": "You closed the page without typing the code.",
-            "ur-Latn": "Aap ne code likhe baghair page band kar diya."
+            "ur-Latn": "Aap ne code likhe baghair page band kar diya.",
+            "ur": "آپ نے کوڈ لکھے بغیر صفحہ بند کر دیا۔"
           },
           "reason": {
             "en": "The page could do nothing without your code.",
-            "ur-Latn": "Aap ke code ke baghair yeh page kuch nahi kar sakta tha."
+            "ur-Latn": "Aap ke code ke baghair yeh page kuch nahi kar sakta tha.",
+            "ur": "آپ کے کوڈ کے بغیر یہ صفحہ کچھ نہیں کر سکتا تھا۔"
           },
           "what_if": {
             "en": "What if I closed the page without typing the code?",
-            "ur-Latn": "Agar main code likhe baghair page band kar deti?"
+            "ur-Latn": "Agar main code likhe baghair page band kar deti?",
+            "ur": "اگر میں کوڈ لکھے بغیر صفحہ بند کر دیتی تو؟"
           },
           "next": "n_close_call"
         }
@@ -381,14 +612,20 @@
       "ui": {
         "component": "Phone/BankAlert",
         "props": {
-          "alert_from": { "en": "SafeTrust Bank", "ur-Latn": "SafeTrust Bank" },
+          "alert_from": {
+            "en": "SafeTrust Bank",
+            "ur-Latn": "SafeTrust Bank",
+            "ur": "SafeTrust Bank"
+          },
           "alert_text": {
             "en": "PKR 48,500 was sent from your account to a new recipient. Balance: PKR 1,500.",
-            "ur-Latn": "Aap ke account se PKR 48,500 aik naye account par bhej diye gaye. Baqi raqam: PKR 1,500."
+            "ur-Latn": "Aap ke account se PKR 48,500 aik naye account par bhej diye gaye. Baqi raqam: PKR 1,500.",
+            "ur": "آپ کے اکاؤنٹ سے PKR 48,500 ایک نئے اکاؤنٹ میں بھیج دیے گئے۔ باقی رقم: PKR 1,500۔"
           },
           "note": {
             "en": "Practice money only. Your real money is safe.",
-            "ur-Latn": "Yeh sirf practice ke paise hain. Aap ke asli paise mehfooz hain."
+            "ur-Latn": "Yeh sirf practice ke paise hain. Aap ke asli paise mehfooz hain.",
+            "ur": "یہ صرف پریکٹس کے پیسے ہیں۔ آپ کے اصلی پیسے محفوظ ہیں۔"
           }
         }
       },
@@ -396,17 +633,23 @@
         {
           "id": "see_what_happened",
           "slot": "primary",
-          "label": { "en": "See what happened", "ur-Latn": "Dekhein kya hua" },
+          "label": {
+            "en": "See what happened",
+            "ur-Latn": "Dekhein kya hua",
+            "ur": "دیکھیں کیا ہوا"
+          },
           "effects": {},
           "evidence": [],
           "tag": "neutral",
           "replay": {
             "en": "PKR 48,500 of practice money left your account a moment later.",
-            "ur-Latn": "Kuch hi lamhon mein PKR 48,500 practice paise account se nikal gaye."
+            "ur-Latn": "Kuch hi lamhon mein PKR 48,500 practice paise account se nikal gaye.",
+            "ur": "چند ہی لمحوں میں PKR 48,500 پریکٹس کے پیسے اکاؤنٹ سے نکل گئے۔"
           },
           "reason": {
             "en": "Whoever holds your OTP can approve a transfer as if they were you.",
-            "ur-Latn": "Jis ke paas aap ka OTP ho woh aap ban kar paise bhej sakta hai."
+            "ur-Latn": "Jis ke paas aap ka OTP ho woh aap ban kar paise bhej sakta hai.",
+            "ur": "جس کے پاس آپ کا OTP ہو وہ آپ بن کر رقم بھیج سکتا ہے۔"
           },
           "next": "n_compromised"
         }
@@ -416,90 +659,122 @@
   "outcomes": {
     "n_helped": {
       "tag": "neutral",
-      "headline": { "en": "You stayed safe with Bilal's help", "ur-Latn": "Bilal ki madad se aap mehfooz rahin" },
+      "headline": {
+        "en": "You stayed safe with Bilal's help",
+        "ur-Latn": "Bilal ki madad se aap mehfooz rahin",
+        "ur": "بلال کی مدد سے آپ محفوظ رہیں"
+      },
       "consequence": {
         "what": {
           "en": "You called Bilal before tapping anything, and he confirmed the message was fake.",
-          "ur-Latn": "Aap ne kuch tap karne se pehle Bilal ko call ki, aur us ne bataya message nakli hai."
+          "ur-Latn": "Aap ne kuch tap karne se pehle Bilal ko call ki, aur us ne bataya message nakli hai.",
+          "ur": "آپ نے کچھ ٹیپ کرنے سے پہلے بلال کو کال کی، اور اس نے بتایا کہ پیغام جعلی ہے۔"
         },
         "why": {
           "en": "Pausing beat the message's hurry. Asking someone you trust is a good instinct.",
-          "ur-Latn": "Rukne se message ki jaldi nakam ho gayi. Apne bharosay wale se poochna achi aadat hai."
+          "ur-Latn": "Rukne se message ki jaldi nakam ho gayi. Apne bharosay wale se poochna achi aadat hai.",
+          "ur": "رکنے سے پیغام کی جلدی ناکام ہو گئی۔ اپنے بھروسے والے سے پوچھنا اچھی عادت ہے۔"
         },
         "should_have": {
           "en": "You were safe. You could also have tapped the sender's name and spotted the signs yourself.",
-          "ur-Latn": "Aap mehfooz thin. Aap bhejne wale ke naam par tap kar ke nishaniyan khud bhi dekh sakti thin."
+          "ur-Latn": "Aap mehfooz thin. Aap bhejne wale ke naam par tap kar ke nishaniyan khud bhi dekh sakti thin.",
+          "ur": "آپ محفوظ تھیں۔ آپ بھیجنے والے کے نام پر ٹیپ کر کے نشانیاں خود بھی دیکھ سکتی تھیں۔"
         },
         "do_differently": {
           "en": "Next time, check the sender first. Then call Bilal only if you are still unsure.",
-          "ur-Latn": "Agli dafa pehle bhejne wale ko check karein. Phir bhi shak ho to Bilal ko call karein."
+          "ur-Latn": "Agli dafa pehle bhejne wale ko check karein. Phir bhi shak ho to Bilal ko call karein.",
+          "ur": "اگلی بار پہلے بھیجنے والے کو جانچیں۔ پھر بھی شک ہو تو بلال کو کال کریں۔"
         }
       }
     },
     "n_safe": {
       "tag": "safe",
-      "headline": { "en": "Your practice money is safe", "ur-Latn": "Aap ke practice paise mehfooz hain" },
+      "headline": {
+        "en": "Your practice money is safe",
+        "ur-Latn": "Aap ke practice paise mehfooz hain",
+        "ur": "آپ کے پریکٹس کے پیسے محفوظ ہیں"
+      },
       "consequence": {
         "what": {
           "en": "You reported the message and blocked the number. Your practice balance is still PKR 50,000.",
-          "ur-Latn": "Aap ne message report aur number block kiya. Aap ka practice balance abhi bhi PKR 50,000 hai."
+          "ur-Latn": "Aap ne message report aur number block kiya. Aap ka practice balance abhi bhi PKR 50,000 hai.",
+          "ur": "آپ نے پیغام رپورٹ کیا اور نمبر بلاک کر دیا۔ آپ کا پریکٹس بیلنس اب بھی PKR 50,000 ہے۔"
         },
         "why": {
           "en": "The message used fear and a look-alike link. You checked before you acted, so neither worked.",
-          "ur-Latn": "Message ne dar aur milta julta link istemal kiya. Aap ne pehle check kiya, is liye dono nakam rahe."
+          "ur-Latn": "Message ne dar aur milta julta link istemal kiya. Aap ne pehle check kiya, is liye dono nakam rahe.",
+          "ur": "پیغام نے ڈر اور ملتے جلتے لنک کا سہارا لیا۔ آپ نے پہلے جانچا، اس لیے دونوں ناکام رہے۔"
         },
         "should_have": {
           "en": "This is what should happen, and you did it.",
-          "ur-Latn": "Yehi hona chahiye tha, aur aap ne kar dikhaya."
+          "ur-Latn": "Yehi hona chahiye tha, aur aap ne kar dikhaya.",
+          "ur": "یہی ہونا چاہیے تھا، اور آپ نے کر دکھایا۔"
         },
         "do_differently": {
           "en": "Keep this habit: pause, check the sender, use the number on your card, then report.",
-          "ur-Latn": "Yeh aadat rakhein: rukein, bhejne wale ko check karein, card wala number istemal karein, phir report karein."
+          "ur-Latn": "Yeh aadat rakhein: rukein, bhejne wale ko check karein, card wala number istemal karein, phir report karein.",
+          "ur": "یہ عادت رکھیں: رکیں، بھیجنے والے کو جانچیں، کارڈ والا نمبر استعمال کریں، پھر رپورٹ کریں۔"
         }
       }
     },
     "n_compromised": {
       "tag": "affected",
-      "headline": { "en": "PKR 48,500 of practice money was taken", "ur-Latn": "PKR 48,500 practice paise nikal gaye" },
+      "headline": {
+        "en": "PKR 48,500 of practice money was taken",
+        "ur-Latn": "PKR 48,500 practice paise nikal gaye",
+        "ur": "PKR 48,500 پریکٹس کے پیسے نکل گئے"
+      },
       "recovery": "recovery_shared_otp",
       "consequence": {
         "what": {
           "en": "You typed the code into a fake page. Moments later, PKR 48,500 of practice money left your practice account.",
-          "ur-Latn": "Aap ne code nakli page par likha. Kuch hi lamhon mein PKR 48,500 practice paise practice account se nikal gaye."
+          "ur-Latn": "Aap ne code nakli page par likha. Kuch hi lamhon mein PKR 48,500 practice paise practice account se nikal gaye.",
+          "ur": "آپ نے کوڈ جعلی صفحے پر لکھا۔ چند ہی لمحوں میں PKR 48,500 پریکٹس کے پیسے آپ کے پریکٹس اکاؤنٹ سے نکل گئے۔"
         },
         "why": {
           "en": "An OTP is the last key to your account. Whoever has it can approve a transfer as if they were you.",
-          "ur-Latn": "OTP account ki aakhri chaabi hai. Jis ke paas ho woh aap ban kar paise bhej sakta hai."
+          "ur-Latn": "OTP account ki aakhri chaabi hai. Jis ke paas ho woh aap ban kar paise bhej sakta hai.",
+          "ur": "OTP آپ کے اکاؤنٹ کی آخری چابی ہے۔ جس کے پاس ہو وہ آپ بن کر رقم بھیج سکتا ہے۔"
         },
         "should_have": {
           "en": "Your bank never needs your OTP on a link, a call or a message. The page should have been closed.",
-          "ur-Latn": "Bank ko kabhi link, call ya message par aap ka OTP nahi chahiye. Yeh page band hona chahiye tha."
+          "ur-Latn": "Bank ko kabhi link, call ya message par aap ka OTP nahi chahiye. Yeh page band hona chahiye tha.",
+          "ur": "آپ کے بینک کو کبھی لنک، کال یا پیغام پر آپ کا OTP نہیں چاہیے۔ یہ صفحہ بند ہونا چاہیے تھا۔"
         },
         "do_differently": {
           "en": "Next time, tap the sender's name first. You can rewind and try that now, then practise what to do if this ever really happens.",
-          "ur-Latn": "Agli dafa pehle bhejne wale ke naam par tap karein. Abhi wapis ja kar yeh try kar sakti hain, phir seekhein agar sach mein aisa ho to kya karna hai."
+          "ur-Latn": "Agli dafa pehle bhejne wale ke naam par tap karein. Abhi wapis ja kar yeh try kar sakti hain, phir seekhein agar sach mein aisa ho to kya karna hai.",
+          "ur": "اگلی بار پہلے بھیجنے والے کے نام پر ٹیپ کریں۔ آپ ابھی واپس جا کر یہ آزما سکتی ہیں، پھر سیکھیں کہ اگر سچ میں ایسا ہو تو کیا کرنا ہے۔"
         }
       }
     },
     "n_close_call": {
       "tag": "close_call",
-      "headline": { "en": "You stopped just in time", "ur-Latn": "Aap waqt par ruk gayin" },
+      "headline": {
+        "en": "You stopped just in time",
+        "ur-Latn": "Aap waqt par ruk gayin",
+        "ur": "آپ بروقت رک گئیں"
+      },
       "consequence": {
         "what": {
           "en": "You opened the link but closed the page before typing the code. Your practice balance is still PKR 50,000.",
-          "ur-Latn": "Aap ne link khola magar code likhne se pehle page band kar diya. Practice balance abhi bhi PKR 50,000 hai."
+          "ur-Latn": "Aap ne link khola magar code likhne se pehle page band kar diya. Practice balance abhi bhi PKR 50,000 hai.",
+          "ur": "آپ نے لنک کھولا مگر کوڈ لکھنے سے پہلے صفحہ بند کر دیا۔ آپ کا پریکٹس بیلنس اب بھی PKR 50,000 ہے۔"
         },
         "why": {
           "en": "The page needed your code to do anything. Without it, the scammer got nothing.",
-          "ur-Latn": "Page ko kuch karne ke liye aap ka code chahiye tha. Us ke baghair scammer ko kuch nahi mila."
+          "ur-Latn": "Page ko kuch karne ke liye aap ka code chahiye tha. Us ke baghair scammer ko kuch nahi mila.",
+          "ur": "صفحے کو کچھ کرنے کے لیے آپ کا کوڈ چاہیے تھا۔ اس کے بغیر دھوکے باز کو کچھ نہیں ملا۔"
         },
         "should_have": {
           "en": "The safest choice was to leave the link closed, because the message itself was fake.",
-          "ur-Latn": "Sab se mehfooz faisla tha link na kholna, kyun ke message hi nakli tha."
+          "ur-Latn": "Sab se mehfooz faisla tha link na kholna, kyun ke message hi nakli tha.",
+          "ur": "سب سے محفوظ فیصلہ لنک نہ کھولنا تھا، کیونکہ پیغام ہی جعلی تھا۔"
         },
         "do_differently": {
           "en": "Build the habit: urgent message, pause, check the sender, then report.",
-          "ur-Latn": "Yeh aadat banayein: fori message, rukein, bhejne wale ko check karein, phir report karein."
+          "ur-Latn": "Yeh aadat banayein: fori message, rukein, bhejne wale ko check karein, phir report karein.",
+          "ur": "یہ عادت بنائیں: فوری پیغام آئے تو رکیں، بھیجنے والے کو جانچیں، پھر رپورٹ کریں۔"
         }
       }
     }

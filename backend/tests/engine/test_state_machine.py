@@ -3,6 +3,8 @@
 Rule under test: same state + same action => same result. No randomness.
 """
 
+import json
+import re
 import sys
 from pathlib import Path
 
@@ -242,3 +244,31 @@ def test_no_real_bank_names_in_scenarios():
         text = path.read_text(encoding="utf-8").lower()
         for banned in ("hbl", "meezan", "ubl", "jazzcash", "easypaisa", "whatsapp"):
             assert banned not in text, f"{banned} found in {path.name}"
+
+
+# ---- Urdu is complete: every learner-facing string has it ---------------------
+
+
+def _localized(value):
+    if isinstance(value, dict):
+        if isinstance(value.get("en"), str):
+            yield value
+        for item in value.values():
+            yield from _localized(item)
+    elif isinstance(value, list):
+        for item in value:
+            yield from _localized(item)
+
+
+def test_every_scenario_string_has_urdu_script():
+    urdu_letter = re.compile(r"[\u0600-\u06FF]")
+    latin_only = 0
+    for path in loader.SCENARIOS_DIR.rglob("*.json"):
+        for text in _localized(json.loads(path.read_text(encoding="utf-8"))):
+            assert text.get("ur"), f"{path.name}: no Urdu for {text['en']}"
+            assert text.get("ur-Latn"), f"{path.name}: no Roman Urdu for {text['en']}"
+            if not urdu_letter.search(text["ur"]):
+                # Only brand names, links and numbers may stay in Latin letters.
+                assert text["ur"] == text["en"]
+                latin_only += 1
+    assert latin_only < 20

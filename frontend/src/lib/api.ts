@@ -3,6 +3,8 @@
  * Base URL comes from NEXT_PUBLIC_API_URL (default http://localhost:8000).
  */
 
+import { useA11y } from "./a11y";
+import { translate, type I18nKey } from "./i18n";
 import { getLearnerId } from "./learner";
 import type {
   ActionResponse,
@@ -52,8 +54,10 @@ async function parseApiError(res: Response): Promise<ApiErrorInfo> {
 /** Normalize anything thrown by the client into the calm error shape. */
 export function toApiError(err: unknown): ApiErrorInfo {
   const e = err as Partial<ApiErrorInfo> | null;
-  if (e?.code && e.message) return { code: e.code, message: e.message, status: e.status ?? 0 };
-  return NETWORK_ERROR;
+  const info = e?.code && e.message ? { code: e.code, message: e.message, status: e.status ?? 0 } : NETWORK_ERROR;
+  // Engine errors arrive in English: show them in the learner's language.
+  const known = translate(`error.${info.code}` as I18nKey, useA11y.getState().lang);
+  return known ? { ...info, message: known } : info;
 }
 
 async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {

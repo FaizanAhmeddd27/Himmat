@@ -7,6 +7,7 @@
 
 import { ArrowLeft, BadgeCheck, CreditCard, Globe, Phone, User } from "lucide-react";
 import { pick } from "@/lib/a11y";
+import { translate } from "@/lib/i18n";
 import type { Localized } from "@/lib/types";
 import { FakeStatusBar } from "@/components/simulator/PhoneFrame";
 import { allInSlot, asLocalized, inSlot, type ScreenProps } from "@/components/simulator/screen-props";
@@ -28,7 +29,7 @@ export function SenderDetails({ lang, ui, actions, choose }: ScreenProps) {
     <div className="flex h-full flex-col bg-white">
       <div className="bg-[#0E7490]">
         <FakeStatusBar dark />
-        <div className="flex items-center gap-1 pb-1 pl-1 pr-3 text-white">
+        <div className="flex items-center gap-1 pb-1 ps-1 pe-3 text-white">
           <button
             type="button"
             disabled={!back}
@@ -36,9 +37,9 @@ export function SenderDetails({ lang, ui, actions, choose }: ScreenProps) {
             aria-label={back ? pick(back.label, lang) : undefined}
             className="tap-spot flex size-12 shrink-0 items-center justify-center rounded-xl active:bg-white/10"
           >
-            <ArrowLeft aria-hidden className="size-6" />
+            <ArrowLeft aria-hidden className="size-6 rtl:-scale-x-100" />
           </button>
-          <span className="text-base text-white">Contact info</span>
+          <span className="text-base text-white">{translate("phone.contact", lang)}</span>
         </div>
       </div>
 
@@ -57,7 +58,7 @@ export function SenderDetails({ lang, ui, actions, choose }: ScreenProps) {
                 <Icon aria-hidden className="mt-1 size-5 shrink-0 text-[#0E7490]" />
                 <span className="min-w-0">
                   <span className="block text-xs leading-tight text-ink/70">{pick(row.label, lang)}</span>
-                  <span className="block break-words text-sm leading-snug text-ink">{pick(row.value, lang)}</span>
+                  <span dir="auto" className="block break-words text-start text-sm leading-snug text-ink">{pick(row.value, lang)}</span>
                 </span>
               </li>
             );

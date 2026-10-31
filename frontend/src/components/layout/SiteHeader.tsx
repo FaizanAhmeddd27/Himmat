@@ -45,7 +45,7 @@ function PlainNavLinks() {
 export function SiteHeader() {
   return (
     <header className="bg-surface">
-      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-1.5 sm:px-6 md:px-10">
+      <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-1.5 sm:px-6 md:px-10">
         <Link href="/" className="inline-flex min-h-12 items-center" aria-label="HIMMAT home">
           <Logo />
         </Link>

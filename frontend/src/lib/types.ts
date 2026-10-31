@@ -3,7 +3,7 @@
  * Mirrors backend/app/engine/models.py response payloads.
  */
 
-export type LangKey = "en" | "ur-Latn";
+export type LangKey = "en" | "ur-Latn" | "ur";
 
 /** Inline localized map carried in scenario data. `en` is always present. */
 export interface Localized {

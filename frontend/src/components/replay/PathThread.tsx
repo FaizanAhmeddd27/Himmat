@@ -34,7 +34,7 @@ const BEAD: Record<ThreadTone, string> = {
 export function Thread({ tone = "wine", children }: { tone?: ThreadTone; children: ReactNode }) {
   return (
     <div className="relative">
-      <span aria-hidden className={`absolute bottom-6 left-[15px] top-2 w-0.5 ${LINE[tone]}`} />
+      <span aria-hidden className={`absolute bottom-6 start-[15px] top-2 w-0.5 ${LINE[tone]}`} />
       {children}
     </div>
   );
@@ -103,7 +103,7 @@ export function OutcomeBead({
   return (
     <div className="relative flex gap-4">
       {/* The outcome ends the path: hide the thread below this bead. */}
-      <span aria-hidden className="absolute -bottom-6 left-[15px] top-8 w-0.5 bg-background" />
+      <span aria-hidden className="absolute -bottom-6 start-[15px] top-8 w-0.5 bg-background" />
       <span
         aria-hidden
         className={`relative flex size-8 shrink-0 items-center justify-center rounded-full ${BEAD[tone]}`}

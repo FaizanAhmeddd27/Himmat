@@ -8,10 +8,11 @@
 
 import { useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Volume2 } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Image from "next/image";
+import { ListenButton } from "@/components/common/ListenButton";
 import { api, toApiError } from "@/lib/api";
-import { canReadAloud, pick, speak } from "@/lib/a11y";
+import { pick } from "@/lib/a11y";
 import { useT, type I18nKey } from "@/lib/i18n";
 import type { ApiErrorInfo, HintResponse, LangKey } from "@/lib/types";
 
@@ -103,16 +104,7 @@ export function HintDrawer({
                     <li key={hint.level} className="rounded-[12px] bg-neutral-tint p-3">
                       <p className="text-sm text-muted-foreground">{t(LEVEL_TITLES[hint.level])}</p>
                       <p className="mt-1 text-base text-ink">{text}</p>
-                      {canReadAloud(lang) ? (
-                      <button
-                        type="button"
-                        onClick={() => speak(text)}
-                        className="mt-1 inline-flex min-h-12 items-center gap-2 text-sm text-wine underline-offset-4 hover:underline"
-                      >
-                        <Volume2 aria-hidden className="size-5" />
-                        {t("common.listen")}
-                      </button>
-                      ) : null}
+                      <ListenButton text={text} className="mt-1" />
                     </li>
                   );
                 })}
@@ -155,16 +147,7 @@ export function HintDrawer({
                 {answer ? (
                   <div aria-live="polite" className="mt-3 rounded-[12px] bg-neutral-tint p-3">
                     <p className="text-base text-ink">{answer}</p>
-                    {canReadAloud(lang) ? (
-                    <button
-                      type="button"
-                      onClick={() => speak(answer)}
-                      className="mt-1 inline-flex min-h-12 items-center gap-2 text-sm text-wine underline-offset-4 hover:underline"
-                    >
-                      <Volume2 aria-hidden className="size-5" />
-                      {t("common.listen")}
-                    </button>
-                    ) : null}
+                    <ListenButton text={answer} className="mt-1" />
                   </div>
                 ) : null}
               </form>

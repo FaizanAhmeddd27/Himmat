@@ -38,7 +38,7 @@ export function SkillRadar({ skills }: { skills: DnaSkill[] }) {
   const data = skills.map((skill) => ({ name: pick(skill.name, lang), mastery: skill.mastery }));
 
   return (
-    <div role="img" aria-label={t("dna.radarLabel")} className="h-96 w-full">
+    <div dir="ltr" role="img" aria-label={t("dna.radarLabel")} className="h-96 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart data={data} outerRadius="72%" margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
           <PolarGrid stroke="var(--c-border)" />
@@ -89,10 +89,14 @@ export function SkillBars({ skills }: { skills: DnaSkill[] }) {
 
 export function SkillTrend({ history }: { history: DnaHistoryPoint[] }) {
   const t = useT();
+  const points = history.map((point) => ({
+    ...point,
+    label: point.label.replace("Start", t("dna.start")).replace("Try", t("dna.try")),
+  }));
   return (
-    <div role="img" aria-label={t("dna.trendLabel")} className="h-52 w-full">
+    <div dir="ltr" role="img" aria-label={t("dna.trendLabel")} className="h-52 w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={history} margin={{ top: 12, right: 16, bottom: 4, left: 0 }}>
+        <LineChart data={points} margin={{ top: 12, right: 16, bottom: 4, left: 0 }}>
           <CartesianGrid stroke="var(--c-border)" vertical={false} />
           <XAxis dataKey="label" tick={{ fill: "var(--text-muted)", fontSize: 14 }} tickLine={false} axisLine={false} />
           <YAxis

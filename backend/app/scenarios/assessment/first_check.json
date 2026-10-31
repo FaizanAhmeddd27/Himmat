@@ -5,13 +5,46 @@
       "skill": "scam_detection",
       "situation": {
         "en": "A message from an unknown number says your account will close today. What do you do first?",
-        "ur-Latn": "Anjaan number se message aata hai ke aap ka account aaj band ho jayega. Aap pehle kya karengi?"
+        "ur-Latn": "Anjaan number se message aata hai ke aap ka account aaj band ho jayega. Aap pehle kya karengi?",
+        "ur": "انجان نمبر سے پیغام آتا ہے کہ آپ کا اکاؤنٹ آج بند ہو جائے گا۔ آپ پہلے کیا کریں گی؟"
       },
       "options": [
-        { "id": "a", "value": 80, "label": { "en": "Check who sent it", "ur-Latn": "Dekhti hoon kis ne bheja" } },
-        { "id": "b", "value": 45, "label": { "en": "Ask someone in my family", "ur-Latn": "Ghar mein kisi se poochti hoon" } },
-        { "id": "c", "value": 15, "label": { "en": "Do what the message says", "ur-Latn": "Jo message kehta hai woh karti hoon" } },
-        { "id": "d", "value": 25, "label": { "en": "I am not sure", "ur-Latn": "Mujhe yaqeen nahi" } }
+        {
+          "id": "a",
+          "value": 80,
+          "label": {
+            "en": "Check who sent it",
+            "ur-Latn": "Dekhti hoon kis ne bheja",
+            "ur": "دیکھیں کس نے بھیجا"
+          }
+        },
+        {
+          "id": "b",
+          "value": 45,
+          "label": {
+            "en": "Ask someone in my family",
+            "ur-Latn": "Ghar mein kisi se poochti hoon",
+            "ur": "گھر میں کسی سے پوچھتی ہوں"
+          }
+        },
+        {
+          "id": "c",
+          "value": 15,
+          "label": {
+            "en": "Do what the message says",
+            "ur-Latn": "Jo message kehta hai woh karti hoon",
+            "ur": "جو پیغام کہتا ہے وہ کرتی ہوں"
+          }
+        },
+        {
+          "id": "d",
+          "value": 25,
+          "label": {
+            "en": "I am not sure",
+            "ur-Latn": "Mujhe yaqeen nahi",
+            "ur": "مجھے یقین نہیں"
+          }
+        }
       ]
     },
     {
@@ -19,12 +52,37 @@
       "skill": "otp_safety",
       "situation": {
         "en": "A caller says they are from your bank and asks for the code that just came to your phone. What do you do?",
-        "ur-Latn": "Call karne wala kehta hai woh bank se hai aur phone par aaya code mangta hai. Aap kya karengi?"
+        "ur-Latn": "Call karne wala kehta hai woh bank se hai aur phone par aaya code mangta hai. Aap kya karengi?",
+        "ur": "کال کرنے والا کہتا ہے کہ وہ بینک سے ہے اور فون پر آیا کوڈ مانگتا ہے۔ آپ کیا کریں گی؟"
       },
       "options": [
-        { "id": "a", "value": 85, "label": { "en": "Say no and end the call", "ur-Latn": "Mana kar ke call band karti hoon" } },
-        { "id": "b", "value": 15, "label": { "en": "Give the code, since it is the bank", "ur-Latn": "Code de deti hoon, bank hai" } },
-        { "id": "c", "value": 25, "label": { "en": "I am not sure", "ur-Latn": "Mujhe yaqeen nahi" } }
+        {
+          "id": "a",
+          "value": 85,
+          "label": {
+            "en": "Say no and end the call",
+            "ur-Latn": "Mana kar ke call band karti hoon",
+            "ur": "منع کر کے کال بند کرتی ہوں"
+          }
+        },
+        {
+          "id": "b",
+          "value": 15,
+          "label": {
+            "en": "Give the code, since it is the bank",
+            "ur-Latn": "Code de deti hoon, bank hai",
+            "ur": "کوڈ دے دیتی ہوں، بینک ہے"
+          }
+        },
+        {
+          "id": "c",
+          "value": 25,
+          "label": {
+            "en": "I am not sure",
+            "ur-Latn": "Mujhe yaqeen nahi",
+            "ur": "مجھے یقین نہیں"
+          }
+        }
       ]
     },
     {
@@ -32,12 +90,37 @@
       "skill": "reporting",
       "situation": {
         "en": "Do you know how to block a number that keeps sending you strange messages?",
-        "ur-Latn": "Kya aap ko pata hai ajeeb messages bhejne wale number ko block kaise karte hain?"
+        "ur-Latn": "Kya aap ko pata hai ajeeb messages bhejne wale number ko block kaise karte hain?",
+        "ur": "کیا آپ کو معلوم ہے کہ عجیب پیغام بھیجنے والے نمبر کو بلاک کیسے کرتے ہیں؟"
       },
       "options": [
-        { "id": "a", "value": 80, "label": { "en": "Yes, I can do it myself", "ur-Latn": "Haan, khud kar sakti hoon" } },
-        { "id": "b", "value": 40, "label": { "en": "Someone would have to help me", "ur-Latn": "Kisi ki madad chahiye hogi" } },
-        { "id": "c", "value": 15, "label": { "en": "No", "ur-Latn": "Nahi" } }
+        {
+          "id": "a",
+          "value": 80,
+          "label": {
+            "en": "Yes, I can do it myself",
+            "ur-Latn": "Haan, khud kar sakti hoon",
+            "ur": "ہاں، خود کر سکتی ہوں"
+          }
+        },
+        {
+          "id": "b",
+          "value": 40,
+          "label": {
+            "en": "Someone would have to help me",
+            "ur-Latn": "Kisi ki madad chahiye hogi",
+            "ur": "کسی کی مدد چاہیے ہوگی"
+          }
+        },
+        {
+          "id": "c",
+          "value": 15,
+          "label": {
+            "en": "No",
+            "ur-Latn": "Nahi",
+            "ur": "نہیں"
+          }
+        }
       ]
     },
     {
@@ -45,13 +128,46 @@
       "skill": "account_recovery",
       "situation": {
         "en": "Imagine you shared a code by mistake and then got worried. What would you do first?",
-        "ur-Latn": "Farz karein aap ne ghalti se code de diya aur phir pareshan ho gayin. Aap pehle kya karengi?"
+        "ur-Latn": "Farz karein aap ne ghalti se code de diya aur phir pareshan ho gayin. Aap pehle kya karengi?",
+        "ur": "فرض کریں آپ نے غلطی سے کوڈ دے دیا اور پھر پریشان ہو گئیں۔ آپ پہلے کیا کریں گی؟"
       },
       "options": [
-        { "id": "a", "value": 80, "label": { "en": "Call the number on my bank card", "ur-Latn": "Bank card wale number par call karti hoon" } },
-        { "id": "b", "value": 40, "label": { "en": "Call someone in my family", "ur-Latn": "Ghar mein kisi ko call karti hoon" } },
-        { "id": "c", "value": 15, "label": { "en": "Wait and see what happens", "ur-Latn": "Intezar kar ke dekhti hoon" } },
-        { "id": "d", "value": 20, "label": { "en": "I am not sure", "ur-Latn": "Mujhe yaqeen nahi" } }
+        {
+          "id": "a",
+          "value": 80,
+          "label": {
+            "en": "Call the number on my bank card",
+            "ur-Latn": "Bank card wale number par call karti hoon",
+            "ur": "بینک کارڈ والے نمبر پر کال کرتی ہوں"
+          }
+        },
+        {
+          "id": "b",
+          "value": 40,
+          "label": {
+            "en": "Call someone in my family",
+            "ur-Latn": "Ghar mein kisi ko call karti hoon",
+            "ur": "گھر میں کسی کو کال کرتی ہوں"
+          }
+        },
+        {
+          "id": "c",
+          "value": 15,
+          "label": {
+            "en": "Wait and see what happens",
+            "ur-Latn": "Intezar kar ke dekhti hoon",
+            "ur": "انتظار کر کے دیکھتی ہوں"
+          }
+        },
+        {
+          "id": "d",
+          "value": 20,
+          "label": {
+            "en": "I am not sure",
+            "ur-Latn": "Mujhe yaqeen nahi",
+            "ur": "مجھے یقین نہیں"
+          }
+        }
       ]
     },
     {
@@ -59,12 +175,37 @@
       "skill": "online_payments",
       "situation": {
         "en": "How do you feel about sending money from your phone?",
-        "ur-Latn": "Phone se paise bhejne ke baare mein aap kaisa mehsoos karti hain?"
+        "ur-Latn": "Phone se paise bhejne ke baare mein aap kaisa mehsoos karti hain?",
+        "ur": "فون سے پیسے بھیجنے کے بارے میں آپ کیسا محسوس کرتی ہیں؟"
       },
       "options": [
-        { "id": "a", "value": 75, "label": { "en": "I do it myself", "ur-Latn": "Khud kar leti hoon" } },
-        { "id": "b", "value": 40, "label": { "en": "I do it with help", "ur-Latn": "Madad se karti hoon" } },
-        { "id": "c", "value": 15, "label": { "en": "I have never done it", "ur-Latn": "Kabhi nahi kiya" } }
+        {
+          "id": "a",
+          "value": 75,
+          "label": {
+            "en": "I do it myself",
+            "ur-Latn": "Khud kar leti hoon",
+            "ur": "خود کر لیتی ہوں"
+          }
+        },
+        {
+          "id": "b",
+          "value": 40,
+          "label": {
+            "en": "I do it with help",
+            "ur-Latn": "Madad se karti hoon",
+            "ur": "مدد سے کرتی ہوں"
+          }
+        },
+        {
+          "id": "c",
+          "value": 15,
+          "label": {
+            "en": "I have never done it",
+            "ur-Latn": "Kabhi nahi kiya",
+            "ur": "کبھی نہیں کیا"
+          }
+        }
       ]
     },
     {
@@ -72,12 +213,37 @@
       "skill": "video_calls",
       "situation": {
         "en": "How do you feel about starting a video call?",
-        "ur-Latn": "Video call shuru karne ke baare mein aap kaisa mehsoos karti hain?"
+        "ur-Latn": "Video call shuru karne ke baare mein aap kaisa mehsoos karti hain?",
+        "ur": "ویڈیو کال شروع کرنے کے بارے میں آپ کیسا محسوس کرتی ہیں؟"
       },
       "options": [
-        { "id": "a", "value": 80, "label": { "en": "I do it myself", "ur-Latn": "Khud kar leti hoon" } },
-        { "id": "b", "value": 45, "label": { "en": "I do it with help", "ur-Latn": "Madad se karti hoon" } },
-        { "id": "c", "value": 15, "label": { "en": "I have never done it", "ur-Latn": "Kabhi nahi kiya" } }
+        {
+          "id": "a",
+          "value": 80,
+          "label": {
+            "en": "I do it myself",
+            "ur-Latn": "Khud kar leti hoon",
+            "ur": "خود کر لیتی ہوں"
+          }
+        },
+        {
+          "id": "b",
+          "value": 45,
+          "label": {
+            "en": "I do it with help",
+            "ur-Latn": "Madad se karti hoon",
+            "ur": "مدد سے کرتی ہوں"
+          }
+        },
+        {
+          "id": "c",
+          "value": 15,
+          "label": {
+            "en": "I have never done it",
+            "ur-Latn": "Kabhi nahi kiya",
+            "ur": "کبھی نہیں کیا"
+          }
+        }
       ]
     }
   ]

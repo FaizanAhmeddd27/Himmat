@@ -52,7 +52,7 @@ export default function DashboardPage() {
         <div className="mx-auto flex w-full max-w-5xl items-end justify-between gap-6">
           <div className="py-8 sm:py-10">
             <h1 className="text-2xl text-on-wine sm:text-3xl">
-              {t("dashboard.hello")}, {view.name}
+              {t("dashboard.hello")}{lang === "ur" ? "،" : ","} {t("common.name")}
             </h1>
             <p className="mt-2 text-lg text-on-wine-muted">{t("banner.practice")}</p>
           </div>

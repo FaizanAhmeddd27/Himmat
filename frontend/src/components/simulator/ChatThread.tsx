@@ -8,6 +8,7 @@
 
 import { ArrowLeft, ChevronRight, Landmark, Paperclip, Phone, Send, Video } from "lucide-react";
 import { pick } from "@/lib/a11y";
+import { translate } from "@/lib/i18n";
 import type { ChatMessage } from "@/lib/types";
 import { FakeStatusBar } from "@/components/simulator/PhoneFrame";
 import { allInSlot, asLocalized, inSlot, type ScreenProps } from "@/components/simulator/screen-props";
@@ -24,8 +25,8 @@ export function ChatThread({ lang, ui, actions, choose, error }: ScreenProps) {
     <div className="flex h-full flex-col bg-[#E9EEF0]">
       <div className="bg-[#0E7490]">
         <FakeStatusBar dark />
-        <div className="flex items-center gap-1 pb-2 pl-2 pr-3 text-white">
-          <ArrowLeft aria-hidden className="size-6 shrink-0 opacity-70" />
+        <div className="flex items-center gap-1 pb-2 ps-2 pe-3 text-white">
+          <ArrowLeft aria-hidden className="size-6 shrink-0 opacity-70 rtl:-scale-x-100" />
           <button
             type="button"
             disabled={!sender}
@@ -38,35 +39,36 @@ export function ChatThread({ lang, ui, actions, choose, error }: ScreenProps) {
             </span>
             <span className="min-w-0 flex-1">
               <span className="block truncate text-base leading-tight text-white">{senderName}</span>
-              <span className="block truncate text-xs text-white/85">{senderNumber}</span>
+              <span dir="ltr" className="block truncate text-start text-xs text-white/85">{senderNumber}</span>
             </span>
-            {sender ? <ChevronRight aria-hidden className="size-5 shrink-0 opacity-80" /> : null}
+            {sender ? <ChevronRight aria-hidden className="size-5 shrink-0 opacity-80 rtl:-scale-x-100" /> : null}
           </button>
-          <Phone aria-hidden className="ml-1 size-5 shrink-0 opacity-70" />
-          <Video aria-hidden className="ml-2 size-5 shrink-0 opacity-70" />
+          <Phone aria-hidden className="ms-1 size-5 shrink-0 opacity-70" />
+          <Video aria-hidden className="ms-2 size-5 shrink-0 opacity-70" />
         </div>
       </div>
 
       <div className="flex-1 space-y-3 overflow-y-auto px-3 py-4">
         <p className="text-center text-xs text-ink/60" aria-hidden>
-          Today
+          {translate("phone.today", lang)}
         </p>
         {messages.map((message, index) => (
-          <div key={index} className="max-w-[90%] rounded-2xl rounded-tl-sm bg-white px-3.5 py-2.5">
+          <div key={index} className="max-w-[90%] rounded-2xl rounded-ss-sm bg-white px-3.5 py-2.5">
             <p className="text-sm leading-relaxed text-ink">{pick(message.text, lang)}</p>
             {message.link ? (
               <button
                 type="button"
                 disabled={!link}
                 onClick={() => link && choose(link)}
+                dir="ltr"
                 aria-label={link ? `${pick(link.label, lang)}: ${message.link}` : undefined}
                 className="tap-spot mt-1 -mx-1 block min-h-11 max-w-full break-all rounded-md px-1 text-start text-sm text-[#0E5F8A] underline underline-offset-2 active:bg-[#0E7490]/10"
               >
                 {message.link}
               </button>
             ) : null}
-            <p className="mt-1 text-right text-xs text-ink/60" aria-hidden>
-              1:04 PM
+            <p className="mt-1 text-end text-xs text-ink/60" aria-hidden>
+              <span dir="ltr">1:04 PM</span>
             </p>
           </div>
         ))}
@@ -91,7 +93,7 @@ export function ChatThread({ lang, ui, actions, choose, error }: ScreenProps) {
         ))}
         <div className="flex items-center gap-2 text-ink/60" aria-hidden>
           <Paperclip className="size-5 shrink-0" />
-          <span className="min-h-9 flex-1 rounded-full bg-[#E9EEF0] px-3 py-1.5 text-sm">Message</span>
+          <span className="min-h-9 flex-1 rounded-full bg-[#E9EEF0] px-3 py-1.5 text-sm">{translate("phone.message", lang)}</span>
           <Send className="size-5 shrink-0" />
         </div>
       </div>

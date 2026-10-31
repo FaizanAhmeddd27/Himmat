@@ -23,10 +23,10 @@ export function FakeVerifyPage({ lang, ui, actions, choose, error }: ScreenProps
     <div className="relative flex h-full flex-col bg-white">
       <FakeStatusBar />
       <div className="flex items-center gap-2 border-b border-black/10 px-3 py-2">
-        <ArrowLeft aria-hidden className="size-5 shrink-0 text-ink/60" />
+        <ArrowLeft aria-hidden className="size-5 shrink-0 text-ink/60 rtl:-scale-x-100" />
         <span className="flex min-w-0 flex-1 items-center gap-1 rounded-full bg-black/5 px-3 py-1.5 text-xs text-ink">
           <Lock aria-hidden className="size-3 shrink-0" />
-          <span className="truncate">{pageUrl}</span>
+          <span dir="ltr" className="truncate">{pageUrl}</span>
         </span>
         <RotateCcw aria-hidden className="size-5 shrink-0 text-ink/60" />
       </div>
@@ -54,6 +54,7 @@ export function FakeVerifyPage({ lang, ui, actions, choose, error }: ScreenProps
         </label>
         <input
           id="practice-otp"
+          dir="ltr"
           type="text"
           inputMode="numeric"
           autoComplete="off"

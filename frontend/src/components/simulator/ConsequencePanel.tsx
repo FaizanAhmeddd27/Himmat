@@ -7,9 +7,10 @@
  */
 
 import Link from "next/link";
-import { CircleHelp, Compass, Lightbulb, ShieldCheck, TriangleAlert, Volume2 } from "lucide-react";
+import { CircleHelp, Compass, Lightbulb, ShieldCheck, TriangleAlert } from "lucide-react";
 import { motion } from "framer-motion";
-import { canReadAloud, pick, speak, type LangKey } from "@/lib/a11y";
+import { ListenButton } from "@/components/common/ListenButton";
+import { pick, type LangKey } from "@/lib/a11y";
 import { SKILL_NAMES, useT, type I18nKey } from "@/lib/i18n";
 import type { OutcomeTagName, SessionView } from "@/lib/types";
 import { ConfidenceRating } from "@/components/simulator/ConfidenceRating";
@@ -72,16 +73,7 @@ export function ConsequencePanel({
           {mastery && tag !== "safe" ? (
             <p className="mt-2 text-lg text-on-wine-muted">{t("outcome.notYet")}</p>
           ) : null}
-          {canReadAloud(lang) ? (
-          <button
-            type="button"
-            onClick={() => speak(readOut)}
-            className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-[12px] border-2 border-on-wine-muted/70 px-4 text-on-wine hover:bg-white/10"
-          >
-            <Volume2 aria-hidden className="size-5" />
-            {t("common.listen")}
-          </button>
-          ) : null}
+          <ListenButton text={readOut} tone="wine" className="mt-5" noteIfNoVoice />
         </div>
       </div>
 
@@ -107,7 +99,8 @@ export function ConsequencePanel({
                   <li key={change.skill} className="flex flex-wrap justify-between gap-x-4 text-lg text-ink">
                     <span>{pick(SKILL_NAMES[change.skill], lang) || change.skill}</span>
                     <span className="tabular-nums text-wine">
-                      {Math.round(change.before)}% {t("common.to")} {Math.round(change.after)}%
+                      <span dir="ltr">{Math.round(change.before)}%</span> {t("common.to")}{" "}
+                      <span dir="ltr">{Math.round(change.after)}%</span>
                     </span>
                   </li>
                 ))}

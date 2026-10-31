@@ -13,6 +13,7 @@ import { useT, type I18nKey } from "@/lib/i18n";
 const LABELS = {
   en: ["Not at all", "A little", "Somewhat", "Quite sure", "Very sure"],
   "ur-Latn": ["Bilkul nahi", "Thora sa", "Kuch had tak", "Kafi", "Bohat zyada"],
+  ur: ["بالکل نہیں", "تھوڑا سا", "کچھ حد تک", "کافی", "بہت زیادہ"],
 };
 
 export function ConfidenceRating({

@@ -10,7 +10,7 @@ export function PhoneFrame({ children, reveal = false }: { children: ReactNode; 
   return (
     <div className="relative mx-auto w-full max-w-[360px]" data-ui data-phone data-reveal={reveal ? "true" : undefined}>
       <div className="rounded-[34px] bg-ink px-2.5 pb-3 pt-1 shadow-[0_18px_40px_-18px_rgba(42,10,16,0.55)]">
-        <p aria-hidden className="py-1 text-center text-[10px] tracking-[0.3em] text-on-wine-muted">
+        <p lang="en" aria-hidden className="py-1 text-center text-[10px] tracking-[0.3em] text-on-wine-muted">
           PRACTICE
         </p>
         <div className="h-[640px] overflow-hidden rounded-[24px] bg-white">{children}</div>
@@ -26,7 +26,7 @@ export function FakeStatusBar({ dark = false }: { dark?: boolean }) {
       className={`flex items-center justify-between px-4 pb-1 pt-2 text-xs ${dark ? "text-white/90" : "text-ink/80"}`}
       aria-hidden
     >
-      <span>1:04 PM</span>
+      <span dir="ltr">1:04 PM</span>
       <span className="flex items-center gap-1">
         <SignalHigh className="size-4" />
         <Wifi className="size-4" />

@@ -44,7 +44,7 @@
 
   /* Font stacks — Share Tech (Latin) + Noto Nastaliq Urdu (Urdu script).
      --font-share-tech / --font-urdu are provided by next/font in layout.tsx */
-  --font-urdu-stack: var(--font-urdu), "Noto Naskh Arabic", "Jameel Noori Nastaleeq", serif;
+  --font-urdu-stack: "Share Tech", var(--font-urdu), "Noto Naskh Arabic", "Jameel Noori Nastaleeq", serif;
 }
 
 html {
@@ -150,4 +150,29 @@ html[data-contrast="high"] {
   button:disabled {
     cursor: not-allowed;
   }
+}
+
+/* Urdu (UI_UX §3.4, §8): Nastaliq needs room between lines, and letter-spacing
+   would break the joins between letters. Latin text such as brand names and web
+   links falls through to Share Tech inside the same stack. */
+html[lang="ur"] body,
+html[lang="ur"] body *,
+[lang="ur"] {
+  font-family: var(--font-urdu-stack);
+}
+html[lang="ur"] body *,
+[lang="ur"] {
+  letter-spacing: 0 !important;
+}
+html[lang="ur"] body * {
+  line-height: 1.95 !important;
+}
+/* The practice phone has less room: tighter lines keep every row on screen. */
+html[lang="ur"] [data-phone] * {
+  line-height: 1.7 !important;
+}
+/* Share Tech for Latin controls while the rest of the page is in Urdu. */
+html[lang="ur"] [lang="en"],
+html[lang="ur"] [lang="ur-Latn"] {
+  font-family: var(--font-share-tech), "Segoe UI", system-ui, sans-serif;
 }

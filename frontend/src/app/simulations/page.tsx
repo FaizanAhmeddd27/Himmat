@@ -20,10 +20,10 @@ const MASCOTS: Record<string, string> = {
 };
 
 const UPCOMING = [
-  { en: "Send Money Safely", "ur-Latn": "Paise mehfooz tareeqe se bhejein" },
-  { en: "Video Call Rescue", "ur-Latn": "Video call ki mushkil" },
-  { en: "Online Shopping Trap", "ur-Latn": "Online shopping ka jaal" },
-  { en: "Government Portal Challenge", "ur-Latn": "Sarkari portal ka form" },
+  { en: "Send Money Safely", "ur-Latn": "Paise mehfooz tareeqe se bhejein", "ur": "محفوظ طریقے سے پیسے بھیجیں" },
+  { en: "Video Call Rescue", "ur-Latn": "Video call ki mushkil", "ur": "ویڈیو کال کی مشکل" },
+  { en: "Online Shopping Trap", "ur-Latn": "Online shopping ka jaal", "ur": "آن لائن خریداری کا جال" },
+  { en: "Government Portal Challenge", "ur-Latn": "Sarkari portal ka form", "ur": "سرکاری پورٹل کا فارم" },
 ];
 
 export default function SimulationsPage() {
