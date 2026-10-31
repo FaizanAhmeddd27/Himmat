@@ -1,6 +1,6 @@
 # Demo video script (2 minutes or less)
 
-Before recording: run the production build (`npm run build`, then `npm run start`), set the window to 1366 wide, and press **Start over with a new profile** on My skills.
+Before recording: sign in, because the practice pages require it. Run the production build (`npm run build`, then `npm run start`), set the window to 1366 wide, and press **Start over with a new profile** on My skills.
 
 | Time | On screen | Say |
 |---|---|---|

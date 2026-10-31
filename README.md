@@ -8,7 +8,16 @@ HIMMAT is a practice phone for parents, grandparents and anyone who did not grow
 
 Built for the Build4Better hackathon, 31 October 2026.
 
-**Team:** Faizan Ahmed, Syeda Aliza Ayaz
+## Team
+
+- Syeda Aliza Ayaz
+- Faizan Ahmed
+- Muhammad Hamza Hamid
+- Mughees Subtain
+
+## Target user and problem
+
+HIMMAT is for parents, grandparents and first-time smartphone users. Many of them depend on family for everyday digital tasks and are common targets for scams. A wrong tap on a real phone can cost real money, so they rarely get to practise. Chatbots do the thinking for them, videos give no practice, and quizzes do not feel like a real phone.
 
 ## What you can do
 
@@ -71,6 +80,8 @@ Next.js frontend  --REST-->  FastAPI backend
 
 Sessions are event-sourced: every choice is an immutable event holding the state before and after it. That is what makes replay and What-if possible, and a What-if branch never modifies the original try. A new scenario is a new JSON file, with no engine change. The full design is in [docs/ARCH.md](docs/ARCH.md).
 
+Full dependency lists are in `backend/requirements.txt` and `frontend/package.json`.
+
 ## Safety
 
 - HIMMAT never connects to a real bank, wallet, messaging service or government system.
@@ -105,8 +116,11 @@ Built in one day, so here is what is not done:
 ## Credits
 
 - `frontend/public/loading.lottie` comes from our teammate's earlier project and is recoloured to this theme.
+- Main libraries: Next.js, React, Tailwind CSS, Framer Motion, Recharts, Zustand, lucide-react, dotLottie, FastAPI, Pydantic and psycopg.
+- Services: Supabase (database and sign-in) and Groq (AI answers).
+- Fonts: Share Tech and Noto Nastaliq Urdu, from Google Fonts.
 - Mascots and logo were supplied by the team.
 
 ## Final commit
 
-`24d7904` is the final code commit. The only later commit adds this line.
+`24d7904` is the final code commit. Later commits change documentation only.

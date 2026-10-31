@@ -77,7 +77,7 @@ npm run start
 
 ## Walk through it
 
-Follow this path to see every feature. It is also the order of the demo video.
+Sign in first, because the practice pages require it. Then follow this path to see every feature. It is also the order of the demo video.
 
 | # | Where | What to do | What you should see |
 |---|---|---|---|
