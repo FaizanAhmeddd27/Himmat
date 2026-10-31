@@ -6,8 +6,9 @@ Conventions (docs/ARCH §12): JSON, snake_case, structured errors.
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
+from app.ai import mentor
 from app.deps import learner_id
 from app.engine import branching, replay, service
 from app.engine.models import EngineError, SessionMode
@@ -25,6 +26,11 @@ class ActionRequest(BaseModel):
     action_id: str
     # Text the learner typed (e.g. the practice OTP) when required by the action.
     input: Optional[str] = None
+
+
+class AskRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=500)
+    lang: str = "en"
 
 
 class BranchRequest(BaseModel):
@@ -82,6 +88,25 @@ async def request_hint(session_id: str, level: int = 1) -> dict:
         return service.use_hint(session_id, level)
     except EngineError as exc:
         raise _http_error(exc)
+
+
+@router.post("/sessions/{session_id}/ask")
+async def ask_mentor(session_id: str, body: AskRequest) -> dict:
+    """Free-text question. Read-only: nothing here touches session state."""
+    try:
+        scenario, session = service.get_session(session_id)
+    except EngineError as exc:
+        raise _http_error(exc)
+    node = scenario.nodes.get(session.current_node)
+    if session.mode == "mastery" or node is None:
+        raise _http_error(
+            EngineError(
+                code="hints_off",
+                message="This one is for you to try on your own.",
+                status=403,
+            )
+        )
+    return {"text": await mentor.answer_question(node, body.question, body.lang)}
 
 
 @router.get("/sessions/{session_id}/replay")

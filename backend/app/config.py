@@ -33,7 +33,9 @@ class Settings(BaseSettings):
     supabase_jwt_secret: str = ""
 
     # AI layer
-    ai_provider: str = "none"  # gemini | openai | none
+    ai_provider: str = "none"  # groq | none
+    groq_api_key: str = ""
+    groq_model: str = "openai/gpt-oss-20b"
     gemini_api_key: str = ""
     openai_api_key: str = ""
 
