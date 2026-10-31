@@ -1,15 +1,17 @@
-"""Session endpoints — start, view, act, hint.
+"""Session endpoints: start, view, act, hint, replay, what-if.
 
 Conventions (docs/ARCH §12): JSON, snake_case, structured errors.
 """
 
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
-from app.engine import service
+from app.deps import learner_id
+from app.engine import branching, replay, service
 from app.engine.models import EngineError, SessionMode
+from app.engine.store import get_store
 
 router = APIRouter(tags=["sessions"])
 
@@ -23,8 +25,11 @@ class ActionRequest(BaseModel):
     action_id: str
     # Text the learner typed (e.g. the practice OTP) when required by the action.
     input: Optional[str] = None
-    # Idempotency guard hook for later (docs/ARCH §12): step the client thinks it is on.
-    client_step_no: Optional[int] = None
+
+
+class BranchRequest(BaseModel):
+    from_step: int
+    action_id: str
 
 
 def _http_error(exc: EngineError) -> HTTPException:
@@ -34,9 +39,13 @@ def _http_error(exc: EngineError) -> HTTPException:
 
 
 @router.post("/sessions", status_code=201)
-async def create_session(body: CreateSessionRequest) -> dict:
+async def create_session(
+    body: CreateSessionRequest, learner: str = Depends(learner_id)
+) -> dict:
     try:
-        scenario, session = service.create_session(body.scenario_id, mode=body.mode)
+        scenario, session = service.create_session(
+            body.scenario_id, mode=body.mode, learner_id=learner
+        )
     except EngineError as exc:
         raise _http_error(exc)
     return service.session_payload(scenario, session)
@@ -63,13 +72,6 @@ async def apply_action(session_id: str, body: ActionRequest) -> dict:
         "session_id": outcome.session_id,
         "node": outcome.next_node.model_dump(mode="json"),
         "state": outcome.state,
-        "consequence": (
-            outcome.consequence.model_dump() if outcome.consequence else None
-        ),
-        "outcome_id": outcome.outcome_id,
-        "outcome_tag": outcome.outcome_tag,
-        "headline": outcome.headline,
-        "recovery": outcome.recovery,
         "status": outcome.status,
     }
 
@@ -78,5 +80,36 @@ async def apply_action(session_id: str, body: ActionRequest) -> dict:
 async def request_hint(session_id: str, level: int = 1) -> dict:
     try:
         return service.use_hint(session_id, level)
+    except EngineError as exc:
+        raise _http_error(exc)
+
+
+@router.get("/sessions/{session_id}/replay")
+async def get_replay(session_id: str) -> dict:
+    try:
+        scenario, session = service.get_session(session_id)
+    except EngineError as exc:
+        raise _http_error(exc)
+    return replay.build_replay(scenario, session)
+
+
+@router.post("/sessions/{session_id}/branch", status_code=201)
+async def create_branch(session_id: str, body: BranchRequest) -> dict:
+    try:
+        scenario, parent = service.get_session(session_id)
+        branch = branching.create_branch(
+            scenario, parent, body.from_step, body.action_id, get_store()
+        )
+    except EngineError as exc:
+        raise _http_error(exc)
+    return service.session_payload(scenario, branch)
+
+
+@router.get("/sessions/{session_id}/compare/{branch_id}")
+async def compare(session_id: str, branch_id: str) -> dict:
+    try:
+        scenario, parent = service.get_session(session_id)
+        branch = get_store().get(branch_id)
+        return branching.build_comparison(scenario, parent, branch)
     except EngineError as exc:
         raise _http_error(exc)

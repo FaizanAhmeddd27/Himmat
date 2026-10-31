@@ -16,7 +16,7 @@ from app.engine.store import get_store
 
 
 def create_session(
-    scenario_id: str, mode: SessionMode = "practice"
+    scenario_id: str, mode: SessionMode = "practice", learner_id: str = "guest"
 ) -> tuple[Scenario, SessionRecord]:
     scenario = loader.get_scenario(scenario_id)
     session = get_store().create(
@@ -24,6 +24,7 @@ def create_session(
         current_node=scenario.initial_node,
         initial_state=dict(scenario.initial_state),
         mode=mode,
+        learner_id=learner_id,
     )
     return scenario, session
 
@@ -62,12 +63,20 @@ def session_payload(scenario: Scenario, session: SessionRecord) -> dict:
         "recovery": outcome.recovery if outcome else None,
         "events_count": len(session.events),
         "hints_used": session.hints_used,
+        "parent_session_id": session.parent_session_id,
+        "skill_changes": [c.model_dump() for c in session.skill_changes],
     }
 
 
 def use_hint(session_id: str, level: int) -> dict:
     """Static 3-level hint from the scenario for the current node (Phase 5 adds AI)."""
     scenario, session = get_session(session_id)
+    if session.mode == "mastery":
+        raise EngineError(
+            code="hints_off",
+            message="This one is for you to try on your own.",
+            status=403,
+        )
     node = scenario.nodes.get(session.current_node)
     if node is None or node.hints is None:
         raise EngineError(
