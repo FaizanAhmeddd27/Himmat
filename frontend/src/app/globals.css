@@ -1,15 +1,18 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "../styles/tokens.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* shadcn wiring */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-sans: var(--font-share-tech), "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+  --font-heading: var(--font-share-tech), "Segoe UI", system-ui, sans-serif;
+  --font-urdu: var(--font-urdu-stack);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -26,6 +29,7 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
+  --color-border-strong: var(--c-border-strong);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -39,6 +43,43 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+
+  /* HIMMAT brand tokens (docs/UI_UX.md §2) */
+  --color-wine: var(--wine);
+  --color-wine-dark: var(--wine-dark);
+  --color-wine-tint: var(--wine-tint);
+  --color-sand: var(--sand);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-on-wine: var(--on-wine);
+  --color-on-wine-muted: var(--on-wine-muted);
+  --color-safe: var(--safe);
+  --color-safe-tint: var(--safe-tint);
+  --color-caution: var(--caution);
+  --color-caution-tint: var(--caution-tint);
+  --color-neutral: var(--neutral);
+  --color-neutral-tint: var(--neutral-tint);
+
+  /* HIMMAT type scale — Share Tech is compact, so we start bigger than
+     usual, and the a11y text-size setting scales everything (§3.5) */
+  --text-xs: calc(14px * var(--scale));
+  --text-xs--line-height: 1.5;
+  --text-sm: calc(16px * var(--scale));
+  --text-sm--line-height: 1.5;
+  --text-base: calc(18px * var(--scale));
+  --text-base--line-height: 1.6;
+  --text-lg: calc(22px * var(--scale));
+  --text-lg--line-height: 1.4;
+  --text-xl: calc(28px * var(--scale));
+  --text-xl--line-height: 1.25;
+  --text-2xl: calc(36px * var(--scale));
+  --text-2xl--line-height: 1.2;
+  --text-3xl: calc(44px * var(--scale));
+  --text-3xl--line-height: 1.15;
+
+  /* Shape (§4) */
+  --radius-card: 16px;
+  --radius-control: 12px;
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -48,73 +89,74 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ------------------------------------------------------------
+   shadcn/ui variables mapped to HIMMAT tokens (UI_UX §10.3)
+   ------------------------------------------------------------ */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--wine);
+  --primary-foreground: var(--on-wine);
+  --secondary: var(--wine-tint);
+  --secondary-foreground: var(--wine);
+  --muted: var(--neutral-tint);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--wine-tint);
+  --accent-foreground: var(--wine);
+  --destructive: var(--caution); /* no red in HIMMAT (§2.4 rule 5) */
+  --destructive-foreground: var(--on-wine);
+  --border: var(--c-border);
+  --input: var(--c-border-strong);
+  --ring: var(--wine-dark);
+  --radius: 12px;
+  --chart-1: var(--wine);
+  --chart-2: var(--c-border-strong);
+  --chart-3: var(--safe);
+  --chart-4: var(--on-wine-muted);
+  --chart-5: var(--ink);
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--wine);
+  --sidebar-primary-foreground: var(--on-wine);
+  --sidebar-accent: var(--wine-tint);
+  --sidebar-accent-foreground: var(--wine);
+  --sidebar-border: var(--c-border);
+  --sidebar-ring: var(--wine-dark);
 }
 
+/* HIMMAT ships light-only for readability; .dark intentionally mirrors root */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--wine);
+  --primary-foreground: var(--on-wine);
+  --secondary: var(--wine-tint);
+  --secondary-foreground: var(--wine);
+  --muted: var(--neutral-tint);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--wine-tint);
+  --accent-foreground: var(--wine);
+  --destructive: var(--caution);
+  --destructive-foreground: var(--on-wine);
+  --border: var(--c-border);
+  --input: var(--c-border-strong);
+  --ring: var(--wine-dark);
+  --sidebar: var(--surface);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--wine);
+  --sidebar-primary-foreground: var(--on-wine);
+  --sidebar-accent: var(--wine-tint);
+  --sidebar-accent-foreground: var(--wine);
+  --sidebar-border: var(--c-border);
+  --sidebar-ring: var(--wine-dark);
 }
 
 @layer base {
@@ -122,9 +164,46 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    /* Calm default body size — text-base is already a11y-scaled via --scale */
+    @apply bg-background text-foreground font-sans text-base;
+    font-size: var(--text-base);
+    line-height: 1.6;
+    letter-spacing: 0.01em;
   }
   html {
     @apply font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    /* Titles: never bold (Share Tech has one weight — §3.3) */
+    @apply font-sans;
+    line-height: 1.25;
+    letter-spacing: 0;
+  }
+}
+
+/* Card + hero utilities implementing the "meta card" (§4.1) and
+   "split band" (§4.2) patterns */
+@layer components {
+  .card-meta {
+    background: var(--surface);
+    border: 1px solid var(--c-border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  @media (min-width: 640px) {
+    .card-meta {
+      padding: 32px;
+    }
+  }
+  .hero-band {
+    background: var(--wine);
+    color: var(--on-wine);
+  }
+  .hero-label {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 }

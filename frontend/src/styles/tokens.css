@@ -1,0 +1,105 @@
+/* ============================================================
+   HIMMAT design tokens — from docs/UI_UX.md §10.1
+   Theme: Wine Red #7F011F + Light Sand #F5EBD0
+   Rule: red (wine) is the BRAND, never the warning.
+   Status is green (--safe) / amber (--caution) + icon + word.
+   ============================================================ */
+
+:root {
+  /* Brand */
+  --wine: #7f011f;
+  --sand: #f5ebd0;
+
+  /* Surfaces and text */
+  --bg: var(--sand);
+  --surface: #fff9ea;
+  --ink: #2a0a10;
+  --text-muted: #5c3a40;
+  --text-subtle: #6b5258;
+  /* generic names are namespaced with --c- so shadcn's --border can alias them
+     without a circular reference (docs map --border: var(--border)) */
+  --c-border: #dccba3;
+  --c-border-strong: #8a7748;
+
+  /* Wine variants */
+  --wine-dark: #5a0016;
+  --wine-tint: #ebd0c4;
+  --on-wine: #f5ebd0;
+  --on-wine-muted: #e4d3b0;
+
+  /* Status (no red) */
+  --safe: #146c2e;
+  --safe-tint: #dce9d0;
+  --caution: #8a5100;
+  --caution-tint: #f5dda6;
+  --neutral: #5c3a40;
+  --neutral-tint: #efe3c4;
+
+  /* Shape and space */
+  --tap-min: 48px;
+  --focus-ring: 3px solid var(--wine-dark);
+
+  /* Type scale (a11y text-size setting scales everything) */
+  --scale: 1;
+
+  /* Font stacks — Share Tech (Latin) + Noto Nastaliq Urdu (Urdu script).
+     --font-share-tech / --font-urdu are provided by next/font in layout.tsx */
+  --font-urdu-stack: var(--font-urdu), "Noto Naskh Arabic", "Jameel Noori Nastaleeq", serif;
+}
+
+html {
+  font-synthesis: none;
+}
+
+/* Text-size accessibility setting */
+html[data-text="large"] {
+  --scale: 1.11;
+}
+html[data-text="xlarge"] {
+  --scale: 1.33;
+}
+
+/* High-contrast mode (accessibility toggle) */
+html[data-contrast="high"] {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --c-border: #000000;
+  --c-border-strong: #000000;
+  --ink: #000000;
+  --text-muted: #000000;
+  --text-subtle: #000000;
+  --wine: #5a0016;
+  --wine-dark: #3a000e;
+  --wine-tint: #ffffff;
+  --safe-tint: #ffffff;
+  --caution-tint: #ffffff;
+  --neutral-tint: #ffffff;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* Visible focus everywhere (UI_UX §7) */
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Numbers and OTP codes: easy to read digit by digit (UI_UX §3.6) */
+.otp-digits {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.15em;
+}
+
+/* Respect user motion preference (UI_UX §5.12) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
