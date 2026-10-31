@@ -164,7 +164,7 @@ export interface RecoveryView {
 export interface RecoveryStepResult {
   id: string;
   label: Localized;
-  verdict: "good" | "order" | "harmful";
+  verdict: "good" | "order" | "harmful" | "missed";
   explain: Localized;
 }
 

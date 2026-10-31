@@ -69,10 +69,8 @@ export function ConsequencePanel({
             {t(meta.label)}
           </motion.span>
           <h1 className="mt-4 text-2xl text-on-wine sm:text-3xl">{pick(session.headline, lang)}</h1>
-          {mastery ? (
-            <p className="mt-2 text-lg text-on-wine-muted">
-              {t(tag === "safe" ? "outcome.passed" : "outcome.notYet")}
-            </p>
+          {mastery && tag !== "safe" ? (
+            <p className="mt-2 text-lg text-on-wine-muted">{t("outcome.notYet")}</p>
           ) : null}
           <button
             type="button"

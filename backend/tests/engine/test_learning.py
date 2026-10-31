@@ -65,7 +65,9 @@ def test_wrong_order_is_flagged_and_explained(otp_recovery):
     )
     assert result["passed"] is False
     flagged = [step for step in result["steps"] if step["verdict"] == "order"]
-    assert flagged and all(step["explain"]["en"] for step in flagged)
+    # Only the step that jumped ahead is flagged, not the ones it pushed back.
+    assert [step["id"] for step in flagged] == ["report"]
+    assert flagged[0]["explain"]["en"]
 
 
 def test_harmful_step_fails_even_when_complete(otp_recovery):
@@ -77,6 +79,7 @@ def test_harmful_step_fails_even_when_complete(otp_recovery):
 def test_missed_steps_are_listed(otp_recovery):
     result = recovery.evaluate(otp_recovery, ["stop", "call_bank"])
     assert result["completeness"] == 40
+    assert {step["verdict"] for step in result["missed"]} == {"missed"}
     assert [step["id"] for step in result["missed"]] == [
         "block_card",
         "change_passwords",

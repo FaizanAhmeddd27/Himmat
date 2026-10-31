@@ -6,7 +6,7 @@ recovery JSON. Each step gets a verdict and a reason, never a bare score.
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Set
 
 from pydantic import BaseModel
 
@@ -65,6 +65,18 @@ def public_view(scenario: RecoveryScenario) -> dict:
     }
 
 
+def _longest_in_order(ranks: List[int]) -> Set[int]:
+    """Largest set of steps already in the right order. Only the rest get flagged,
+    so one step out of place never makes the steps around it look wrong."""
+    best: List[List[int]] = []
+    for index, rank in enumerate(ranks):
+        chain = max(
+            (best[i] for i in range(index) if ranks[i] < rank), key=len, default=[]
+        )
+        best.append([*chain, rank])
+    return set(max(best, key=len, default=[]))
+
+
 def evaluate(scenario: RecoveryScenario, submitted: List[str]) -> dict:
     """Score an ordered list of card ids for order and completeness."""
     cards = {card.id: card for card in scenario.cards}
@@ -76,18 +88,22 @@ def evaluate(scenario: RecoveryScenario, submitted: List[str]) -> dict:
             status=400,
         )
 
+    in_order = _longest_in_order(
+        [
+            cards[card_id].rank
+            for card_id in submitted
+            if cards[card_id].rank is not None
+        ]
+    )
     steps = []
-    highest_rank = 0
     for card_id in submitted:
         card = cards[card_id]
         if card.harmful:
             verdict = "harmful"
-        elif card.rank is not None and card.rank < highest_rank:
+        elif card.rank is not None and card.rank not in in_order:
             verdict = "order"
         else:
             verdict = "good"
-        if card.rank is not None:
-            highest_rank = max(highest_rank, card.rank)
         steps.append(
             {
                 "id": card.id,
@@ -111,7 +127,7 @@ def evaluate(scenario: RecoveryScenario, submitted: List[str]) -> dict:
         "completeness": completeness,
         "steps": steps,
         "missed": [
-            {"id": c.id, "label": c.label, "verdict": "order", "explain": c.explain}
+            {"id": c.id, "label": c.label, "verdict": "missed", "explain": c.explain}
             for c in missed
         ],
     }
